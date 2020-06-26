@@ -22,6 +22,7 @@ export class CreateLeadComponent implements OnInit {
   createLead;
   commentList = [];
   allCustomer = [];
+  totalStatus = [];
   allStatus = [];
   allLeadSource = [];
   allCities = [];
@@ -30,6 +31,9 @@ export class CreateLeadComponent implements OnInit {
   totalCities = [];
   userID = '';
   LeadID = 0;
+  disableStatus = false;
+  filterStateData = false;
+  IsfollowUpDate = false;
 
   constructor(protected userService: UserService, private leadService: LeadService,
     private router: Router, private activatedRoute: ActivatedRoute,
@@ -42,14 +46,16 @@ export class CreateLeadComponent implements OnInit {
       this.todaysDate = { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() };
       this.createLead = this.leadService.getLeadObject();
       this.createLead = JSON.parse(JSON.stringify(this.createLead));
-      this.createLead.LeadDate = '';
+      this.disableStatus = true;
+      this.createLead.LeadDate = this.todaysDate;
       this.createLead.FollowUpDate = '';
       this.createLead.LeadNo = '';
       this.createLead.LeadSourceId = 0;
       this.createLead.CustomerName = '';
       this.createLead.ShopName = '';
       this.createLead.LeadType = 0;
-      this.createLead.LeadStatus = 0;
+      this.createLead.LeadStatus = "L";
+      this.createLead.Priority = 2;
       this.createLead.PhoneNo = '';
       this.createLead.Qunatity = '';
       this.createLead.Address = '';
@@ -66,6 +72,7 @@ export class CreateLeadComponent implements OnInit {
         this.LeadID = leadId;
         this.getDetails(leadId);
       } else if(activatedRouteObject['editMode'] === true) {
+        this.disableStatus = false;
         this.isEditOnly = true;
         this.cardTitle = 'EDIT LEAD'
         const leadId = this.activatedRoute.snapshot.params.leadId;
@@ -79,11 +86,27 @@ export class CreateLeadComponent implements OnInit {
         this.showLoader = false;
         let lookUpData = JSON.parse(JSON.stringify(res));
         this.allCustomer = lookUpData.Customer;
-        this.allStatus = lookUpData.LeadStatus.filter(x=> (x.LeadStatusID == 31 || x.LeadStatusID == 32));
+        this.totalStatus = JSON.parse(JSON.stringify(lookUpData.LeadStatus));
+        this.allStatus = lookUpData.LeadStatus;
         this.allState = lookUpData.State;
         this.allLeadSource = lookUpData.LeadSource;
         this.totalCities = lookUpData.City;
         this.allLeadTypes = lookUpData.LeadType;
+        if(this.filterStateData == true && (this.isEditOnly || this.isViewOnly)) {
+          this.refreshDataHandler('statechange');
+        }
+        if(this.filterStateData == true && this.isEditOnly) {
+          if(this.IsfollowUpDate == true) {
+            let showOnlyStatus = this.totalStatus.filter(x => x.Code == 'F' || x.Code == 'D');
+            this.allStatus = showOnlyStatus;
+          } else {
+            let showOnlyStatus = this.totalStatus.filter(x => x.Code == 'L' || x.Code == 'D');
+            this.allStatus = showOnlyStatus;
+          }
+          if(this.createLead.LeadStatus == 'W') {
+            this.allStatus = this.totalStatus;
+          }
+        }
       },(error)=> {
         this.showLoader = false;
         this.notification.error('Error','Error While Lookup Master Data');
@@ -99,19 +122,56 @@ export class CreateLeadComponent implements OnInit {
         this.showLoader = false;
       })
     }
+    followUpChangeHandler() {
+      this.disableStatus = true;
+      if(this.isEditOnly) {
+        let findResult = this.totalStatus.find(x => x.Code == 'F');
+        if(!this.allStatus.find(x=> x.Code == 'F')) {
+          this.allStatus.push(findResult);
+        }
+      }
+      if(!this.createLead.FollowUpDate || !this.createLead.FollowUpDate.day) {
+        this.createLead.LeadStatus = 'L';
+      } else {
+        this.createLead.LeadStatus = 'F';
+      }
+    }
     populateAllData(resp) {
       if(resp.Lead.length) {
         let allValues = resp.Lead[0];
+        let followUpDate;
         const leadDateArray = allValues.LeadDate.split('/');
-        const followupDateArray = allValues.FollowUPDate.split('/')
+        if(allValues.FollowUPDate) {
+          const followupDateArray = allValues.FollowUPDate.split('/')
+          followUpDate = { year: +followupDateArray[2], month: +followupDateArray[0], day: +followupDateArray[1] };
+          if(this.allStatus.length == 0) {
+            this.IsfollowUpDate = true;
+            this.filterStateData = true;
+          }
+          let showOnlyStatus = this.totalStatus.filter(x => x.Code == 'F' || x.Code == 'D');
+          this.allStatus = showOnlyStatus;
+        } else {
+          followUpDate = '';
+          if(this.allStatus.length == 0) {
+            this.IsfollowUpDate = false;
+            this.filterStateData = true;
+          }
+          let showOnlyStatus = this.totalStatus.filter(x => x.Code == 'L' || x.Code == 'D');
+          this.allStatus = showOnlyStatus;
+        }
         this.createLead.LeadDate = { year: +leadDateArray[2], month: +leadDateArray[0], day: +leadDateArray[1] };
-        this.createLead.FollowUpDate = { year: +followupDateArray[2], month: +followupDateArray[0], day: +followupDateArray[1] };
+        this.createLead.FollowUpDate = followUpDate
         this.createLead.LeadNo = allValues.LeadNumber;
         this.createLead.LeadSourceId = allValues.LeadSourceID;
         this.createLead.CustomerName = allValues.CustomerName;
         this.createLead.ShopName = allValues.ShopName;
         this.createLead.LeadType = allValues.LeadTypeID;
-        this.createLead.LeadStatus = allValues.LeadStatusID;
+        this.createLead.LeadStatus = allValues.LeadStatusCode;
+        if(allValues.LeadStatusCode == 'W') {
+          const status = this.totalStatus.filter(x => x.Code == 'W');
+          this.allStatus = status;
+        }
+        this.createLead.Priority = allValues.PriorityID;
         this.createLead.PhoneNo = allValues.Phone;
         this.createLead.Qunatity = allValues.Quantity;
         this.createLead.Address = allValues.Address;
@@ -131,10 +191,9 @@ export class CreateLeadComponent implements OnInit {
     }
 
     validateData() {
-      if(this.createLead.LeadDate != '' && this.createLead.FollowUpDate != '' && this.createLead.LeadType != 0 && this.createLead.LeadSourceId != 0
-        && this.createLead.LeadStatus != 0 && this.createLead.CustomerName != '' && this.createLead.PhoneNo != ''
-        && this.createLead.ShopName != '' && this.createLead.Qunatity != '' && this.createLead.Address != ''
-        && this.createLead.State != 0 && this.createLead.City != 0 && this.createLead.ZipCode != '') {
+      if(this.createLead.LeadType != 0 && this.createLead.LeadSourceId != 0 && this.createLead.LeadStatus != 0 
+        && this.createLead.CustomerName != '' && this.createLead.PhoneNo != '' && this.createLead.Qunatity != '' 
+        && this.createLead.Address != '' && this.createLead.State != 0 && this.createLead.City != 0) {
           return true;
         }
       return false;
@@ -147,6 +206,7 @@ export class CreateLeadComponent implements OnInit {
         this.notification.error('Error', 'Please fill all the mandatory information !!!')
         return;
       }
+      let findResult = this.totalStatus.find(x => x.Code == this.createLead.LeadStatus);
       let postData = {
         "LeadID": this.LeadID,
         "LeadDate": `${this.createLead.LeadDate.month}/${this.createLead.LeadDate.day}/${this.createLead.LeadDate.year}`,
@@ -160,8 +220,9 @@ export class CreateLeadComponent implements OnInit {
         "LeadTypeID": this.createLead.LeadType,
         "Quantity": this.createLead.Qunatity,
         "LeadSourceID": this.createLead.LeadSourceId,
+        "PriorityID": this.createLead.Priority,
         "ShopName": this.createLead.ShopName,
-        "LeadStatusID": this.createLead.LeadStatus,
+        "LeadStatusID": findResult.LeadStatusID,
         "UserID": this.userID,
         "Comment": this.createLead.Comment
       }

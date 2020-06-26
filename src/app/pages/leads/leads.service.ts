@@ -22,8 +22,8 @@ export class LeadService {
       }));
   }
   //http://styloxcrm.azurewebsites.net/api/CRMLeadList?StartDate=5/1/2020&EndDate=5/30/2020&CustomerName=''&StatusID=1
-  getAllLeads(StartDate,EndDate,CustName,StatusId) {
-    return this.http.get(`${this.API_ENDPOINT}api/CRMLeadList?StartDate=${StartDate}&EndDate=${EndDate}&CustomerName=${CustName}&StatusID=${StatusId}`).pipe(map( res => res));
+  getAllLeads(StartDate,EndDate,PriorityId,StatusId,userID) {
+    return this.http.get(`${this.API_ENDPOINT}api/CRMLeadList?StartDate=${StartDate}&EndDate=${EndDate}&PriorityID=${PriorityId}&StatusID=${StatusId}&UserID=${userID}`).pipe(map( res => res));
   }
   getLeadDetails(LeadId,UserId) {
     return this.http.get(`${this.API_ENDPOINT}api/CRMLeadDetail?LeadID=${LeadId}&UserID=${UserId}`).pipe(map( res => res));

@@ -65,7 +65,7 @@ export class PagesComponent implements OnInit {
   getFollowUpDetails() {
     this.pagesService.getFollowUpList().subscribe(res => {
       if(res['followupLeadList'] && res['followupLeadList'].length > 0 ){
-        this.displayPopup(res['followupLeadList']);
+       // this.displayPopup(res['followupLeadList']);
        }
     }, err=> {
       console.log(err);

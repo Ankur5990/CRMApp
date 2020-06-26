@@ -7,7 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CacheService } from 'app/shared/cache.service';
 import { SharedService } from 'app/shared/shared.service';
 import { ActivatedRoute } from '@angular/router';
-
+import { ngxCsv } from 'ngx-csv/ngx-csv';
 
 @Component({
   selector: 'app-leads-list',
@@ -25,6 +25,7 @@ export class LeadsListComponent implements OnInit {
   lookUpData;
   allCustomer;
   allStatus;
+  userID;
 
   constructor(protected userService: UserService, private leadService: LeadService,
     private sharedService: SharedService, private activatedRoute: ActivatedRoute,
@@ -32,12 +33,12 @@ export class LeadsListComponent implements OnInit {
     private notification: NotificationsService, private genericSort: GenericSort) { }
 
   ngOnInit() {
-    const userId = localStorage.getItem('userId') || '';
+    this.userID = localStorage.getItem('UserLoginId');
     this.allLeadsList = [];
     this.leadTask = this.leadService.getLeadObject();
     this.leadTask = JSON.parse(JSON.stringify(this.leadTask));
-    this.leadTask.CustomerName = 0;
-    this.leadTask.Status = 0;
+    this.leadTask.Status = 1;
+    this.leadTask.Priority = 1;
     const now = new Date();
     this.todaysDate = { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() };
     this.leadTask.startDate = this.todaysDate;
@@ -59,6 +60,39 @@ export class LeadsListComponent implements OnInit {
     })
   }
 
+  printTable() {
+    var divToPrint = document.getElementById("lead-container");  
+    let newWin = window.open("");  
+    newWin.document.write(divToPrint.outerHTML);  
+    newWin.print();  
+    newWin.close();
+  }
+  exportToCSV() {
+    const report = [];
+    this.allLeadsList.forEach((leadInfo) => {
+      report.push({
+        LeadNumber: leadInfo.LeadNumber,
+        LeadType: leadInfo.LeadType,
+        LeadSource: leadInfo.LeadSource,
+        Priority: leadInfo.PriorityDesc,
+        Address: leadInfo.Address,
+        City: leadInfo.CityName,
+        State: leadInfo.StateName,
+        Zip: leadInfo.Zip,
+        ShopName: leadInfo.ShopName,
+        Quantity: leadInfo.Quantity,
+        LeadDate: leadInfo.LeadDate,
+        FollowUpDate: leadInfo.FollowUPDate,
+        LeadStatus: leadInfo.LeadStatus,
+      });
+    });
+
+    const options = { 
+      headers: ['Lead Number', 'Lead Type', 'Lead Source','Priority','Address','City', 'State', 'Zip', 'Shop Name', 'Quantity', 'Lead Date', 'FollowUp Date', 'Lead Status'], 
+      nullToEmptyString: true,
+    };
+    new ngxCsv(report, 'Lead-List', options);
+  }
   refreshDataHandler() {
     this.validateData();
     if (this.allLeadsList.length || this.noLeadFound != '') {
@@ -69,7 +103,7 @@ export class LeadsListComponent implements OnInit {
   }
 
   validateData() {
-    if (this.leadTask.CustomerName != '' && this.leadTask.Status !=0) {
+    if (this.leadTask.Priority != 0 && this.leadTask.Status !=0) {
       this.buttonAction = true;
       return true;
     } else {
@@ -83,8 +117,7 @@ export class LeadsListComponent implements OnInit {
     const startDate = `${leadTask.startDate.month}/${leadTask.startDate.day}/${leadTask.startDate.year}`;
     const endDate = `${leadTask.endDate.month}/${leadTask.endDate.day}/${leadTask.endDate.year}`;
     this.showLoader = true;
-    const customerName = leadTask.CustomerName == 1 ? '' : leadTask.CustomerName;
-    this.leadService.getAllLeads(startDate,endDate,customerName,leadTask.Status).subscribe((res) => {
+    this.leadService.getAllLeads(startDate,endDate,leadTask.Priority,leadTask.Status, this.userID).subscribe((res) => {
       this.showLoader = false;
       if (!res['LeadList'].length) {
         this.allLeadsList = [];

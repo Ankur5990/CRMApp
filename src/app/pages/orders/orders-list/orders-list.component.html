@@ -4,38 +4,38 @@
   </div>
 </div>
 
-<ba-card cardTitle="LEADS" class="smart-table-container" #leads>
+<ba-card cardTitle="ORDERS" class="smart-table-container" #orders>
     <div class="row">
         <div class="col-md-2 col-sm-12 no-padding-right">
             <label>Start Date</label>
             <div class="input-group">
-                <date-picker [(dateModel)]="leadTask.startDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+                <date-picker [(dateModel)]="orderTask.startDate" (dateModelChange)="refreshDataHandler()"></date-picker>
             </div>
         </div>
         <div class="col-md-2 col-sm-12 no-padding-right">
             <label>End Date</label>
             <div class="input-group">
-                <date-picker [(dateModel)]="leadTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+                <date-picker [(dateModel)]="orderTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
             </div>
         </div>
         <div class="col-md-2 col-sm-12 no-padding-right">
-            <label>Priority</label>
-            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="leadTask.Priority">
-                <option [value]="1">All Priority</option>
-                <option [value]="2">Low</option>
-                <option [value]="3">Medium</option>
-                <option [value]="4">High</option>
+            <label>Select Type</label>
+            <select (change)="refreshDataHandler()" class="form-control"
+                [(ngModel)]="orderTask.OrderType" id="exampleSelect1">
+                <option [value]="1">All Type</option>
+                <option [value]="2">Lead</option>
+                <option [value]="3">Customer</option>
             </select>
         </div>
         <div class="col-md-2 col-sm-12 no-padding-right">
             <label>Status</label>
-            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="leadTask.Status">
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="orderTask.OrderStatus">
                 <option [value]="1">All Status</option>
-                <option *ngFor='let status of allStatus' [value]="status.LeadStatusID">{{status.LeadStatus}}</option>
+                <option *ngFor='let status of allOrderStatus' [value]="status.OrderStatusID">{{status.OrderStatus}}</option>
             </select>
         </div>
         <div class="col-md-2 col-sm-12 no-padding-right view-btn">
-            <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllLeads()">View </button>
+            <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllOrders()">View </button>
         </div>
         <div class="col-md-2 col-sm-12 createTicketBtn">
             <button [routerLink]="['../create']" class="btn btn-primary addCustBtn pull-right">
@@ -43,18 +43,18 @@
             </button>
         </div>
         <div class="col-md-2 col-sm-12 printBtn">
-            <button (click)="printTable()" class="btn btn-primary addCustBtn pull-right" [disabled]="allLeadsList.length == 0">
+            <button (click)="printTable()" class="btn btn-primary addCustBtn pull-right" [disabled]="allOrdersList.length == 0">
                 Print
             </button>
         </div>
         <div class="col-md-2 col-sm-12 exportBtn">
-            <button (click)="exportToCSV()" class="btn btn-primary addCustBtn pull-right" [disabled]="allLeadsList.length == 0">
+            <button (click)="exportToCSV()" class="btn btn-primary addCustBtn pull-right" [disabled]="allOrdersList.length == 0">
                 Export
             </button>
         </div>
     </div>
     <div class="table-container" style="overflow-x:auto;">
-        <table class="table table-striped table-condensed notification-list-table" id="lead-container">
+        <table class="table table-striped table-condensed notification-list-table" id="order-table">
             <thead class="tableHeader">
                 <tr>
                     <th class="table-id thVerticalAlign actionAlignCenter" style="width: 8%;">Actions</th>
@@ -65,12 +65,12 @@
                     </th>
                     <th class="thVerticalAlign text-align-left">
                         <span>
-                            Lead Type
+                            Order Number
                         </span>
                     </th>
-                    <th class="thVerticalAlign text-align-left">
+                    <th class="thVerticalAlign text-align-center">
                         <span>
-                            Lead Source
+                            Order Type
                         </span>
                     </th>
                     <th class="thVerticalAlign text-align-left">
@@ -80,68 +80,62 @@
                     </th>
                     <th class="thVerticalAlign text-align-center">
                         <span>
-                            Address
+                            Payment Mode
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Total Amount
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Discount(%)
                         </span>
                     </th>
                     <th class="thVerticalAlign text-align-left">
                         <span>
-                            Shop Name
+                            Order Date
                         </span>
                     </th>
-                    <th class="thVerticalAlign text-align-left">
+                    <th class="thVerticalAlign text-align-center">
                         <span>
-                            Quantity
-                        </span>
-                    </th>
-                    <th class="thVerticalAlign text-align-left">
-                        <span>
-                            Lead Date
-                        </span>
-                    </th>
-                    <th class="thVerticalAlign text-align-left">
-                        <span>
-                            FollowUp Date
-                        </span>
-                    </th>
-                    <th class="thVerticalAlign text-align-left">
-                        <span>
-                            Status
+                            Order Status
                         </span>
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr valign="middle" *ngFor="let item of allLeadsList let i=index">
+                <tr valign="middle" *ngFor="let item of allOrdersList let i=index">
                     <td class="table-id">
-                        <a [routerLink]="['../view',item.LeadID]">
+                        <i class="ion-ios-book custom-tooltip-ion" 
+                        (click)="printCashData(item.OrderID)" style="margin-right: 5px">
+                            <span class="tooltiptext">Print Invoice</span>
+                        </i>
+                        <a [routerLink]="['../view',item.OrderID]">
                             <i class="ion-eye custom-tooltip-ion" style="margin-right: 5px">
                                 <span class="tooltiptext">View</span>
                             </i>
                         </a>
-                        <a [routerLink]="['../edit',item.LeadID]" *ngIf="item.LeadStatusCode =='L' || item.LeadStatusCode =='F' ">
+                        <a [routerLink]="['../edit',item.OrderID]" *ngIf="item.OrderStatusCode =='PP' || item.OrderStatusCode =='PD'">
                             <i class="ion-edit custom-tooltip-ion" style="margin-right: 5px">
                                 <span class="tooltiptext">Edit</span>
                             </i>
                         </a>
-                        <!-- <i *ngIf="item.ISEdit == 1" class="ion-trash-a custom-tooltip-ion" 
-                            (click)="deleteNotification(item.LeadID);">
-                        <span class="tooltiptext">Delete</span>
-                        </i> -->
                     </td>
                     <td class='text-align-left leadNumber'>{{item.LeadNumber}}</td>
-                    <td class='text-align-left type'>{{item.LeadType}}</td>
-                    <td class='text-align-left source'>{{item.LeadSource}}</td>
+                    <td class='text-align-left leadNumber'>{{item.OrderNumber}}</td>
+                    <td class='text-align-center type'>{{item.OrderType}}</td>
                     <td class='text-align-left custname'>{{item.CustomerName}}</td>
-                    <td class='text-align-left address'>{{item.Address}}, {{item.CityName}}, {{item.StateName}}</td>
-                    <td class='text-align-left shopName'>{{item.ShopName}}</td>
-                    <td class='text-align-left quantity'>{{item.Quantity}}</td>
-                    <td class="text-align-left createdOn">{{item.LeadDate}}</td>
-                    <td class="text-align-left createdOn">{{item.FollowUPDate}}</td>
-                    <td class="text-align-left leadStatus">{{item.LeadStatus}}</td>
+                    <td class='text-align-center payment-mode'>{{item.PaymentMode || 'NA'}}</td>
+                    <td class='text-align-center total-amount'>{{item.TotalAmount}}</td>
+                    <td class='text-align-center discount'>{{item.DiscountPercentage}}</td>
+                    <td class="text-align-left createdOn">{{item.OrderDate}}</td>
+                    <td class="text-align-center orderStatus">{{item.OrderStatus}}</td>
                 </tr>
             </tbody>
         </table>
-        <div *ngIf="noLeadFound == '' && allLeadsList.length == 0 && refreshMessage" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
-        <div *ngIf="noLeadFound != '' && allLeadsList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noLeadFound}}</div>
+        <div *ngIf="noOrderFound == '' && allOrdersList.length == 0 && refreshMessage" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
+        <div *ngIf="noOrderFound != '' && allOrdersList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noLeadFound}}</div>
     </div>
 </ba-card>

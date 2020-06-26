@@ -17,9 +17,10 @@ export class BaPageTop implements OnInit {
   public isMenuCollapsed:boolean = false;
   public logedInUser:any={};
   public showReset:boolean=false;
+  public Name = '';
   
   ngOnInit() {
-    
+    this.Name = localStorage.getItem('UserName');
   }
 
   constructor(private _state:GlobalState, private userService: UserService,

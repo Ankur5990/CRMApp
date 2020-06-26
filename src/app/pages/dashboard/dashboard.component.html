@@ -1,0 +1,109 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+    <div style="margin:auto;position:fixed;top:50%;left:50%;">
+        <img src="assets/crm/spinner.gif " width='25px'>
+    </div>
+</div>
+<div class="row row-flex">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="inner_container">
+        <div class='box-title' style="background: #e12726; color:#FFFFFF;" >FollowUp Leads</div>
+        <div class='box-middle row'>
+            <div class="box-txt col-12"  *ngIf="allFollowUpLeads.length > 0">
+                <div class="item-heading">
+                    <div class="customer-name">Customer Name</div>
+                    <div class="phone-number">Phone Number</div>
+                </div>
+                <div class="item-value" *ngFor="let item of allFollowUpLeads">
+                    <div class="customer-name">{{item.CustomerName}}</div>
+                    <div class="phone-number">{{item.Phone}}</div>
+                </div>
+            </div>
+            <div class="box-txt col-12" *ngIf="allFollowUpLeads.length == 0">
+                <div class="item-heading no-lead">
+                    No Followup Lead Present
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="inner_container">
+        <div class='box-title' style="background: #e12726; color:#FFFFFF;" >Hot Leads</div>
+        <div class='box-middle row'>
+            <div class="box-txt col-12" *ngIf="allHotLeads.length > 0">
+                <div class="item-heading">
+                    <div class="customer-name"> Customer Name</div>
+                    <div class="phone-number"> Phone Number</div>
+                </div>
+                <div class="item-value" *ngFor="let item of allHotLeads">
+                    <div class="customer-name">{{item.CustomerName}}</div>
+                    <div class="phone-number">{{item.Phone}}</div>
+                </div>
+            </div>
+            <div class="box-txt col-12" *ngIf="allHotLeads.length == 0">
+                <div class="item-heading no-lead">
+                    No Hot Lead Present
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="inner_container">
+            <div class='box-title lightGreen'>Total Leads</div>
+            <div class='box-middle row'>
+            <div class='box-txt col-12' *ngIf="allLeads">
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Pending Leads</div>
+                    <div class="desciption-value">{{allLeads.TotalPendingLead || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Low Leads</div>
+                    <div class="desciption-value">{{allLeads.TotalLowLead || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Medium Leads</div>
+                    <div class="desciption-value">{{allLeads.TotalMediumLead || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Hot Leads</div>
+                    <div class="desciption-value">{{allLeads.TotalHotLead || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Followup Leads</div>
+                    <div class="desciption-value">{{allLeads.TotalFollowupLead || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Dead Leads</div>
+                    <div class="desciption-value">{{allLeads.TotalDeadLead || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Client</div>
+                    <div class="desciption-value">{{allLeads.TotalClient || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Leads</div>
+                    <div class="desciption-value">{{allLeads.TotalLead || 0}}</div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="inner_container">
+            <div class='box-title lightGreen'>Orders</div>
+            <div class='box-middle row'>
+            <div class='box-txt col-12' *ngIf="allOrders">
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Pending Payment</div>
+                    <div class="desciption-value">{{allOrders.TotalPendingPayment || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Pending Dispatch</div>
+                    <div class="desciption-value">{{allOrders.TotalPendingDispatch || 0}}</div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div> 

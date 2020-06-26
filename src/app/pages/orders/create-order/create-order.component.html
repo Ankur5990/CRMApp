@@ -1,0 +1,153 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+    <div style="margin:auto;position:fixed;top:50%;left:50%;">
+        <img src="assets/crm/spinner.gif " width='25px'>
+    </div>
+</div>
+<ba-card cardTitle="{{cardTitle}}" id="newTicket">
+    <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-order' : 'backtolist'" (click)="goToListPage()">Back</button>
+    <button class="btn btn-danger buttonMargin btn-margin submit-create-order" *ngIf="!isViewOnly" (click)="submitOrder();">Submit</button>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Order Date <sup style="color:red;">*</sup></label>
+                    <div *ngIf="!disableOthers">
+                        <date-picker [minDate]="todaysDate" [disabled]="isViewOnly" [(dateModel)]="createOrder.OrderDate"></date-picker>
+                    </div>
+                    <div class="form-control" *ngIf="disableOthers">
+                        {{createOrder.OrderDate.year}}-{{createOrder.OrderDate.month}}-{{createOrder.OrderDate.day}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Order Type <sup style="color:red;">*</sup></label>
+                    <select class="form-control" (change)="refreshDataHandler('typeChange')" [disabled]="isViewOnly || disableOthers" [(ngModel)]="createOrder.OrderType">
+                        <option [value]="2">Lead</option>
+                        <option [value]="3">Customer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Payment Mode</label>
+                    <select class="form-control" (change)="refreshDataHandler('paymentMode')" [disabled]="isViewOnly || disablePayment" [(ngModel)]="createOrder.PaymentId">
+                        <option [value]="0">Select Payment Mode</option>
+                        <option *ngFor='let mode of allPaymentMode' [value]="mode.PaymentID">{{mode.Payment}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Dispatch No</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly || createOrder.Transporter == 0" [(ngModel)]="createOrder.DispatchNo">
+                </div>
+                <div class="form-group">
+                    <label>Discount(%)</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly || disableOthers" [(ngModel)]="createOrder.discount" (ngModelChange)="onDiscountChange()">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Company<sup style="color:red;">*</sup></label>
+                    <select class="form-control" (change)="refreshDataHandler()" [disabled]="isViewOnly || disableOthers" [(ngModel)]="createOrder.Company">
+                        <option *ngFor='let company of allCompany' [value]="company.CompanyID">{{company.CompanyName}}, {{company.CityName}}, {{company.StateName}}</option>
+                    </select>
+                </div>
+                <div class="form-group" *ngIf="createOrder.OrderType == 2 || createOrder.OrderType == 3">
+                    <label>Customer Detail<sup style="color:red;">*</sup></label>
+                    <select class="form-control" *ngIf="createOrder.OrderStatus != 'C' && (createOrder.OrderStatus != 'PD' && !disableOthers)" (change)="refreshDataHandler()" [disabled]="isViewOnly" [(ngModel)]="createOrder.CustomerId">
+                        <option [value]="0">Select Details</option>
+                        <option *ngFor='let customer of allCustomerList' [value]="customer.ID">{{customer.CustomerName}},{{customer.Address}}</option>
+                    </select>
+                    <div class="form-control" *ngIf="(createOrder.OrderStatus == 'C' && isViewOnly) || disableOthers">{{customerNameWithAddress}}</div>
+                </div>
+                <div class="form-group">
+                    <label>Transporter</label>
+                    <select class="form-control" (change)="refreshDataHandler('transporter')" [disabled]="isViewOnly || createOrder.PaymentId == 0" [(ngModel)]="createOrder.Transporter">
+                        <option [value]="0">Select Transporter</option>
+                        <option *ngFor='let transporter of allTransporter' [value]="transporter.TransporterID">{{transporter.Transporter}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status <sup style="color:red;">*</sup></label>
+                    <select class="form-control" (change)="refreshDataHandler()" [disabled]="isViewOnly || disableStatus" [(ngModel)]="createOrder.OrderStatus">
+                        <option *ngFor='let status of allStatus' [value]="status.Code">{{status.OrderStatus}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Freight Amount</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createOrder.FreightCharge" (ngModelChange)="onFreightChargeChange()">
+                </div>
+            </div>
+        </div>
+        <div>
+            <fieldset>
+                <legend>Select Product</legend>
+                <div class="row">
+                    <div class="col-sm-9">
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-danger btn-placement" (click)="addProductRow()" [disabled]="isViewOnly || disableOthers" >Add Product</button>
+                    </div>
+                    <div class="col-sm-12">
+                        <table class="table table-condensed">
+                            <thead class="mttableHeader">
+                                <th>Product <sup style="color:red;">*</sup></th>
+                                <th class="textAlignCenter">Size <sup style="color:red;">*</sup></th>
+                                <th class="textAlignCenter" style="width: 12%">Rate</th>
+                                <th class="textAlignCenter" style="width:8%">Quantity <sup style="color:red;">*</sup></th>
+                                <th class="textAlignRight">Amount</th>
+                                <th class="textAlignCenter">Action</th>
+                            </thead>
+                            <tbody> 
+                                <tr *ngFor="let item of selectedProduct;let i = index">
+                                    <td id="prodDSD">
+                                        <select *ngIf="!item.alreadyStored" class="form-control prodListElement" name="product" (change)="onProductChange(item)" [(ngModel)]="item.PRODUCTID" [disabled]="isViewOnly || (isEditOnly && item.alreadyStored)" >
+                                            <option value="0">Select Product</option>
+                                            <option *ngFor="let product of allProducts" [value]="product.PRODUCTID">{{product.Product}}</option>
+                                        </select>
+                                        <div *ngIf="item.alreadyStored" class="form-control product-list-div">{{item.ProductName}}</div>
+                                    </td>
+                                    <td id="prodDSD">
+                                        <select *ngIf="!item.alreadyStored" class="form-control prodListElement" name="size" [(ngModel)]="item.SizeID" [disabled]="isViewOnly || (isEditOnly && item.alreadyStored)" >
+                                            <option value="0">Select Size</option>
+                                            <ng-container *ngFor="let productsize of allSize;">
+                                                <option *ngIf="productsize.PRODUCTID == item.PRODUCTID" [value]="productsize.SizeID">{{productsize.Size}}</option>
+                                            </ng-container>
+                                        </select>
+                                        <div *ngIf="item.alreadyStored" class="form-control product-list-div">{{item.SizeValue}}</div>
+                                    </td>
+                                    <td class="textAlignCenter">{{item.Rate | number : '1.2-2'}}</td>
+                                    <td class="textAlignRight">
+                                        <input type="number" class="form-control textAlignRight prodListElement" [disabled]="isViewOnly || disableOthers" name="quantity" [(ngModel)]="item.Quantity" (ngModelChange)="unitChangeHandler(item);">
+                                    </td>
+                                    <td class="textAlignRight">{{item.Amount  | number : '1.2-2'}}</td>
+                                    <td class="textAlignCenter">
+                                        <i class="ion-trash-a" *ngIf="selectedProduct.length > 1 && !isViewOnly" (click)="onDelete(i)"></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td colspan="2" class="textAlignRight"><b>SubTotal</b></td>
+                                    <td colspan="2" class="textAlignCenter"><b>{{totalAmount  | number : '1.2-2'}}</b></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td colspan="2" class="textAlignRight"><b>Freight Amount</b></td>
+                                    <td colspan="2" class="textAlignCenter"><b>{{createOrder.FreightCharge || 0  | number : '1.2-2'}}</b></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td colspan="2" class="textAlignRight"><b>Discount</b></td>
+                                    <td colspan="2" class="textAlignCenter"><b>{{discountedValue || 0  | number : '1.2-2'}}</b></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td colspan="2" class="textAlignRight"><b>Total Amount</b></td>
+                                    <td colspan="2" class="textAlignCenter"><b>{{finalAmount  | number : '1.2-2'}}</b></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+</ba-card>

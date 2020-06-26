@@ -1,5 +1,34 @@
 @import "../../../theme/sass/conf/conf.scss";
+.page-header {
+    border: 1px solid;
+}
+.slip-header-section {
+    text-align: center;
+}
+// .slip-name {
 
+// }
+// .company-name {
+
+// }
+// .addr {
+
+// }
+// .gst-no {
+
+// }
+.order-section {
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+}
+.order-no-lbl {
+    display: inline-block;
+    width: 30%;
+}
+.order-no-value {
+    display: inline-block;
+    width: 70%;
+}
 .view-btn {
     padding-top: 25px;
     padding-left: 25px;
@@ -9,9 +38,6 @@
     position: absolute;
     right: -13px;
     top: -3px;
-}
-.text-align-center {
-    text-align: center;
 }
 .printBtn {
     padding: 10px 35px;
@@ -25,6 +51,10 @@
     right: 160px;
     top: -3px;  
 }
+.text-align-center {
+    text-align: center;
+}
+
 .text-align-left {
     text-align: left;
 }
@@ -41,39 +71,29 @@ table.notification-list-table thead th {
     padding-left: 5px !important;
     padding-right: 5px !important;
 }
-
-.address {
-    max-width: 180px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 .createdOn {
-    width: 17%;
+    width: 9%;
 }
-.source {
+.payment-mode {
     width: 9%
 }
 .leadNumber {
-    width: 10%
+    width: 11%
 }
 .custname {
-    width: 9%
+    width: 12%
 }
-.address {
-    width: 22%;
-}
-.shopName {
+.total-amount {
     width: 10%
 }
-.quantity {
-    width: 8%
+.discount {
+    width: 7%
 }
-.leadStatus {
-    width: 10%
+.orderStatus {
+    width: 20%
 }
 .type {
-    width: 12%
+    width: 9%
 }
 .custom-tooltip-ion:hover .customTooltiptext {
     visibility: visible;

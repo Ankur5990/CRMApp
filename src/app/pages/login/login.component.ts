@@ -65,6 +65,7 @@ export class Login implements OnInit {
 			if(res.Error[0].ERROR == 0) {
 				localStorage.setItem('UserLoginId', res.LoginInfo[0].USERLOGINID);
 				localStorage.setItem('UserRole', res.LoginInfo[0].USERROLE);
+				localStorage.setItem('UserName', res.LoginInfo[0].USERNAME);
 				this.router.navigate(['pages']);
 			} else {
 				this.notification.error('Error',res.Error[0].Msg);
