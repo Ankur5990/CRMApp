@@ -50,7 +50,7 @@
                 </div>
                 <div class="form-group" *ngIf="createOrder.OrderType == 2 || createOrder.OrderType == 3">
                     <label>Customer Detail<sup style="color:red;">*</sup></label>
-                    <select class="form-control" *ngIf="createOrder.OrderStatus != 'C' && (createOrder.OrderStatus != 'PD' && !disableOthers)" (change)="refreshDataHandler()" [disabled]="isViewOnly" [(ngModel)]="createOrder.CustomerId">
+                    <select class="form-control" *ngIf="createOrder.OrderStatus != 'C' && (!showOtherCustomer && !disableOthers)" (change)="refreshDataHandler()" [disabled]="isViewOnly" [(ngModel)]="createOrder.CustomerId">
                         <option [value]="0">Select Details</option>
                         <option *ngFor='let customer of allCustomerList' [value]="customer.ID">{{customer.CustomerName}},{{customer.Address}}</option>
                     </select>

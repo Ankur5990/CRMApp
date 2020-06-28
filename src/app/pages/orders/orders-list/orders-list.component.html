@@ -109,7 +109,7 @@
                 <tr valign="middle" *ngFor="let item of allOrdersList let i=index">
                     <td class="table-id">
                         <i class="ion-ios-book custom-tooltip-ion" 
-                        (click)="printCashData(item.OrderID)" style="margin-right: 5px" *ngIf="item.OrderStatusCode =='PD' || item.OrderStatusCode =='C'">
+                        (click)="printCashData(item.OrderID)" style="margin-right: 5px">
                             <span class="tooltiptext">Print Invoice</span>
                         </i>
                         <a [routerLink]="['../view',item.OrderID]">

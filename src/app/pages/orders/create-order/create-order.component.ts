@@ -42,6 +42,7 @@ export class CreateOrderComponent implements OnInit {
   disablePayment = false;
   disableStatus = false;
   disableOthers = false;
+  showOtherCustomer = false;
   statusId;
   customerNameWithAddress = '';
   enableVoidOrder = false;
@@ -178,6 +179,7 @@ export class CreateOrderComponent implements OnInit {
         this.createOrder.OrderType = allValues.OrderTypeID;
         this.createOrder.OrderStatus = allValues.OrderStatusCode;
         if(allValues.OrderStatusCode == 'PD') {
+          this.showOtherCustomer = true;
           this.disablePayment = true;
           this.disableOthers = true;
         }
