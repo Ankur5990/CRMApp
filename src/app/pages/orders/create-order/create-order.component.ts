@@ -44,6 +44,7 @@ export class CreateOrderComponent implements OnInit {
   disableOthers = false;
   statusId;
   customerNameWithAddress = '';
+  enableVoidOrder = false;
   constructor(protected userService: UserService, private orderService: OrderService,
     private router: Router, private activatedRoute: ActivatedRoute,
     protected cacheService: CacheService, protected modalService: NgbModal,
@@ -180,6 +181,9 @@ export class CreateOrderComponent implements OnInit {
           this.disablePayment = true;
           this.disableOthers = true;
         }
+        if(allValues.OrderStatusCode == 'PP' && this.isEditOnly == true) {
+          this.enableVoidOrder = true;
+        }
         this.customerNameWithAddress = `${allValues.CustomerName}, ${allValues.Address}`;
         this.createOrder.PaymentId = allValues.PaymentModeID;
         this.createOrder.CustomerId = allValues.LeadID == 0 ? allValues.CustomerID : allValues.LeadID;
@@ -304,6 +308,26 @@ export class CreateOrderComponent implements OnInit {
       }, err => {
         this.showLoader = false;
         this.notification.error('Error', 'Something went wrong!');
+      })
+    }
+    VoidOrder() {
+      this.showLoader = true;
+      this.orderService.voidOrder(this.OrderID, this.userID).subscribe(res => {
+        this.showLoader = false;
+        if(res['Error'] && res['Error'][0]) {
+          const mainObj = res['Error'][0];
+          if(mainObj.ERROR == 0) {
+            this.notification.success(mainObj.Msg);
+            this.router.navigate(['/pages/orders/list']);
+          } else {
+            this.notification.error('Error', mainObj.Msg);
+          }
+        } else {
+          this.notification.error('Error', 'Something went wrong while Void Order');
+        }
+      }, err => {
+        this.showLoader = false;
+        this.notification.error('Error', 'Something went wrong while Void Order');
       })
     }
 }

@@ -85,11 +85,6 @@
                     </th>
                     <th class="thVerticalAlign text-align-left">
                         <span>
-                            Shop Name
-                        </span>
-                    </th>
-                    <th class="thVerticalAlign text-align-left">
-                        <span>
                             Quantity
                         </span>
                     </th>
@@ -123,18 +118,13 @@
                                 <span class="tooltiptext">Edit</span>
                             </i>
                         </a>
-                        <!-- <i *ngIf="item.ISEdit == 1" class="ion-trash-a custom-tooltip-ion" 
-                            (click)="deleteNotification(item.LeadID);">
-                        <span class="tooltiptext">Delete</span>
-                        </i> -->
                     </td>
                     <td class='text-align-left leadNumber'>{{item.LeadNumber}}</td>
                     <td class='text-align-left type'>{{item.LeadType}}</td>
                     <td class='text-align-left source'>{{item.LeadSource}}</td>
                     <td class='text-align-left custname'>{{item.CustomerName}}</td>
-                    <td class='text-align-left address'>{{item.Address}}, {{item.CityName}}, {{item.StateName}}</td>
-                    <td class='text-align-left shopName'>{{item.ShopName}}</td>
-                    <td class='text-align-left quantity'>{{item.Quantity}}</td>
+                    <td class='text-align-left address'>{{item.Address}},{{item.CityName}},{{item.StateName}}</td>
+                    <td class='text-align-center quantity'>{{item.Quantity}}</td>
                     <td class="text-align-left createdOn">{{item.LeadDate}}</td>
                     <td class="text-align-left createdOn">{{item.FollowUPDate}}</td>
                     <td class="text-align-left leadStatus">{{item.LeadStatus}}</td>

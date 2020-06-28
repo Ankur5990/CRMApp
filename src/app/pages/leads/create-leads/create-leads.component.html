@@ -6,7 +6,7 @@
 <ba-card cardTitle="{{cardTitle}}" id="newTicket" class="create-notification-screen">
     <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-notification' : 'backtonotification'" (click)="goToListPage()">Back</button>
     <button class="btn btn-danger buttonMargin btn-margin submit-create-notification" *ngIf="!isViewOnly" (click)="submitLead();">Submit</button>
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-6">
                 <div class="form-group">
                     <label>Lead Date <sup style="color:red;">*</sup></label>
@@ -92,6 +92,130 @@
                         <option *ngFor='let city of allCities' [value]="city.CityID">{{city.CityName}}</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>Comment</label>
+                    <textarea [(ngModel)]="createLead.Comment" class="form-control" [disabled]="isViewOnly"></textarea>
+                </div>
+                <div class="form-group" *ngIf="(isViewOnly || isEditOnly) && commentList.length">
+                    <label>Previous Comments List</label>
+                    <div *ngFor="let val of commentList; let i=index">{{i+1}}. {{val.Comment}}</div>
+                </div>
+            </div>
+        </div> -->
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Lead Date <sup style="color:red;">*</sup></label>
+                    <div class="form-control">
+                        <date-picker [minDate]="todaysDate" [disabled]="isViewOnly" [(dateModel)]="createLead.LeadDate"></date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Follow Up Date</label>
+                    <div class="form-control">
+                        <date-picker [minDate]="todaysDate" [(dateModel)]="createLead.FollowUpDate" (dateModelChange)="followUpChangeHandler()" [disabled]="isViewOnly"></date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Lead Number</label>
+                    <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createLead.LeadNo">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Lead Status <sup style="color:red;">*</sup></label>
+                    <select class="form-control" (change)="refreshDataHandler()" [disabled]="isViewOnly || disableStatus" [(ngModel)]="createLead.LeadStatus">
+                        <option *ngFor='let status of allStatus' [value]="status.Code">{{status.LeadStatus}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Lead Type <sup style="color:red;">*</sup></label>
+                    <select class="form-control" (change)="refreshDataHandler()" [disabled]="isViewOnly" [(ngModel)]="createLead.LeadType">
+                        <option [value]="0">Select Lead Type</option>
+                        <option *ngFor='let ltype of allLeadTypes' [value]="ltype.LeadTypeID">{{ltype.LeadType}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Lead Source <sup style="color:red;">*</sup></label>
+                    <select class="form-control" (change)="refreshDataHandler()" [disabled]="isViewOnly" [(ngModel)]="createLead.LeadSourceId">
+                        <option [value]="0">Select Source</option>
+                        <option *ngFor='let source of allLeadSource' [value]="source.LeadSourceID">{{source.LeadSource}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createLead.Priority">
+                        <option [value]="2">Low</option>
+                        <option [value]="3">Medium</option>
+                        <option [value]="4">High</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Customer Name <sup style="color:red;">*</sup></label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createLead.CustomerName">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Phone Number <sup style="color:red;">*</sup></label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createLead.PhoneNo">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Quantity <sup style="color:red;">*</sup></label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createLead.Qunatity">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Address <sup style="color:red;">*</sup></label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createLead.Address">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Shop Name</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createLead.ShopName">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>State <sup style="color:red;">*</sup></label>
+                    <select class="form-control" (change)="refreshDataHandler('statechange')" [disabled]="isViewOnly" [(ngModel)]="createLead.State">
+                        <option [value]="0">Select State</option>
+                        <option *ngFor='let state of allState' [value]="state.StatesID">{{state.StateName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>City <sup style="color:red;">*</sup></label>
+                    <select class="form-control" (change)="refreshDataHandler()" [disabled]="isViewOnly" [(ngModel)]="createLead.City">
+                        <option [value]="0">Select City</option>
+                        <option *ngFor='let city of allCities' [value]="city.CityID">{{city.CityName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Zip Code</label>
+                    <input type='text' [disabled]="isViewOnly" class='form-control' [(ngModel)]="createLead.ZipCode">
+                </div>
+            </div>
+            <div class="col-6">
                 <div class="form-group">
                     <label>Comment</label>
                     <textarea [(ngModel)]="createLead.Comment" class="form-control" [disabled]="isViewOnly"></textarea>

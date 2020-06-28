@@ -75,6 +75,7 @@ export class LeadsListComponent implements OnInit {
         LeadType: leadInfo.LeadType,
         LeadSource: leadInfo.LeadSource,
         Priority: leadInfo.PriorityDesc,
+        CustomerName: leadInfo.CustomerName,
         Address: leadInfo.Address,
         City: leadInfo.CityName,
         State: leadInfo.StateName,
@@ -88,7 +89,7 @@ export class LeadsListComponent implements OnInit {
     });
 
     const options = { 
-      headers: ['Lead Number', 'Lead Type', 'Lead Source','Priority','Address','City', 'State', 'Zip', 'Shop Name', 'Quantity', 'Lead Date', 'FollowUp Date', 'Lead Status'], 
+      headers: ['Lead Number', 'Lead Type', 'Lead Source','Priority','CustomerName','Address','City', 'State', 'Zip', 'Shop Name', 'Quantity', 'Lead Date', 'FollowUp Date', 'Lead Status'], 
       nullToEmptyString: true,
     };
     new ngxCsv(report, 'Lead-List', options);

@@ -40,4 +40,8 @@ export class OrderService {
   getPrintableData(id,usedID) {
     return this.http.get(`${this.API_ENDPOINT}api/CRMOrderInvoice?OrderID=${id}&LoginUserID=${usedID}`).pipe(map( res => res));
   }
+  voidOrder(id,userID) {
+    const obj = {"OrderID": id, "CreatedBy": userID};
+    return this.http.post(`${this.API_ENDPOINT}api/VoidOrder`, obj).pipe(map( res => res));
+  }
 }

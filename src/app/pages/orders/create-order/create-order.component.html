@@ -4,6 +4,7 @@
     </div>
 </div>
 <ba-card cardTitle="{{cardTitle}}" id="newTicket">
+    <button class="btn btn-danger buttonMargin btn-margin submit-void-order" *ngIf="!isViewOnly && enableVoidOrder" (click)="VoidOrder();">Void Order</button>
     <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-order' : 'backtolist'" (click)="goToListPage()">Back</button>
     <button class="btn btn-danger buttonMargin btn-margin submit-create-order" *ngIf="!isViewOnly" (click)="submitOrder();">Submit</button>
         <div class="row">

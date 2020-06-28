@@ -48,20 +48,26 @@ table.notification-list-table thead th {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.custname {
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .createdOn {
-    width: 17%;
+    width: 15%;
 }
 .source {
     width: 9%
 }
 .leadNumber {
-    width: 10%
+    width: 12%
 }
 .custname {
-    width: 9%
+    width: 10%
 }
 .address {
-    width: 22%;
+    width: 18%;
 }
 .shopName {
     width: 10%
