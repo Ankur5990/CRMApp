@@ -38,7 +38,7 @@
                 </div>
                 <div class="form-group">
                     <label>Discount(%)</label>
-                    <input type='text' class='form-control' [disabled]="isViewOnly || disableOthers" [(ngModel)]="createOrder.discount" (ngModelChange)="onDiscountChange()">
+                    <input type='text' class='form-control' [disabled]="isViewOnly || disableOthers" (focus)="removeZero('discount')" (focusout)="addZero('discount')" [(ngModel)]="createOrder.discount" (ngModelChange)="onDiscountChange()">
                 </div>
             </div>
             <div class="col-6">
@@ -71,7 +71,7 @@
                 </div>
                 <div class="form-group">
                     <label>Freight Amount</label>
-                    <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createOrder.FreightCharge" (ngModelChange)="onFreightChargeChange()">
+                    <input type='text' class='form-control' [disabled]="isViewOnly" (focus)="removeZero('frieght')" (focusout)="addZero('frieght')" [(ngModel)]="createOrder.FreightCharge" (ngModelChange)="onFreightChargeChange()">
                 </div>
             </div>
         </div>

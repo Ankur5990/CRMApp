@@ -330,4 +330,26 @@ export class CreateOrderComponent implements OnInit {
         this.notification.error('Error', 'Something went wrong while Void Order');
       })
     }
+    removeZero(type) {
+      if(type == 'discount') {
+        if(this.createOrder.discount == 0) {
+          this.createOrder.discount = '';
+        }
+      } else if(type == 'frieght') {
+        if(this.createOrder.FreightCharge == 0) {
+          this.createOrder.FreightCharge = '';
+        }
+      }
+    }
+    addZero(type) {
+      if(type == 'discount') {
+        if(this.createOrder.discount == '') {
+          this.createOrder.discount = 0;
+        }
+      } else if(type == 'frieght') {
+        if(this.createOrder.FreightCharge == '') {
+          this.createOrder.FreightCharge = 0;
+        }
+      }
+    }
 }

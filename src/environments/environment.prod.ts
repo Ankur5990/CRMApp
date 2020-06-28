@@ -2,7 +2,7 @@ export const environment = {
 	production: true,
 	EDIUserName: 'MyiceboxEDI',
 	encStr:'@reddyicesecure#',
-	apiEndpoint: 'http://styloxcrm.azurewebsites.net/',
+	apiEndpoint: 'https://crmstyloxapi.azurewebsites.net/',
 	reportEndpoint: 'https://buat2-myicebox.reddyice.com/MyIceBoxReports/Reports/ReportData.aspx',
 	inventoryEndpoint: 'https://buat2-myicebox.reddyice.com/Inventory_Icebox/forms/addBom.aspx',
 	prodLabel: '(BUAT2)',
