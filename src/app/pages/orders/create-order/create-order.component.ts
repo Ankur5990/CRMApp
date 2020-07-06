@@ -45,6 +45,7 @@ export class CreateOrderComponent implements OnInit {
   showOtherCustomer = false;
   statusId;
   customerNameWithAddress = '';
+  notHavingSize = false;
   enableVoidOrder = false;
   constructor(protected userService: UserService, private orderService: OrderService,
     private router: Router, private activatedRoute: ActivatedRoute,
@@ -118,30 +119,78 @@ export class CreateOrderComponent implements OnInit {
       this.orderService.getAllProducts().subscribe(res => {
         this.allProducts = res['Product'];
         this.allSize = res['ProductSize'];
+        if(this.notHavingSize == true && (this.isEditOnly || this.isViewOnly)){
+          this.pushExtraSize();
+        }
       }, err=> {
         console.log(err);
       })
     }
+    pushExtraSize() {
+      for(let i=0; i< this.selectedProduct.length; i++) {
+        const allsize = JSON.parse(JSON.stringify(this.allSize));
+        const availableSize = allsize.filter(x => x.PRODUCTID == this.selectedProduct[i].PRODUCTID);
+          for(let j=0; j< availableSize.length; j++) {
+            let flag = true;
+            for(let k=0; k< this.selectedProduct[i].ProductAvailableSize.length; k++) {
+              if(this.selectedProduct[i].ProductAvailableSize[k].SizeID == availableSize[j].SizeID) {
+                flag = false;
+                break;
+              }
+            }
+            if(flag == true) {
+              this.selectedProduct[i].ProductAvailableSize.push({PRODUCTID: availableSize[j].PRODUCTID,name:availableSize[j].Size,INVBalance: availableSize[i].INVBalance,Size: availableSize[j].Size, SizeID: availableSize[j].SizeID,alreadySizeStored: false, quantity: 0})
+            }
+          }
+
+        }
+    }
     onProductChange(item) {
+      const allsize = JSON.parse(JSON.stringify(this.allSize));
+      const availableSize = allsize.filter(x => x.PRODUCTID == item.PRODUCTID);
+      let sizeQuantity = [];
+      if(this.selectedProduct.length > 0) {
+        const statusResult = this.selectedProduct.find(x=> x.PRODUCTID == item.PRODUCTID);
+        if(statusResult) {
+          this.notification.error('error', 'Can not select same product again !!!');
+          item.PRODUCTID = 0;
+          return;
+        }
+      }
+      for(let i=0; i<availableSize.length; i++) {
+        sizeQuantity.push({ProductId: availableSize[i].PRODUCTID,INVBalance: availableSize[i].INVBalance, name: availableSize[i].Size, SizeID: availableSize[i].SizeID , quantity: 0});
+      }
       for(let i=0; i<this.allProducts.length; i++) {
           if(this.allProducts[i].PRODUCTID == item.PRODUCTID) {
             item.Rate = this.allProducts[i].Rate;
-            item.Quantity = 0;
+            item.ProductAvailableSize = sizeQuantity;
           }
       } 
     }
     addProductRow() {
-      this.selectedProduct.push({});
+      this.selectedProduct.push({ProductAvailableSize:[]});
+    }
+    changeAmount(item) {
+      let amount = 0;
+      for(let i=0; i< item.ProductAvailableSize.length; i++) {
+        if(!item.ProductAvailableSize[i].quantity) {
+          amount = amount + 0;
+        } else {
+          amount = amount + (+item.ProductAvailableSize[i].quantity * +item.Rate);
+        }
+      }
+      item.Amount = amount;
+      this.calculateTotals();
     }
     calculateTotals() {
       this.totalAmount = 0;
       this.discountedValue = 0;
       this.finalAmount = 0;
-        for(let i=0; i<this.selectedProduct.length; i++) {
-          this.totalAmount = this.totalAmount + this.selectedProduct[i].Amount;
-        }
-        this.discountedValue = (this.totalAmount * this.createOrder.discount)/100;
-        this.finalAmount = this.totalAmount + (+this.createOrder.FreightCharge) - this.discountedValue;
+      for(let i=0; i<this.selectedProduct.length; i++) {
+        this.totalAmount = this.totalAmount + this.selectedProduct[i].Amount;
+      }
+      this.discountedValue = (this.totalAmount * this.createOrder.discount)/100;
+      this.finalAmount = this.totalAmount + (+this.createOrder.FreightCharge) - this.discountedValue;
     }
     onDiscountChange() {
       if(this.selectedProduct[0].Amount) {
@@ -199,21 +248,51 @@ export class CreateOrderComponent implements OnInit {
       }
       if(resp.OrderDetail.length > 0) {
         let allProductDetails = resp.OrderDetail;
+        let sizeQuantityArray = []
+        let j = 0;
         for(let i=0; i< allProductDetails.length; i++) {
-           this.selectedProduct.push({PRODUCTID: allProductDetails[i].ProductID,
-             SizeID: allProductDetails[i].SizeID,
-             Quantity: allProductDetails[i].Quantity,
-             Rate: allProductDetails[i].SP,
-             Amount: +allProductDetails[i].Quantity * +allProductDetails[i].SP,
-             OrderDetailId: allProductDetails[i].OrderDetailID,
-             ProductName: `${allProductDetails[i].PRODUCTCODE} - ${allProductDetails[i].PRODUCTDESC}`,
-             SizeValue: allProductDetails[i].Size,
-             alreadyStored: true})
+          if(j == 0) {
+            this.selectedProduct.push({PRODUCTID: allProductDetails[i].ProductID,
+              ProductAvailableSize: [],
+              Rate: allProductDetails[i].SP,
+              Amount: 0,
+              ProductName: `${allProductDetails[i].PRODUCTCODE} - ${allProductDetails[i].PRODUCTDESC}`,
+              SizeValue: allProductDetails[i].Size,
+              alreadyStored: true})
+              this.selectedProduct[j].ProductAvailableSize.push({PRODUCTID: allProductDetails[i].ProductID,name:allProductDetails[i].Size,INVBalance: allProductDetails[i].INVBalance,Size: allProductDetails[i].Size, SizeID: allProductDetails[i].SizeID,alreadySizeStored: true, quantity: allProductDetails[i].Quantity});
+              j++;
+          } else if( j!= 0 && allProductDetails[i].ProductID != this.selectedProduct[j-1].PRODUCTID) {
+            this.selectedProduct.push({PRODUCTID: allProductDetails[i].ProductID,
+              ProductAvailableSize: [],
+              Rate: allProductDetails[i].SP,
+              Amount: 0,
+              ProductName: `${allProductDetails[i].PRODUCTCODE} - ${allProductDetails[i].PRODUCTDESC}`,
+              SizeValue: allProductDetails[i].Size,
+              alreadyStored: true})
+              this.selectedProduct[j].ProductAvailableSize.push({PRODUCTID: allProductDetails[i].ProductID,name:allProductDetails[i].Size,INVBalance: allProductDetails[i].INVBalance,Size: allProductDetails[i].Size, SizeID: allProductDetails[i].SizeID,alreadySizeStored: true, quantity: allProductDetails[i].Quantity});
+              j++;
+          } else if (j!= 0 && allProductDetails[i].ProductID == this.selectedProduct[j-1].PRODUCTID) {
+            this.selectedProduct[j-1].ProductAvailableSize.push({PRODUCTID: allProductDetails[i].ProductID,name:allProductDetails[i].Size,INVBalance: allProductDetails[i].INVBalance,Size: allProductDetails[i].Size, SizeID: allProductDetails[i].SizeID,alreadySizeStored: true, quantity: allProductDetails[i].Quantity});
+          }
         }
-        this.calculateTotals();
+        this.calculateAmount();
+        if(this.allSize.length > 0) {
+          this.pushExtraSize();
+        } else {
+          this.notHavingSize = true;
+        }
       }
     }
-  
+    calculateAmount() {
+      for(let i=0; i< this.selectedProduct.length; i++) {
+        let amount = 0;
+        for(let j=0; j< this.selectedProduct[i].ProductAvailableSize.length; j++) {
+          amount = amount + (+this.selectedProduct[i].ProductAvailableSize[j].quantity * +this.selectedProduct[i].Rate);
+        }
+        this.selectedProduct[i].Amount = amount;
+      }
+      this.calculateTotals();
+    }
     refreshDataHandler(byType: any = '') {
       if(byType === "typeChange") {
         if(this.createOrder.OrderType != 0) {
@@ -247,9 +326,7 @@ export class CreateOrderComponent implements OnInit {
     validateProducts() {
       let flag;
       for(let i=0; i< this.selectedProduct.length; i++) {
-        if(this.selectedProduct[i].PRODUCTID && this.selectedProduct[i].PRODUCTID !=0 && 
-          this.selectedProduct[i].Quantity && this.selectedProduct[i].Quantity !=0 && 
-          this.selectedProduct[i].SizeID && this.selectedProduct[i].SizeID !=0) {
+        if(this.selectedProduct[i].PRODUCTID && this.selectedProduct[i].PRODUCTID !=0 ) {
           flag = true;
         } else {
           flag = false;
@@ -271,12 +348,16 @@ export class CreateOrderComponent implements OnInit {
       }
       let productDetails = [];
       for(let i=0; i<this.selectedProduct.length; i++) {
-          productDetails.push({
-            ProductID : this.selectedProduct[i].PRODUCTID,
-            SizeID: this.selectedProduct[i].SizeID,
-            Quantity: this.selectedProduct[i].Quantity,
-            Rate: this.selectedProduct[i].Rate
-          })
+        for(let j=0; j<this.selectedProduct[i].ProductAvailableSize.length; j++) {
+          if(this.selectedProduct[i].ProductAvailableSize[j].quantity && this.selectedProduct[i].ProductAvailableSize[j].quantity != 0) {
+            productDetails.push({
+              ProductID : this.selectedProduct[i].PRODUCTID,
+              SizeID: this.selectedProduct[i].ProductAvailableSize[j].SizeID,
+              Quantity: this.selectedProduct[i].ProductAvailableSize[j].quantity,
+              Rate: this.selectedProduct[i].Rate
+            })
+          }
+        }
       }
       const statusResult = this.allStatus.find(x=> x.Code == this.createOrder.OrderStatus);
       let postData = {
@@ -352,6 +433,16 @@ export class CreateOrderComponent implements OnInit {
         if(this.createOrder.FreightCharge == '') {
           this.createOrder.FreightCharge = 0;
         }
+      }
+    }
+    removeQuantityZero(quan) {
+      if(quan.quantity == 0) {
+        quan.quantity = '';
+      }
+    }
+    addQuantityZero(quan) {
+      if(quan.quantity == '') {
+        quan.quantity = 0;
       }
     }
 }

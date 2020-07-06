@@ -38,14 +38,15 @@ export class UserService {
     }
     setPrivateKeys(values) {        
         values = values || '';
-		 var ciphertext = this.EncrDecr.set(environment.encStr, JSON.stringify(values));
-        localStorage.setItem('privateKeys', ciphertext);
+		// var ciphertext = this.EncrDecr.set(environment.encStr, JSON.stringify(values));
+        //localStorage.setItem('privateKeys', ciphertext);
     }
 
     getPrivateKeys(): any {
 		var ciphertext = localStorage.getItem('privateKeys');
-		var bytes = this.EncrDecr.get(environment.encStr, ciphertext);
-	    return JSON.parse(bytes);
+		//var bytes = this.EncrDecr.get(environment.encStr, ciphertext);
+       // return JSON.parse(bytes);
+       return;
     }
 
     getUserForAutoLogin() {

@@ -88,9 +88,8 @@
                         <table class="table table-condensed">
                             <thead class="mttableHeader">
                                 <th>Product <sup style="color:red;">*</sup></th>
-                                <th class="textAlignCenter">Size <sup style="color:red;">*</sup></th>
-                                <th class="textAlignCenter" style="width: 12%">Rate</th>
-                                <th class="textAlignCenter" style="width:8%">Quantity <sup style="color:red;">*</sup></th>
+                                <th class="textAlignCenter" style="width: 10%">Rate</th>
+                                <th class="textAlignCenter quantityforsize">Quantity for Different Size <sup style="color:red;">*</sup></th>
                                 <th class="textAlignRight">Amount</th>
                                 <th class="textAlignCenter">Action</th>
                             </thead>
@@ -103,47 +102,45 @@
                                         </select>
                                         <div *ngIf="item.alreadyStored" class="form-control product-list-div">{{item.ProductName}}</div>
                                     </td>
-                                    <td id="prodDSD">
-                                        <select *ngIf="!item.alreadyStored" class="form-control prodListElement" name="size" [(ngModel)]="item.SizeID" [disabled]="isViewOnly || (isEditOnly && item.alreadyStored)" >
-                                            <option value="0">Select Size</option>
-                                            <ng-container *ngFor="let productsize of allSize;">
-                                                <option *ngIf="productsize.PRODUCTID == item.PRODUCTID" [value]="productsize.SizeID">{{productsize.Size}}</option>
-                                            </ng-container>
-                                        </select>
-                                        <div *ngIf="item.alreadyStored" class="form-control product-list-div">{{item.SizeValue}}</div>
-                                    </td>
                                     <td class="textAlignCenter">{{item.Rate | number : '1.2-2'}}</td>
-                                    <td class="textAlignRight">
-                                        <input type="number" class="form-control textAlignRight prodListElement" [disabled]="isViewOnly || disableOthers" name="quantity" [(ngModel)]="item.Quantity" (ngModelChange)="unitChangeHandler(item);">
-                                    </td>
-                                    <td class="textAlignRight">{{item.Amount  | number : '1.2-2'}}</td>
                                     <td class="textAlignCenter">
-                                        <i class="ion-trash-a" *ngIf="selectedProduct.length > 1 && !isViewOnly" (click)="onDelete(i)"></i>
+                                        <ng-container *ngFor="let quan of item.ProductAvailableSize ">
+                                            <span class="name-space-between"><b>{{quan.name}}({{quan.INVBalance || 0}})</b></span>
+                                            <span class="space-between"><input class="input-width form-control" type="number" (focus)="removeQuantityZero(quan)" (focusout)="addQuantityZero(quan)" (keyup)="changeAmount(item)" [(ngModel)]="quan.quantity" [disabled]="disableOthers || isViewOnly"/></span>
+                                        </ng-container>
+                                    </td>
+                                    <td class="textAlignCenter">{{(item.Amount || 0)  | number : '1.2-2'}}</td>
+                                    <td class="textAlignCenter">
+                                        <i class="ion-trash-a" *ngIf="selectedProduct.length > 1 && !isViewOnly && !disableOthers" (click)="onDelete(i)"></i>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <td></td>
-                                    <td colspan="2" class="textAlignRight"><b>SubTotal</b></td>
-                                    <td colspan="2" class="textAlignCenter"><b>{{totalAmount  | number : '1.2-2'}}</b></td>
+                                    <td class="textAlignRight"><b>SubTotal</b></td>
+                                    <td class="textAlignCenter"><b>{{totalAmount  | number : '1.2-2'}}</b></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <td></td>
-                                    <td colspan="2" class="textAlignRight"><b>Freight Amount</b></td>
-                                    <td colspan="2" class="textAlignCenter"><b>{{createOrder.FreightCharge || 0  | number : '1.2-2'}}</b></td>
+                                    <td class="textAlignRight"><b>Freight Amount</b></td>
+                                    <td class="textAlignCenter"><b>{{createOrder.FreightCharge || 0  | number : '1.2-2'}}</b></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <td></td>
-                                    <td colspan="2" class="textAlignRight"><b>Discount</b></td>
-                                    <td colspan="2" class="textAlignCenter"><b>{{discountedValue || 0  | number : '1.2-2'}}</b></td>
+                                    <td class="textAlignRight"><b>Discount</b></td>
+                                    <td class="textAlignCenter"><b>{{discountedValue || 0  | number : '1.2-2'}}</b></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <td></td>
-                                    <td colspan="2" class="textAlignRight"><b>Total Amount</b></td>
-                                    <td colspan="2" class="textAlignCenter"><b>{{finalAmount  | number : '1.2-2'}}</b></td>
+                                    <td class="textAlignRight"><b>Total Amount</b></td>
+                                    <td class="textAlignCenter"><b>{{finalAmount  | number : '1.2-2'}}</b></td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
