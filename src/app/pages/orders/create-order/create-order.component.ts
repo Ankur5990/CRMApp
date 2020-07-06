@@ -150,8 +150,13 @@ export class CreateOrderComponent implements OnInit {
       const availableSize = allsize.filter(x => x.PRODUCTID == item.PRODUCTID);
       let sizeQuantity = [];
       if(this.selectedProduct.length > 0) {
-        const statusResult = this.selectedProduct.find(x=> x.PRODUCTID == item.PRODUCTID);
-        if(statusResult) {
+        let len = 0;
+        for(let i=0; i< this.selectedProduct.length; i++) {
+          if(this.selectedProduct[i].PRODUCTID == item.PRODUCTID) {
+              len++;
+          }
+        }
+        if(len > 1) {
           this.notification.error('error', 'Can not select same product again !!!');
           item.PRODUCTID = 0;
           return;
