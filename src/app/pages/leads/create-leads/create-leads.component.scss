@@ -26,7 +26,11 @@ label {
 .buttonMargin {
   margin-left:10px;
 }
-
+.createOrder {
+  position: absolute;
+  top: 7px;
+  right: 190px;
+}
 .radioButtonMargin {  
   margin-top: 6px;
 }
@@ -239,8 +243,8 @@ label {
 .backtonotification
 {
   position: absolute;
-    top: 7px;
-    right: 108px;
+  top: 7px;
+  right: 110px;
 }
 
 .submit-create-notification

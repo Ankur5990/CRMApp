@@ -1,0 +1,129 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+  <div style="margin:auto;position:fixed;top:50%;left:50%;">
+      <img src="assets/crm/spinner.gif " width='25px'>
+  </div>
+</div>
+
+<ba-card cardTitle="STOCKS" class="smart-table-container" #stock>
+    <div class="row">
+        <div class="col-md-2 col-sm-12 no-padding-right">
+            <label>Start Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="stockTask.startDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right">
+            <label>End Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="stockTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right">
+            <label>Select Type</label>
+            <select (change)="refreshDataHandler()" class="form-control"
+                [(ngModel)]="stockTask.Washer" id="exampleSelect1">
+                <option [value]="1">All Washer</option>
+                <option *ngFor="let washer of allWashers" [value]="washer.WasherID">{{washer.Washer}}</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right view-btn">
+            <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllStocks()">View </button>
+        </div>
+        <div class="col-md-2 col-sm-12 createTicketBtn">
+            <button [routerLink]="['../create']" class="btn btn-primary addCustBtn pull-right">
+                Create
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 printBtn">
+            <button (click)="printTable()" class="btn btn-primary addCustBtn pull-right" [disabled]="allStocksList.length == 0">
+                Print
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 exportBtn">
+            <button (click)="exportToCSV()" class="btn btn-primary addCustBtn pull-right" [disabled]="allStocksList.length == 0">
+                Export
+            </button>
+        </div>
+    </div>
+    <div class="table-container" style="overflow-x:auto;">
+        <table class="table table-striped table-condensed notification-list-table" id="stock-table">
+            <thead class="tableHeader">
+                <tr>
+                    <th class="table-id thVerticalAlign actionAlignCenter" style="width: 8%;">Actions</th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Lot Number
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Washer
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Washing
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Rate
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Cutting
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Sample
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Issue
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Receive
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Stock Date
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr valign="middle" *ngFor="let item of allStocksList let i=index">
+                    <td class="table-id">
+                        <a [routerLink]="['../view',item.StockManagementID]">
+                            <i class="ion-eye custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">View</span>
+                            </i>
+                        </a>
+                        <a [routerLink]="['../edit',item.StockManagementID]">
+                            <i class="ion-edit custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">Edit</span>
+                            </i>
+                        </a>
+                    </td>
+                    <td class='text-align-left lotNo'>{{item.LotNo}}</td>
+                    <td class='text-align-left washer'>{{item.Washer}}</td>
+                    <td class='text-align-left washing'>{{item.Washing}}</td>
+                    <td class='text-align-center rate'>{{item.Rate || 0}}</td>
+                    <td class='text-align-center cutting'>{{item.CuttingQty || 0}}</td>
+                    <td class='text-align-center cutting'>{{item.SampleQty || 0}}</td>
+                    <td class='text-align-center cutting'>{{item.IssueQty || 0}}</td>
+                    <td class="text-align-center cutting">{{item.ReceiveQty || 0}}</td>
+                    <td class="text-align-center createdOn">{{item.StockDate}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="noStockFound == '' && allStocksList.length == 0 && refreshMessage" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
+        <div *ngIf="noStockFound != '' && allStocksList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noStockFound}}</div>
+    </div>
+</ba-card>

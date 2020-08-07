@@ -6,19 +6,29 @@
 
 <ba-card cardTitle="ORDERS" class="smart-table-container" #orders>
     <div class="row">
-        <div class="col-md-2 col-sm-12 no-padding-right">
+        <div class="col-12 search-container">
+            Search Leads By: <input type="radio" name="type" [value]="1" [(ngModel)]="orderTask.searchorderby" (change)="valueChange('phone')"/>Customer/Phone <input type="radio" name="type" [value]="2" [(ngModel)]="orderTask.searchorderby" (change)="valueChange('other')"/>Other filters
+        </div>
+    </div>
+    <div class="row" *ngIf="orderTask.searchorderby == 1"> 
+        <div class="col-md-5 padding-eater">
+            <input name="riUser" [(ngModel)]="searchKey" autocomplete="off" type="text" class="form-control" placeholder="Search" (keyup)="searchOrdersTerm$.next($event.target.value)">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="orderTask.searchorderby == 2">
             <label>Start Date</label>
             <div class="input-group">
                 <date-picker [(dateModel)]="orderTask.startDate" (dateModelChange)="refreshDataHandler()"></date-picker>
             </div>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="orderTask.searchorderby == 2">
             <label>End Date</label>
             <div class="input-group">
                 <date-picker [(dateModel)]="orderTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
             </div>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="orderTask.searchorderby == 2">
             <label>Select Type</label>
             <select (change)="refreshDataHandler()" class="form-control"
                 [(ngModel)]="orderTask.OrderType" id="exampleSelect1">
@@ -27,14 +37,14 @@
                 <option [value]="3">Customer</option>
             </select>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="orderTask.searchorderby == 2">
             <label>Status</label>
             <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="orderTask.OrderStatus">
                 <option [value]="1">All Status</option>
                 <option *ngFor='let status of allOrderStatus' [value]="status.OrderStatusID">{{status.OrderStatus}}</option>
             </select>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right view-btn">
+        <div class="col-md-2 col-sm-12 no-padding-right view-btn" *ngIf="orderTask.searchorderby == 2">
             <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllOrders()">View </button>
         </div>
         <div class="col-md-2 col-sm-12 createTicketBtn">
@@ -136,6 +146,6 @@
             </tbody>
         </table>
         <div *ngIf="noOrderFound == '' && allOrdersList.length == 0 && refreshMessage" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
-        <div *ngIf="noOrderFound != '' && allOrdersList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noLeadFound}}</div>
+        <div *ngIf="noOrderFound != '' && allOrdersList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noOrderFound}}</div>
     </div>
 </ba-card>

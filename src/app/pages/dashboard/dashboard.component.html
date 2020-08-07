@@ -12,10 +12,12 @@
                 <div class="item-heading">
                     <div class="customer-name">Customer Name</div>
                     <div class="phone-number">Phone Number</div>
+                    <div class="followup-date">Followup On</div>
                 </div>
                 <div class="item-value" *ngFor="let item of allFollowUpLeads">
                     <div class="customer-name">{{item.CustomerName}}</div>
                     <div class="phone-number">{{item.Phone}}</div>
+                    <div class="followup-date">{{item.FollowUPDate}}</div>
                 </div>
             </div>
             <div class="box-txt col-12" *ngIf="allFollowUpLeads.length == 0">
@@ -34,10 +36,12 @@
                 <div class="item-heading">
                     <div class="customer-name"> Customer Name</div>
                     <div class="phone-number"> Phone Number</div>
+                    <div class="followup-date">Followup On</div>
                 </div>
                 <div class="item-value" *ngFor="let item of allHotLeads">
                     <div class="customer-name">{{item.CustomerName}}</div>
                     <div class="phone-number">{{item.Phone}}</div>
+                    <div class="followup-date">{{item.FollowUPDate}}</div>
                 </div>
             </div>
             <div class="box-txt col-12" *ngIf="allHotLeads.length == 0">
@@ -101,6 +105,18 @@
                 <div class="item-count-box">
                     <div class="desciption-heading">Total Pending Dispatch</div>
                     <div class="desciption-value">{{allOrders.TotalPendingDispatch || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Void Orders</div>
+                    <div class="desciption-value">{{allOrders.TotalVoidOrder || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Completed Orders</div>
+                    <div class="desciption-value">{{allOrders.TotalCompletedOrder || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Orders</div>
+                    <div class="desciption-value">{{allOrders.TotalOrder || 0}}</div>
                 </div>
             </div>
             </div>

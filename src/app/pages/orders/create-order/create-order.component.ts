@@ -8,6 +8,7 @@ import { GenericSort } from '../../../shared/pipes/generic-sort.pipe';
 import { CacheService } from '../../../shared/cache.service';
 import * as _ from 'lodash';
 import { isNgTemplate } from '@angular/compiler';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-create-order',
@@ -47,6 +48,13 @@ export class CreateOrderComponent implements OnInit {
   customerNameWithAddress = '';
   notHavingSize = false;
   enableVoidOrder = false;
+  leadAlreadySelected = false;
+  searching = false;
+  showList = false;
+  customerList = [];
+  searchKey = '';
+  searchCustomer$ = new Subject<string>();
+  disableLeadCustomer = false;
   constructor(protected userService: UserService, private orderService: OrderService,
     private router: Router, private activatedRoute: ActivatedRoute,
     protected cacheService: CacheService, protected modalService: NgbModal,
@@ -73,6 +81,12 @@ export class CreateOrderComponent implements OnInit {
       this.disableStatus = true;
       this.getMasterData();
       this.getAllProducts();
+      const id = this.activatedRoute.snapshot.queryParams.id;
+      if(id) {
+        this.leadAlreadySelected = true;
+        this.createOrder.CustomerId = id;
+        this.customerNameWithAddress = this.activatedRoute.snapshot.queryParams.customer;
+      }
       const activatedRouteObject = this.activatedRoute.snapshot.data;
       if(activatedRouteObject['viewMode'] === true) {
         this.isViewOnly = true;
@@ -92,6 +106,28 @@ export class CreateOrderComponent implements OnInit {
         this.selectedProduct.push({});
       }
       this.displayDeleteIcon();
+      this.orderService.search(this.searchCustomer$,this.userID)
+      .subscribe(results => {
+        this.showList = true;
+        if(results['Customer']) {
+          this.customerList = results['Customer']
+        }
+        // if(results['LeadList'].length == 0) {
+        //   this.allLeadsList = [];
+        //   this.noLeadFound = "No Lead Found";
+        //   this.refreshMessage = '';
+        // } else {
+        //   this.allLeadsList = results['LeadList'];
+        //   if(results['LeadList'].length > 0) {
+        //     this.cacheService.set("allLeadList", this.allLeadsList);
+        //     console.log(document.getElementById('searchvalue'));
+        //     if(sessionStorage.getItem('searchvalue')) {
+        //       this.leadTask.searchtext = sessionStorage.getItem('searchvalue');
+        //     }
+        //     this.cacheService.set("listFilterData", this.leadTask);
+        //   }
+        // }
+      });
     }
     displayDeleteIcon() {
       if(this.selectedProduct.length > 1) {
@@ -177,11 +213,13 @@ export class CreateOrderComponent implements OnInit {
     }
     changeAmount(item) {
       let amount = 0;
-      for(let i=0; i< item.ProductAvailableSize.length; i++) {
-        if(!item.ProductAvailableSize[i].quantity) {
-          amount = amount + 0;
-        } else {
-          amount = amount + (+item.ProductAvailableSize[i].quantity * +item.Rate);
+      if(item.ProductAvailableSize) {
+        for(let i=0; i< item.ProductAvailableSize.length; i++) {
+          if(!item.ProductAvailableSize[i].quantity) {
+            amount = amount + 0;
+          } else {
+            amount = amount + (+item.ProductAvailableSize[i].quantity * +item.Rate);
+          }
         }
       }
       item.Amount = amount;
@@ -227,6 +265,7 @@ export class CreateOrderComponent implements OnInit {
     }
     populateAllData(resp) {
       if(resp.Order.length > 0) {
+        this.disableLeadCustomer = true;
         let allValues = resp.Order[0];
         this.statusId = allValues.OrderStatusID;
         let orderDateArray = allValues.OrderDate.split('/');
@@ -300,13 +339,9 @@ export class CreateOrderComponent implements OnInit {
     }
     refreshDataHandler(byType: any = '') {
       if(byType === "typeChange") {
-        if(this.createOrder.OrderType != 0) {
-          this.orderService.getListOnType(this.createOrder.OrderType, this.userID).subscribe(res => {
-            this.allCustomerList = res['Customer'];
-          }, err=> {
-            this.notification.error('Error', 'Something went wrong while fetching customer detail !!!');
-          })
-        }
+        this.showList = false;
+        this.customerList = [];
+        sessionStorage.setItem('type', this.createOrder.OrderType);
       }
       if(byType=="paymentMode" || byType=="transporter") {
         if(this.createOrder.PaymentId > 0 && this.createOrder.Transporter == 0) {
@@ -344,6 +379,9 @@ export class CreateOrderComponent implements OnInit {
       return false;
     }
     goToListPage() {
+      if (this.cacheService.has("allOrdersList")) {
+        this.cacheService.set("backToOrderList", 'back');
+      }
       this.router.navigate(['/pages/orders/list']);
     }
     submitOrder() {
@@ -385,9 +423,21 @@ export class CreateOrderComponent implements OnInit {
       this.showLoader = true;
       this.orderService.createOrder(postData).subscribe(res => {
         this.showLoader = false;
-        console.log(res);
         const resp = JSON.parse(JSON.stringify(res));
         if(resp.Error[0].ERROR == 0) {
+          if (this.cacheService.has("allOrdersList")) {
+            this.cacheService.set("redirectAfterOrderSave", 'ordersaved');
+            if (this.cacheService.has("orderListFilterData")) {
+              this.cacheService.get("orderListFilterData").subscribe((res) => {
+                let resp = JSON.parse(JSON.stringify(res));
+                resp.OrderType = 1;
+                resp.OrderStatus = 1;
+                resp.startDate = this.createOrder.OrderDate;
+                resp.endDate = this.createOrder.OrderDate;
+                this.cacheService.set("orderListFilterData", resp);
+              });
+            }
+          }
           this.notification.success('Success', resp.Error[0].Msg);
           this.router.navigate(['pages/orders/list']);
         } else {
@@ -440,6 +490,16 @@ export class CreateOrderComponent implements OnInit {
         }
       }
     }
+    removeRateZero(item) {
+      if(item.Rate == 0) {
+        item.Rate = '';
+      }
+    }
+    addRateZero(item) {
+      if(item.Rate == '') {
+        item.Rate = 0;
+      }
+    }
     removeQuantityZero(quan) {
       if(quan.quantity == 0) {
         quan.quantity = '';
@@ -449,5 +509,14 @@ export class CreateOrderComponent implements OnInit {
       if(quan.quantity == '') {
         quan.quantity = 0;
       }
+    }
+    customerSelected(item) {
+      this.showList = false;
+      this.customerList = [];
+      this.searchKey = `${item.CustomerName}`;
+      if(item.Address) {
+        this.searchKey = this.searchKey + `,${item.Address}`;
+      }
+      this.createOrder.CustomerId = item.ID
     }
 }

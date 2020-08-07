@@ -1,6 +1,6 @@
 export const environment = {
 	production: false,
 	EDIUserName: 'Stylox',
-	apiEndpoint: 'http://crmstyloxapi.azurewebsites.net/',
+	apiEndpoint: 'http://styloxapi.azurewebsites.net/',
 	prodLabel: '(CRM)',
 };

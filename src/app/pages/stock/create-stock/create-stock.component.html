@@ -1,0 +1,130 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+    <div style="margin:auto;position:fixed;top:50%;left:50%;">
+        <img src="assets/crm/spinner.gif " width='25px'>
+    </div>
+</div>
+<ba-card cardTitle="{{cardTitle}}" id="newTicket">
+    <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-order' : 'backtolist'" (click)="goToListPage()">Back</button>
+    <button class="btn btn-danger buttonMargin btn-margin submit-create-order" *ngIf="!isViewOnly" (click)="submitOrder();">Submit</button>
+        <div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>Stock Date <sup style="color:red;">*</sup></label>
+                        <div *ngIf="!disableOthers">
+                            <date-picker [minDate]="todaysDate" [disabled]="isViewOnly" [(dateModel)]="createStock.StockDate"></date-picker>
+                        </div>
+                        <div class="form-control" *ngIf="disableOthers">
+                            {{createStock.StockDate.year}}-{{createStock.StockDate.month}}-{{createStock.StockDate.day}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label>LOT No <sup style="color:red;">*</sup></label>
+                        <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createStock.LotNo">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>Cutting Quantity</label>
+                        <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createStock.Cutting">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>Sample Quantity</label>
+                        <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createStock.Sample">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>RATE</label>
+                        <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createStock.Rate">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>Issue Quantity <sup style="color:red;">*</sup></label>
+                        <input type='text' class='form-control' [disabled]="isViewOnly" (keyup)="displayBalance()" [(ngModel)]="createStock.Issue">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>Recieve Quantity <sup style="color:red;">*</sup></label>
+                        <input type='text' class='form-control' [disabled]="isViewOnly" (keyup)="displayBalance()" [(ngModel)]="createStock.Recieve">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>Balance Quantity</label>
+                        <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createStock.Balance">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>Washer<sup style="color:red;">*</sup></label>
+                        <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createStock.Washer">
+                            <option *ngFor='let washer of allWashers' [value]="washer.WasherID">{{washer.Washer}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>WASHING</label>
+                        <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createStock.Washing">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <fieldset>
+                <legend>Select Stock</legend>
+                <div class="row">
+                    <div class="col-sm-9">
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-danger btn-placement" (click)="addProductRow()" [disabled]="isViewOnly" >Add Product</button>
+                    </div>
+                    <div class="col-sm-12">
+                        <table class="table table-condensed">
+                            <thead class="mttableHeader">
+                                <th>ARTICLE CODE <sup style="color:red;">*</sup></th>
+                                <th style="width: 15%">QUANTITY</th>
+                                <th style="width: 15%">GRN</th>
+                                <th class="textAlignCenter">BALANCE</th>
+                                <th class="textAlignCenter">ACTION</th>
+                            </thead>
+                            <tbody> 
+                                <tr *ngFor="let item of selectedProduct;let i = index">
+                                    <td id="prodDSD">
+                                        <select *ngIf="!item.alreadyStored" class="form-control prodListElement" name="product" (change)="onProductChange(item)" [(ngModel)]="item.PRODUCTID" [disabled]="isViewOnly || (isEditOnly && item.alreadyStored)" >
+                                            <option value="0">Select Product</option>
+                                            <option *ngFor="let product of allProducts" [value]="product.PRODUCTID">{{product.Product}}</option>
+                                        </select>
+                                        <div *ngIf="item.alreadyStored" class="form-control product-list-div">{{item.ProductCode}} - {{item.ProductDesc}}</div>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <input class="form-control input-value" type="number" [(ngModel)]="item.quantity" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <input class="form-control input-value" type="number" [(ngModel)]="item.grn" [disabled]="true"/>
+                                    </td>
+                                    <td class="textAlignCenter">{{item.quantity - item.grn || 0}}</td>
+                                    <td class="textAlignCenter">
+                                        <i class="ion-trash-a" *ngIf="selectedProduct.length > 1 && !isViewOnly" (click)="onDelete(i)"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+</ba-card>

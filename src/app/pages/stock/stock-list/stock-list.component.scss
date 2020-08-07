@@ -1,5 +1,22 @@
 @import "../../../theme/sass/conf/conf.scss";
-
+.page-header {
+    border: 1px solid;
+}
+.slip-header-section {
+    text-align: center;
+}
+.order-section {
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+}
+.order-no-lbl {
+    display: inline-block;
+    width: 30%;
+}
+.order-no-value {
+    display: inline-block;
+    width: 70%;
+}
 .view-btn {
     padding-top: 25px;
     padding-left: 25px;
@@ -9,9 +26,6 @@
     position: absolute;
     right: -13px;
     top: -3px;
-}
-.text-align-center {
-    text-align: center;
 }
 .printBtn {
     padding: 10px 35px;
@@ -25,6 +39,10 @@
     right: 160px;
     top: -3px;  
 }
+.text-align-center {
+    text-align: center;
+}
+
 .text-align-left {
     text-align: left;
 }
@@ -41,65 +59,22 @@ table.notification-list-table thead th {
     padding-left: 5px !important;
     padding-right: 5px !important;
 }
-
-.address {
-    max-width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.custname {
-    max-width: 80px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.phone {
-    max-width: 100px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 .createdOn {
-    width: 11%;
+    width: 10%;
 }
-.leadNumber {
-    width: 12%
-}
-.custname {
+.lotNo {
     width: 10%
 }
-.address {
-    width: 15%;
-}
-.shopName {
-    width: 10%
-}
-.phone {
+.washer {
     width: 9%
 }
-.quantity {
-    width: 7%
-}
-.leadStatus {
-    width: 10%
-}
-.type {
-    width: 10%
+.washing {
+    width: 15%
 }
 .custom-tooltip-ion:hover .customTooltiptext {
     visibility: visible;
 }
-input[type="radio"] {
-    margin-right: 3px;
-}
-.search-container {
-    padding-bottom: 12px;
-}
-.padding-eater {
-    padding-left: 15px;
-    padding-bottom: 10px;
-}
+  
 .customTooltiptext {
     z-index: 999;
     visibility: hidden;

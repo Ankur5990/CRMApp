@@ -20,7 +20,7 @@
                 </div>
                 <div class="form-group">
                     <label>Order Type <sup style="color:red;">*</sup></label>
-                    <select class="form-control" (change)="refreshDataHandler('typeChange')" [disabled]="isViewOnly || disableOthers" [(ngModel)]="createOrder.OrderType">
+                    <select class="form-control" (change)="refreshDataHandler('typeChange')" [disabled]="isViewOnly || disableOthers || leadAlreadySelected || disableLeadCustomer" [(ngModel)]="createOrder.OrderType">
                         <option [value]="2">Lead</option>
                         <option [value]="3">Customer</option>
                     </select>
@@ -50,11 +50,14 @@
                 </div>
                 <div class="form-group" *ngIf="createOrder.OrderType == 2 || createOrder.OrderType == 3">
                     <label>Customer Detail<sup style="color:red;">*</sup></label>
-                    <select class="form-control" *ngIf="createOrder.OrderStatus != 'C' && (!showOtherCustomer && !disableOthers)" (change)="refreshDataHandler()" [disabled]="isViewOnly" [(ngModel)]="createOrder.CustomerId">
-                        <option [value]="0">Select Details</option>
-                        <option *ngFor='let customer of allCustomerList' [value]="customer.ID">{{customer.CustomerName}},{{customer.Address}}</option>
-                    </select>
-                    <div class="form-control" *ngIf="(createOrder.OrderStatus == 'C' && isViewOnly) || disableOthers">{{customerNameWithAddress}}</div>
+                    <input name="riUser" *ngIf="(!disableLeadCustomer) && (!leadAlreadySelected)" [(ngModel)]="searchKey" autocomplete="off" type="text" class="form-control" placeholder="Type Here to Start Search" (keyup)="searchCustomer$.next($event.target.value)">
+                    <div class="search-container" [hidden]="!searching">
+                        <div [hidden]="!searching" class="search-item">Searching...</div>
+                    </div>
+                    <div class="search-container" [hidden]="!showList">
+                        <div [hidden]="!showList" class="search-item" *ngFor="let c of customerList" (click)="customerSelected(c)">{{c.CustomerName}},{{c.Address}}</div>
+                    </div>
+                    <div class="form-control" *ngIf="disableLeadCustomer || leadAlreadySelected">{{customerNameWithAddress}}</div>
                 </div>
                 <div class="form-group">
                     <label>Transporter</label>
@@ -102,7 +105,9 @@
                                         </select>
                                         <div *ngIf="item.alreadyStored" class="form-control product-list-div">{{item.ProductName}}</div>
                                     </td>
-                                    <td class="textAlignCenter">{{item.Rate | number : '1.2-2'}}</td>
+                                    <td class="textAlignCenter">
+                                        <input class="input-rate-width form-control" type="text" (focus)="removeRateZero(item)" (focusout)="addRateZero(item)" (keyup)="changeAmount(item)" [(ngModel)]="item.Rate" [disabled]="disableOthers || isViewOnly"/>
+                                    </td>
                                     <td class="textAlignCenter">
                                         <ng-container *ngFor="let quan of item.ProductAvailableSize ">
                                             <span class="name-space-between"><b>{{quan.name}}({{quan.INVBalance || 0}})</b></span>

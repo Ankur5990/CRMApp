@@ -8,6 +8,7 @@ import { SharedService } from 'app/shared/shared.service';
 import { ActivatedRoute } from '@angular/router';
 import { OrderService } from '../orders.service';
 import { ngxCsv } from 'ngx-csv/ngx-csv';
+import { Subject } from 'rxjs';
 
 
 @Component({
@@ -28,8 +29,9 @@ export class OrdersListComponent implements OnInit {
   userID = '';
   printHeaderInfo;
   printDetailInfo = [];
-
+  searchKey = '';
   popupWin: any;
+  searchOrdersTerm$ = new Subject<string>();
 
   constructor(protected userService: UserService, private orderService: OrderService,
     private sharedService: SharedService, private activatedRoute: ActivatedRoute,
@@ -44,14 +46,95 @@ export class OrdersListComponent implements OnInit {
     this.orderTask = JSON.parse(JSON.stringify(this.orderTask));
     this.orderTask.OrderType = 1;
     this.orderTask.OrderStatus = 1;
+    this.orderTask.searchorderby = 1;
     const now = new Date();
     this.todaysDate = { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() };
     this.orderTask.startDate = this.todaysDate;
     this.orderTask.endDate = this.todaysDate;
-    this.getMasterData();                    
+    if (this.cacheService.has("orderListFilterData")) {
+      this.cacheService.get("orderListFilterData").subscribe((res) => {
+        this.orderTask = JSON.parse(JSON.stringify(res));
+        if(res.searchorderby == 1) {
+          this.searchKey = res.searchtext;
+        } else {
+          this.searchKey = '';
+        }
+        if(this.cacheService.has('allOrdersList')) {
+          this.cacheService.get('allOrdersList').subscribe(res => {
+            this.allOrdersList = JSON.parse(JSON.stringify(res));
+          })
+        }
+      });
+    }
+    if(this.cacheService.has("backToOrderList")) {
+      this.cacheService.deleteCache('backToOrderList');
+      this.cacheService.get('allOrdersList').subscribe(res => {
+        this.allOrdersList = JSON.parse(JSON.stringify(res));
+      })
+    }
+    if(this.cacheService.has("redirectAfterOrderSave")) {
+      this.cacheService.deleteCache('redirectAfterOrderSave');
+      this.allOrdersList = [];
+      if(this.orderTask.searchorderby == 2) {
+        this.validateData();
+        if(this.buttonAction) {
+          this.getAllOrders();
+        }
+      } else if(this.orderTask.searchorderby == 1) {
+        this.showLoader = true;
+        this.orderService.searchListEntries(this.searchKey, this.userID).subscribe(res => {
+          this.showLoader = false;
+          if(res['OrderList'].length == 0) {
+            this.allOrdersList = [];
+            this.noOrderFound = "No Lead Found";
+            this.refreshMessage = '';
+          } else {
+            this.allOrdersList = res['OrderList'];
+            if(res['OrderList'].length > 0) {
+              this.cacheService.set("allOrdersList", this.allOrdersList);
+              if(sessionStorage.getItem('searchOrderValue')) {
+                this.orderTask.searchtext = sessionStorage.getItem('searchOrderValue');
+              }
+              this.cacheService.set("orderListFilterData", this.orderTask);
+            }
+          }
+        }, err=> {
+          this.showLoader = false;
+          this.notification.error('Error', 'Having Problem in loading latest data !!!');
+        })
+      }
+    }
+    this.orderService.searchList(this.searchOrdersTerm$,this.userID)
+    .subscribe(results => {
+      if(results['OrderList'].length == 0) {
+        this.allOrdersList = [];
+        this.noOrderFound = "No Lead Found";
+        this.refreshMessage = '';
+      } else {
+        this.allOrdersList = results['OrderList'];
+        if(results['OrderList'].length > 0) {
+          this.cacheService.set("allOrdersList", this.allOrdersList);
+          if(sessionStorage.getItem('searchOrderValue')) {
+            this.orderTask.searchtext = sessionStorage.getItem('searchOrderValue');
+          }
+          this.cacheService.set("orderListFilterData", this.orderTask);
+        }
+      }
+    });
+    this.getMasterData();
     this.validateData();
   }
-
+  valueChange(txt) {
+    this.allOrdersList = [];
+    if(txt == 'other') {
+      this.searchKey = '';
+    }
+    if(this.orderTask.searchorderby == 1) {
+      this.refreshMessage = 'Please search to get latest data';
+    } else {
+      this.refreshMessage = 'Please click View button to get latest data'
+    }
+  }
   getMasterData() {
     this.showLoader = true;
     this.orderService.getMasterData().subscribe(res => {
@@ -97,6 +180,8 @@ export class OrdersListComponent implements OnInit {
         this.allOrdersList = res['OrderList'];
         this.refreshMessage = "";
         this.noOrderFound = "";
+        this.cacheService.set("allOrdersList", this.allOrdersList);
+        this.cacheService.set("orderListFilterData", this.orderTask);
       }
     },(error) => {
       this.showLoader = false;

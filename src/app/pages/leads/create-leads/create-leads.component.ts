@@ -6,6 +6,7 @@ import { LeadService } from '../leads.service';
 import { UserService } from '../../../shared/user.service';
 import { GenericSort } from '../../../shared/pipes/generic-sort.pipe';
 import { CacheService } from '../../../shared/cache.service';
+import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import * as _ from 'lodash';
 
 @Component({
@@ -31,10 +32,11 @@ export class CreateLeadComponent implements OnInit {
   totalCities = [];
   userID = '';
   LeadID = 0;
+  customerDetail = '';
   disableStatus = false;
   filterStateData = false;
   IsfollowUpDate = false;
-
+  showCreateOrder = false;
   constructor(protected userService: UserService, private leadService: LeadService,
     private router: Router, private activatedRoute: ActivatedRoute,
     protected cacheService: CacheService, protected modalService: NgbModal,
@@ -57,7 +59,7 @@ export class CreateLeadComponent implements OnInit {
       this.createLead.LeadStatus = "L";
       this.createLead.Priority = 2;
       this.createLead.PhoneNo = '';
-      this.createLead.Qunatity = '';
+      this.createLead.Quantity = '';
       this.createLead.Address = '';
       this.createLead.State = 0;
       this.createLead.City = 0;
@@ -167,19 +169,32 @@ export class CreateLeadComponent implements OnInit {
         this.createLead.ShopName = allValues.ShopName;
         this.createLead.LeadType = allValues.LeadTypeID;
         this.createLead.LeadStatus = allValues.LeadStatusCode;
+        if(allValues.LeadStatusCode == 'F') {
+          this.showCreateOrder = true;
+        }
         if(allValues.LeadStatusCode == 'W') {
           const status = this.totalStatus.filter(x => x.Code == 'W');
           this.allStatus = status;
         }
         this.createLead.Priority = allValues.PriorityID;
         this.createLead.PhoneNo = allValues.Phone;
-        this.createLead.Qunatity = allValues.Quantity;
+        this.createLead.Quantity = allValues.Quantity;
         this.createLead.Address = allValues.Address;
         this.createLead.State = allValues.StateID;
         this.refreshDataHandler('statechange');
         this.createLead.City = allValues.CityID;
         this.createLead.ZipCode = allValues.Zip;
         this.createLead.Comment = '';
+        this.customerDetail = allValues.CustomerName
+        if(allValues.Address) {
+          this.customerDetail = this.customerDetail + `, ${allValues.Address}`;
+        }
+        if(allValues.CityName) {
+          this.customerDetail = this.customerDetail + `, ${allValues.CityName}`;
+        }
+        if(allValues.StateName) {
+          this.customerDetail = this.customerDetail + `, ${allValues.StateName}`;
+        }
       }
       this.commentList = resp.LeadComment;
     }
@@ -192,13 +207,16 @@ export class CreateLeadComponent implements OnInit {
 
     validateData() {
       if(this.createLead.LeadType != 0 && this.createLead.LeadSourceId != 0 && this.createLead.LeadStatus != 0 
-        && this.createLead.CustomerName != '' && this.createLead.PhoneNo != '' && this.createLead.Qunatity != '' 
-        && this.createLead.Address != '' && this.createLead.State != 0 && this.createLead.City != 0) {
+        && this.createLead.CustomerName != '' && this.createLead.PhoneNo != '' && this.createLead.Quantity >= 0
+        && this.createLead.Address != '' && this.createLead.State != 0) {
           return true;
         }
       return false;
     }
     goToListPage() {
+      if (this.cacheService.has("allLeadList")) {
+        this.cacheService.set("redirectToList", 'back');
+      }
       this.router.navigate(['/pages/leads/list']);
     }
     submitLead() {
@@ -207,10 +225,11 @@ export class CreateLeadComponent implements OnInit {
         return;
       }
       let findResult = this.totalStatus.find(x => x.Code == this.createLead.LeadStatus);
+      const followDate = this.createLead.FollowUpDate.day ? `${this.createLead.FollowUpDate.month}/${this.createLead.FollowUpDate.day}/${this.createLead.FollowUpDate.year}`:'';
       let postData = {
         "LeadID": this.LeadID,
         "LeadDate": `${this.createLead.LeadDate.month}/${this.createLead.LeadDate.day}/${this.createLead.LeadDate.year}`,
-        "FollowupDate": `${this.createLead.FollowUpDate.month}/${this.createLead.FollowUpDate.day}/${this.createLead.FollowUpDate.year}`,
+        "FollowupDate": followDate,
         "CustomerName": this.createLead.CustomerName,
         "Address": this.createLead.Address,
         "Zip": this.createLead.ZipCode,
@@ -218,7 +237,7 @@ export class CreateLeadComponent implements OnInit {
         "CityID": this.createLead.City,
         "Phone": this.createLead.PhoneNo,
         "LeadTypeID": this.createLead.LeadType,
-        "Quantity": this.createLead.Qunatity,
+        "Quantity": this.createLead.Quantity,
         "LeadSourceID": this.createLead.LeadSourceId,
         "PriorityID": this.createLead.Priority,
         "ShopName": this.createLead.ShopName,
@@ -231,8 +250,36 @@ export class CreateLeadComponent implements OnInit {
         this.showLoader = false;
         const resp = JSON.parse(JSON.stringify(res));
         if(resp.Error[0].ERROR == 0) {
+          if (this.cacheService.has("allLeadList")) {
+            this.cacheService.set("redirectAfterSave", 'saved');
+            if (this.cacheService.has("listFilterData")) {
+              this.cacheService.get("listFilterData").subscribe((res) => {
+                let resp = JSON.parse(JSON.stringify(res));
+                resp.Priority = 1;
+                resp.Status = 1;
+                resp.startDate = this.createLead.LeadDate;
+                resp.endDate = this.createLead.LeadDate;
+                this.cacheService.set("listFilterData", resp);
+              });
+            }
+          }
+          const id = resp.Error[0].LeadID;
           this.notification.success('Success', resp.Error[0].Msg);
-          this.router.navigate(['pages/leads/list']);
+          if(this.createLead.LeadStatus == 'F') {
+            this.leadService.checkOrder(id,this.userID).subscribe(response => {
+              if(response['Message'] && response['Message'][0] && response['Message'][0].ERROR == 0) {
+                this.showConfirmationPopUp(response['Message'][0]);
+              } else if(response['Message'] && response['Message'][0] && response['Message'][0].ERROR == 1) {
+                this.router.navigate(['pages/leads/list']);
+              } else {
+                this.router.navigate(['pages/leads/list']);
+              }
+            },err=> {
+              this.router.navigate(['pages/leads/list']);
+            })
+          } else {
+            this.router.navigate(['pages/leads/list']);
+          }
         } else {
           this.notification.error('Error', resp.Error[0].Msg);
         }
@@ -240,5 +287,26 @@ export class CreateLeadComponent implements OnInit {
         this.showLoader = false;
         this.notification.error('Error', 'Something went wrong!');
       })
+    }
+    showConfirmationPopUp(item) {
+      const activeModal = this.modalService.open(ModalComponent, {
+        size: 'sm',
+        backdrop: 'static',
+      });
+      activeModal.componentInstance.BUTTONS.OK = 'Yes';
+      activeModal.componentInstance.BUTTONS.Cancel = 'No';
+      activeModal.componentInstance.showCancel = true;
+      activeModal.componentInstance.modalHeader = 'Create Order Confirmation!';
+      activeModal.componentInstance.modalContent = `If you want to create an order for this lead then say YES.`;
+      activeModal.componentInstance.closeModalHandler = (() => {
+        this.customerDetail = `${item.CustomerName},${item.Address}`;
+        this.goToOrderDetail(item.ID);
+      });
+      activeModal.componentInstance.dismissHandler = (() => {
+        this.router.navigate(['pages/leads/list']);
+      });
+    }
+    goToOrderDetail(id) {
+      this.router.navigate(['pages/orders/create'], { queryParams: { id: id,customer: this.customerDetail } })
     }
 }

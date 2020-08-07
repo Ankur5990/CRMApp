@@ -6,19 +6,29 @@
 
 <ba-card cardTitle="LEADS" class="smart-table-container" #leads>
     <div class="row">
-        <div class="col-md-2 col-sm-12 no-padding-right">
+        <div class="col-12 search-container">
+            Search Leads By: <input type="radio" name="type" [value]="1" [(ngModel)]="leadTask.searchby" (change)="valueChange('phone')"/>Customer/Phone <input type="radio" name="type" [value]="2" [(ngModel)]="leadTask.searchby" (change)="valueChange('other')"/>Other filters
+        </div>
+    </div>
+    <div class="row" *ngIf="leadTask.searchby == 1"> 
+        <div class="col-md-5 padding-eater">
+            <input name="riUser" [(ngModel)]="searchKey" autocomplete="off" type="text" class="form-control" placeholder="Search" (keyup)="searchTerm$.next($event.target.value)">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="leadTask.searchby == 2">
             <label>Start Date</label>
             <div class="input-group">
                 <date-picker [(dateModel)]="leadTask.startDate" (dateModelChange)="refreshDataHandler()"></date-picker>
             </div>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="leadTask.searchby == 2">
             <label>End Date</label>
             <div class="input-group">
                 <date-picker [(dateModel)]="leadTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
             </div>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="leadTask.searchby == 2">
             <label>Priority</label>
             <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="leadTask.Priority">
                 <option [value]="1">All Priority</option>
@@ -27,14 +37,14 @@
                 <option [value]="4">High</option>
             </select>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="leadTask.searchby == 2">
             <label>Status</label>
             <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="leadTask.Status">
                 <option [value]="1">All Status</option>
                 <option *ngFor='let status of allStatus' [value]="status.LeadStatusID">{{status.LeadStatus}}</option>
             </select>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right view-btn">
+        <div class="col-md-2 col-sm-12 no-padding-right view-btn" *ngIf="leadTask.searchby == 2">
             <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllLeads()">View </button>
         </div>
         <div class="col-md-2 col-sm-12 createTicketBtn">
@@ -70,17 +80,22 @@
                     </th>
                     <th class="thVerticalAlign text-align-left">
                         <span>
-                            Lead Source
+                            Customer Name
                         </span>
                     </th>
                     <th class="thVerticalAlign text-align-left">
                         <span>
-                            Customer Name
+                            Phone No
                         </span>
                     </th>
                     <th class="thVerticalAlign text-align-center">
                         <span>
                             Address
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Shop
                         </span>
                     </th>
                     <th class="thVerticalAlign text-align-left">
@@ -121,9 +136,10 @@
                     </td>
                     <td class='text-align-left leadNumber'>{{item.LeadNumber}}</td>
                     <td class='text-align-left type'>{{item.LeadType}}</td>
-                    <td class='text-align-left source'>{{item.LeadSource}}</td>
                     <td class='text-align-left custname'>{{item.CustomerName}}</td>
+                    <td class='text-align-left phone'>{{item.Phone}}</td>
                     <td class='text-align-left address'>{{item.Address}},{{item.CityName}},{{item.StateName}}</td>
+                    <td class='text-align-center shopName'>{{item.ShopName}}</td>
                     <td class='text-align-center quantity'>{{item.Quantity}}</td>
                     <td class="text-align-left createdOn">{{item.LeadDate}}</td>
                     <td class="text-align-left createdOn">{{item.FollowUPDate}}</td>

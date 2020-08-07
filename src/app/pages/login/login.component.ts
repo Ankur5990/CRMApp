@@ -1,14 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router} from '@angular/router';
+import { Router} from '@angular/router';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationsService } from 'angular2-notifications';
-import { UserService } from '../../shared/user.service';
-import { environment } from '../../../environments/environment';
-import { SignoutService } from '../../shared/signout.service';
-import { EncrDecrService } from '../../shared/encr-decr.service';
-import { ModalComponent } from '../../shared/components/modal/modal.component';
-import { SharedService } from '../../shared/shared.service';
 import { LoginService } from './login.service';
 
 @Component({
@@ -33,16 +26,10 @@ export class Login implements OnInit {
 	passExpirationDate;
 
   	constructor (
-    	private userService: UserService,
     	private fb: FormBuilder,
-    	private activatedRoute: ActivatedRoute,
     	private loginService: LoginService,
     	private router: Router,
-    	private notification: NotificationsService,
-		private signoutService: SignoutService,
-		private EncrDecr: EncrDecrService,
-		private modalService:NgbModal,
-		private sharedService: SharedService) {
+    	private notification: NotificationsService) {
   	}
 
 	ngOnInit() {
