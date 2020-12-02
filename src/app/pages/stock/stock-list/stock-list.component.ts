@@ -135,11 +135,13 @@ export class StockListComponent implements OnInit {
         SampleQty: stockInfo.SampleQty,
         IssueQty: stockInfo.IssueQty,
         ReceiveQty: stockInfo.ReceiveQty,
+        GRN: stockInfo.GRN,
+        Balance: stockInfo.Balance
       });
     });
 
     const options = { 
-      headers: ['Stock Date','Lot Number','Washer','Washing', 'Rate','Cutting Quantity','Sample Quantity','Issue Quantity', 'Receive Quantity'], 
+      headers: ['Stock Date','Lot Number','Washer','Washing', 'Rate','Cutting Quantity','Sample Quantity','Issue Quantity', 'Receive Quantity','GRN','Balance'], 
       nullToEmptyString: true,
     };
     new ngxCsv(report, 'Stock-List', options);

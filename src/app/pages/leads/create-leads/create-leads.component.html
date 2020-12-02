@@ -58,11 +58,10 @@
             </div>
             <div class="col-6">
                 <div class="form-group">
-                    <label>Priority</label>
+                    <label>Priority <sup style="color:red;">*</sup></label>
                     <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createLead.Priority">
-                        <option [value]="2">Low</option>
-                        <option [value]="3">Medium</option>
-                        <option [value]="4">High</option>
+                        <option [value]="0">Select Priority</option>
+                        <option *ngFor='let priority of allPriority' [value]="priority.PriorityID">{{priority.PriorityDesc}}</option>
                     </select>
                 </div>
             </div>

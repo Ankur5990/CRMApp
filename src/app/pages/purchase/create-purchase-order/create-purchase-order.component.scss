@@ -2,43 +2,41 @@
 
 $arrow-top: 33%;
 
-label {
-  text-align: right;
-  padding-right: 10px;
-}
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 
   margin: 0; 
 }
-.pt4 {
-  padding-top: 4px;
+
+.width10 {
+  width: 10%;
 }
-.form-control:focus {
-  border-color: #cbcbcb;
+.width12 {
+  width: 12%;
 }
-.mandatory {
-  color: #f11c1c;
+.width13 {
+  width: 13%;
 }
-.quantityforsize {
-  width: 55%;
-}
-.customer-value {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 300px;
+.input-width {
+  margin-top: 4px;
 }
 .btn-placement {
   margin-bottom: 5px;
   margin-right: 5px;
   float: right;
 }
-.product-list-div{
-  height: 2rem;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  text-align: left;
+label {
+  text-align: right;
+  padding-right: 10px;
+}
+.form-control:focus {
+  border-color: #cbcbcb;
+}
+.row {
+  padding: 5px 0;
+}
+.mandatory {
+  color: #f11c1c;
 }
 .searchtext {
   border-color: rgb(169, 169, 169);
@@ -51,7 +49,11 @@ input[type=number]::-webkit-outer-spin-button {
 .buttonMargin {
   margin-left:10px;
 }
-
+.createOrder {
+  position: absolute;
+  top: 7px;
+  right: 190px;
+}
 .radioButtonMargin {  
   margin-top: 6px;
 }
@@ -139,29 +141,6 @@ input[type=number]::-webkit-outer-spin-button {
   border-left-color: transparent;
   left: 56%;
 }
-.search-container{
-  position: absolute;
-     max-height: 200px;
-     overflow-y: scroll;
-     width: calc(100%);
-     padding:0px;
-     border: 1px solid #ccc;
-     background: #fff;
-     z-index: 12;
-     .search-item{
-       padding: 6px 12px;
-       border-bottom: 1px solid #d6cccc;
-       cursor: pointer;
-       &:hover{
-         background: #5bc0de;
-         color:#fff;
-       }
- 
-     }
-     .search-item:last-child{
-        border-bottom: 0px solid #d6cccc;
-     }
- }
 
 // .search-container {
 //   position: absolute;
@@ -284,33 +263,18 @@ input[type=number]::-webkit-outer-spin-button {
   transform: scale(1);
 }
 
-.backtolist {
+.backtonotification
+{
   position: absolute;
   top: 7px;
-  right: 108px;
+  right: 110px;
 }
-.space-between {
-  padding-left: 5px;
-  padding-right: 5px;
-}
-.input-width {
-  width: 8%;
-  display: inline-block;
-}
-.input-rate-width {
-  margin-top: 4px;
-  display: inline-block;
-  text-align: center;
-}
-.submit-create-order {
+
+.submit-create-notification
+{
   position: absolute;
   top: 7px;
   right: 20px;
-}
-.submit-void-order {
-  position: absolute;
-  top: 7px;
-  right: 188px;
 }
 
 /* The switch - the box around the slider */

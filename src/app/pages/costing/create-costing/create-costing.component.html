@@ -1,0 +1,195 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+    <div style="margin:auto;position:fixed;top:50%;left:50%;">
+        <img src="assets/crm/spinner.gif " width='25px'>
+    </div>
+</div>
+<ba-card cardTitle="{{cardTitle}}" id="newTicket" class="create-notification-screen">
+    <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-notification' : 'backtonotification'" (click)="goToListPage()">Back</button>
+    <button class="btn btn-danger buttonMargin btn-margin submit-create-notification" *ngIf="!isViewOnly" (click)="submitCosting();">Submit</button>
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Costing Date <sup style="color:red;">*</sup></label>
+                    <div>
+                        <date-picker [disabled]="isViewOnly" [(dateModel)]="createCosting.CostingDate"></date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group" *ngIf="!detail">
+                    <label>Lot No <sup style="color:red;">*</sup></label>
+                    <input name="lotno" [(ngModel)]="LotNoKey" autocomplete="off" type="text" class="form-control" placeholder="Search Lot No" (keyup)="searchLotNo$.next($event.target.value)">
+                    <div class="search-container" *ngIf="showList">
+                        <div [hidden]="!showList" class="search-item" *ngFor="let l of allLotsList" (click)="lotNoSelected(l)">{{l.SortNO}}</div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="detail">
+                    <label>Lot No</label>
+                    <input name="lotnovalue" [(ngModel)]="lotNoValue" type="text" [disabled] ="true" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Product Type <sup style="color:red;">*</sup></label>
+                    <select class="form-control" [disabled]="isViewOnly || detail" [(ngModel)]="createCosting.ProductType" (change)="onProductTypeChange()">
+                        <option [value]="0">Select Product Type</option>
+                        <option *ngFor='let product of allProductType' [value]="product.ProductTypeID">{{product.ProductType}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Fit Type <sup style="color:red;">*</sup></label>
+                    <select class="form-control" [disabled]="isViewOnly || detail" [(ngModel)]="createCosting.FitType">
+                        <option [value]="0">Select Fit Type</option>
+                        <option *ngFor='let fit of allFitType' [value]="fit.FitID">{{fit.Fit}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Fabric Price</label>
+                    <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createCosting.FabricPrice" />
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Average</label>
+                    <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createCosting.Average" />
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Fabric Cost</label>
+                    <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createCosting.FabricCost" />
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Tailor Rate</label>
+                    <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createCosting.TailorCost" />
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Extra Tailor Payment</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" (keyup)="refreshCalucaltionChange()" [(ngModel)]="createCosting.ExtraTailor" />
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Thread Cost</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" (keyup)="refreshCalucaltionChange()" [(ngModel)]="createCosting.ThreadCost" />
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Lining Cost</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" (keyup)="refreshCalucaltionChange()" [(ngModel)]="createCosting.LiningCost"/>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>TRIMS Cost</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" (keyup)="refreshCalucaltionChange()" [(ngModel)]="createCosting.TrimsCost" />
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>ZIP Cost</label>
+                    <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createCosting.ZIPCost" />
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Finishing Cost</label>
+                    <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createCosting.FinishingCost"/>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Overheads Cost</label>
+                    <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createCosting.OverheadsCost"/>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>ExtraCost</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" (keyup)="refreshCalucaltionChange()" [(ngModel)]="createCosting.ExtraCost" (focus)="removeZero()" (focusout)="addZero()"/>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="createCosting.LotID > 0 && createCosting.ProductType > 0">
+            <fieldset>
+                <legend>Select Item</legend>
+                <div class="row">
+                    <div class="col-sm-9">
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-danger btn-placement" (click)="addItemRow()" [disabled]="isViewOnly" >Add Item</button>
+                    </div>
+                    <div class="col-sm-12">
+                        <table class="table table-condensed">
+                            <thead class="mttableHeader">
+                                <th>Color <sup style="color:red;">*</sup></th>
+                                <th class="textAlignCenter width7">Is Distressed</th>
+                                <th class="textAlignCenter width11">Product Code</th>
+                                <th class="textAlignCenter width11">Product Desc</th>
+                                <th class="textAlignCenter width8">Washing</th>
+                                <th class="textAlignCenter width8">Final cost</th>
+                                <th class="textAlignCenter width7">Margin</th>
+                                <th class="textAlignCenter width8">Total Cost</th>
+                                <th class="textAlignCenter width6">GST</th>
+                                <th class="textAlignCenter width7">SP</th>
+                                <th class="textAlignCenter width8">Final MRP</th>
+                                <th class="textAlignCenter">Action</th>
+                            </thead>
+                            <tbody> 
+                                <tr *ngFor="let item of selectedItems;let i = index">
+                                    <td id="prodDSD">
+                                        <select class="form-control prodListElement" name="color" (change)="onItemChange(item, i)" [(ngModel)]="item.ColorID" [disabled]="isViewOnly || item.CostingID" >
+                                            <option value="0">Select Color</option>
+                                            <option *ngFor="let color of allColor" [value]="color.ColorID">{{color.Color}}</option>
+                                        </select>
+                                    </td>
+                                    <td class="textAlignCenter pt10">
+                                        <input class="form-control" type="checkbox" [(ngModel)]="item.IsDistressed" [disabled]="isViewOnly || item.CostingID"/>
+                                    </td>
+                                    <td class="textAlignCenter pt4">
+                                        <input class="form-control" type="text" [(ngModel)]="item.ProductCode" [disabled]="true"/>
+                                    </td>
+                                    <td class="textAlignCenter pt4">
+                                        <input class="form-control" type="text" [(ngModel)]="item.ProductDesc" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter pt4">
+                                        <input class="form-control" type="text" [(ngModel)]="item.WashingCost" (keyup)="onWashingChange(item,i)" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter pt4">
+                                        <input class="form-control" type="text" [(ngModel)]="item.Finalcost" [disabled]="true"/>
+                                    </td>
+                                    <td class="textAlignCenter pt4">
+                                        <input class="form-control" type="text" [(ngModel)]="item.MarginCost" [disabled]="true"/>
+                                    </td>
+                                    <td class="textAlignCenter pt4">
+                                        <input class="form-control" type="text" [(ngModel)]="item.TotalCost" [disabled]="true"/>
+                                    </td>
+                                    <td class="textAlignCenter pt4">
+                                        <input class="form-control" type="text" [(ngModel)]="item.GST" [disabled]="true"/>
+                                    </td>
+                                    <td class="textAlignCenter pt4">
+                                        <input class="form-control" type="text" [(ngModel)]="item.SellingPrice" [disabled]="true"/>
+                                    </td>
+                                    <td class="textAlignCenter pt4">
+                                        <input class="form-control" type="text" [(ngModel)]="item.MRP" [disabled]="isViewOnly || RoleID !=1"/>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <i class="ion-trash-a" *ngIf="selectedItems.length > 1 && !isViewOnly" (click)="onDelete(i)"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+</ba-card>

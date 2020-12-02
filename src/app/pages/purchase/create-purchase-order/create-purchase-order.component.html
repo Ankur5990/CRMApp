@@ -1,0 +1,119 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+    <div style="margin:auto;position:fixed;top:50%;left:50%;">
+        <img src="assets/crm/spinner.gif " width='25px'>
+    </div>
+</div>
+<ba-card cardTitle="{{cardTitle}}" id="newTicket" class="create-notification-screen">
+    <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-notification' : 'backtonotification'" (click)="goToListPage()">Back</button>
+    <button class="btn btn-danger buttonMargin btn-margin submit-create-notification" *ngIf="!isViewOnly" (click)="submitPurchaseOrder();">Submit</button>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Purchase Date <sup style="color:red;">*</sup></label>
+                    <div>
+                        <date-picker [disabled]="isViewOnly" [(dateModel)]="createPurchaseOrder.PurchaseDate"></date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Purchase Number</label>
+                    <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createPurchaseOrder.PurchaseNumber">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Supplier <sup style="color:red;">*</sup></label>
+                    <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createPurchaseOrder.Supplier">
+                        <option [value]="0">Select Supplier</option>
+                        <option *ngFor='let supplier of allSupplier' [value]="supplier.VendorID">{{supplier.Vendor}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Item Type <sup style="color:red;">*</sup></label>
+                    <select class="form-control" (change)="onItemTypeChange()" [disabled]="isViewOnly || isEditOnly" [(ngModel)]="createPurchaseOrder.ItemType">
+                        <option [value]="0">Select Item Type</option>
+                        <option *ngFor='let type of allItemType' [value]="type.ItemTypeID">{{type.ItemType}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Ref Invoice Number</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createPurchaseOrder.RefInvoiceNumber" (focus)="removeZero(createPurchaseOrder.RefInvoiceNumber, 'ref')" (focusout)="addZero(createPurchaseOrder.RefInvoiceNumber, 'ref')"/>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label>Invoice Received</label>
+                    <input type='checkbox' class='form-control' style="margin-top: 5px; zoom: 1.5" [disabled]="isViewOnly" [(ngModel)]="createPurchaseOrder.InvoiceReceived">
+                </div>
+            </div>
+        </div>
+        <div *ngIf="createPurchaseOrder.ItemType > 0">
+            <fieldset>
+                <legend>Select Item</legend>
+                <div class="row">
+                    <div class="col-sm-9">
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-danger btn-placement" (click)="addItemRow()" [disabled]="isViewOnly" >Add Item</button>
+                    </div>
+                    <div class="col-sm-12">
+                        <table class="table table-condensed">
+                            <thead class="mttableHeader">
+                                <th>Item <sup style="color:red;">*</sup></th>
+                                <th class="textAlignCenter width13">Sort No</th>
+                                <th class="textAlignCenter width10">
+                                    <span *ngIf="itemCode != 'FAB'">Quantity</span>
+                                    <span *ngIf="itemCode == 'FAB'">No of rolls</span>
+                                    <sup style="color:red;">*</sup>
+                                </th>
+                                <th class="textAlignCenter width12" *ngIf="itemCode == 'FAB'">Length (Meter)</th>
+                                <th class="textAlignCenter width12" *ngIf="itemCode == 'FAB'">Width (Meter)</th>
+                                <th class="textAlignCenter width12">Rate <sup style="color:red;">*</sup></th>
+                                <th class="textAlignCenter">Action</th>
+                            </thead>
+                            <tbody> 
+                                <tr *ngFor="let item of selectedProduct;let i = index">
+                                    <td id="prodDSD">
+                                        <select class="form-control prodListElement" name="product" (change)="onItemChange(item)" [(ngModel)]="item.ItemID" [disabled]="isViewOnly || item.PurchaseDetailID" >
+                                            <option value="0">Select Item</option>
+                                            <option *ngFor="let product of filteredItems" [value]="product.ItemID">{{product.Item}}</option>
+                                        </select>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <input class="input-width form-control" type="text" [(ngModel)]="item.SortNO" [disabled]="isViewOnly || item.PurchaseDetailID"/>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <input class="input-width form-control" type="number" [(ngModel)]="item.Quantity" (focus)="removeZero(item, 'quantity')" (focusout)="addZero(item, 'quantity')" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter" *ngIf="itemCode == 'FAB'">
+                                        <input class="input-width form-control" type="text" [(ngModel)]="item.LengthMeter" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter" *ngIf="itemCode == 'FAB'">
+                                        <input class="input-width form-control" type="text" [(ngModel)]="item.WidthMeter" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <input class="input-width form-control" type="text" [(ngModel)]="item.Rate" (focus)="removeZero(item, 'price')" (focusout)="addZero(item, 'price')" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <i class="ion-trash-a" *ngIf="selectedProduct.length > 1 && !isViewOnly" (click)="onDelete(i)"></i>
+                                    </td>
+                                </tr>
+                                <!-- <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="textAlignRight"><b>Total Amount</b></td>
+                                    <td class="textAlignCenter"><b>{{finalAmount  | number : '1.2-2'}}</b></td>
+                                    <td></td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+</ba-card>

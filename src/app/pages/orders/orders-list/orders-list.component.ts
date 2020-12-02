@@ -236,23 +236,53 @@ export class OrdersListComponent implements OnInit {
           <div class="gst-no">GST: ${this.printHeaderInfo.CompGST} </div>
         </div>
         <div class="order-section">
-          <div class="order-no-lbl">OrderNo</div>
-          <div class="order-no-value">: ${this.printHeaderInfo.OrderNumber}</div>
-          <div class="order-no-lbl">Order Date</div>
-          <div class="order-no-value">: ${this.printHeaderInfo.OrderDate}</div>
-          <div class="order-no-lbl">Payment Mode</div>
-          <div class="order-no-value">: ${this.printHeaderInfo.PaymentMode}</div>
+          <div class="order-item">
+            <div class="order-no-lbl">OrderNo</div>
+            <div class="order-no-value">: ${this.printHeaderInfo.OrderNumber}</div>
+          </div>
+          <div class="order-item">
+            <div class="order-no-lbl">Order Date</div>
+            <div class="order-no-value">: ${this.printHeaderInfo.OrderDate}</div>
+          </div>
+          <div class="order-item">
+            <div class="order-no-lbl">Payment Mode</div>
+            <div class="order-no-value">: ${this.printHeaderInfo.PaymentMode ? this.printHeaderInfo.PaymentMode : 'N/A'}</div>
+          </div>
+          <div class="order-item">
+            <div class="order-no-lbl">Invoice Type</div>
+            <div class="order-no-value">: ${this.printHeaderInfo.InvoiceType ? this.printHeaderInfo.InvoiceType : 'N/A'}</div>
+          </div>
+          <div class="order-item">
+            <div class="order-no-lbl">Invoice Number</div>
+            <div class="order-no-value">: ${this.printHeaderInfo.InvoiceNumber ? this.printHeaderInfo.InvoiceNumber : 'N/A'}</div>
+          </div>
+          <div class="order-item">
+            <div class="order-no-lbl">Membership No</div>
+            <div class="order-no-value">: ${this.printHeaderInfo.MembershipNo ? this.printHeaderInfo.MembershipNo : 'N/A'}</div>
+          </div>
+          <div class="order-item">
+            <div class="order-no-lbl">GST No</div>
+            <div class="order-no-value">: ${this.printHeaderInfo.GSTNO ? this.printHeaderInfo.GSTNO : 'N/A'}</div>
+          </div>
+          <div class="order-item">
+          <div class="order-no-lbl">Transporter</div>
+          <div class="order-no-value">: ${this.printHeaderInfo.Transporter ? this.printHeaderInfo.Transporter : 'N/A'}</div>
+        </div>
+        <div class="order-item">
+          <div class="order-no-lbl">Shop Name</div>
+          <div class="order-no-value">: ${this.printHeaderInfo.Shop ? this.printHeaderInfo.Shop : 'N/A'}</div>
+        </div>
         </div>
         <div class="Billing-section">
+          <div class="billed-to-text">Billed to:</div>
+          <div class="shipped-to-text">Shipped to:</div>
           <div class="billed-to-section">
-            <div class="billed-to-text">Billed to:</div>
             <div class="billed-to-detail">
-              <div class="cust-name">${this.printHeaderInfo.CustomerName}</div>
-              <div class="cust-add">${this.printHeaderInfo.Address}</div>
+              <div class="cust-name">${this.printHeaderInfo.BillingAddress ? this.printHeaderInfo.BillingAddress : this.printHeaderInfo.CustomerName}</div>
+              <div class="cust-add">${this.printHeaderInfo.BillingAddress ? '.' : this.printHeaderInfo.Address}</div>
             </div>
           </div>
           <div class="shipping-to-section">
-            <div class="shipped-to-text">Shipped to:</div>
             <div class="shipped-to-detail">
               <div class="cust-name">${this.printHeaderInfo.CustomerName}</div>
               <div class="cust-add">${this.printHeaderInfo.Address}</div>
@@ -321,13 +351,15 @@ export class OrdersListComponent implements OnInit {
                 text-align: center;
               }
               .order-section {
+                display: block;
+                width: 100%;
                 padding: 5px 0px;
                 border-top: 1px solid;
                 border-bottom: 1px solid;
               }
               .order-no-lbl {
                 display: inline-block;
-                width: 30%;
+                width: 40%;
                 padding-left: 10px;
               }
               .text-align-right {
@@ -335,7 +367,7 @@ export class OrdersListComponent implements OnInit {
               }
               .order-no-value {
                 display: inline-block;
-                width: 60%;
+                width: 55%;
               }
               .Billing-section {
                 display: block;
@@ -360,9 +392,13 @@ export class OrdersListComponent implements OnInit {
               }
               .billed-to-text {
                 font-style: italic;
+                display: inline-block;
+                width: 45%;
               }
               .shipped-to-text {
                 font-style: italic;
+                display: inline-block;
+                width: 45%;
               }
               .extra-info {
                 display: inline-block;
@@ -387,6 +423,10 @@ export class OrdersListComponent implements OnInit {
               .total-quantity {
                 text-align: center;
                 padding-right: 20px;
+              }
+              .order-item {
+                display: inline-block;
+                width: 45%;
               }
                 </style>
               </head>

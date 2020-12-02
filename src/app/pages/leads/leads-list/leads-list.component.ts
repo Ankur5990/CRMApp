@@ -20,6 +20,7 @@ export class LeadsListComponent implements OnInit {
   todaysDate;
   buttonAction = false;
   allLeadsList = [];
+  allPriority = [];
   noLeadFound = '';
   refreshMessage = "Please click View button to get latest data";
   showLoader = false;
@@ -128,6 +129,7 @@ export class LeadsListComponent implements OnInit {
       let lookUpData = JSON.parse(JSON.stringify(res));
       this.allCustomer = lookUpData.Customer;
       this.allStatus = lookUpData.LeadStatus;
+      this.allPriority = lookUpData.Priority;
     },(error)=> {
       this.showLoader = false;
       this.notification.error('Error','Error While Lookup Master Data');

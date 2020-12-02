@@ -8,7 +8,8 @@ import { GenericSort } from '../../../shared/pipes/generic-sort.pipe';
 import { CacheService } from '../../../shared/cache.service';
 import * as _ from 'lodash';
 import { isNgTemplate } from '@angular/compiler';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-order',
@@ -59,7 +60,22 @@ export class CreateOrderComponent implements OnInit {
     private router: Router, private activatedRoute: ActivatedRoute,
     protected cacheService: CacheService, protected modalService: NgbModal,
     private notification: NotificationsService, private genericSort: GenericSort) { }
-
+    inputFormatter = (res => {
+      if(res){
+        return `${res.Product}`;
+      }
+    });
+    searchProduct = (text$: Observable<any>) => {
+      var self = this; return text$.pipe(debounceTime(200),
+        distinctUntilChanged(),
+        map(term => {
+          return self.allProducts && self.allProducts.filter((v: any) => {
+            term = term.trim();
+            const flag = v.Product.toLowerCase().indexOf(term.toLowerCase()) > -1;
+            return flag;
+          }).slice(0, 12);
+        }),)
+    };
     ngOnInit() {
       const now = new Date();
       this.todaysDate = { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() };
@@ -76,6 +92,11 @@ export class CreateOrderComponent implements OnInit {
       this.createOrder.discount = 0;
       this.createOrder.FreightCharge = 0;
       this.createOrder.Transporter = 0;
+      this.createOrder.InvoiceNo = '';
+      this.createOrder.BillingAddress = '';
+      this.createOrder.GSTNo = '';
+      this.createOrder.MembershipNo = '';
+      this.createOrder.TaxInvoice = false;
       this.createOrder.Company = 1;
       this.disablePayment = true;
       this.disableStatus = true;
@@ -112,21 +133,6 @@ export class CreateOrderComponent implements OnInit {
         if(results['Customer']) {
           this.customerList = results['Customer']
         }
-        // if(results['LeadList'].length == 0) {
-        //   this.allLeadsList = [];
-        //   this.noLeadFound = "No Lead Found";
-        //   this.refreshMessage = '';
-        // } else {
-        //   this.allLeadsList = results['LeadList'];
-        //   if(results['LeadList'].length > 0) {
-        //     this.cacheService.set("allLeadList", this.allLeadsList);
-        //     console.log(document.getElementById('searchvalue'));
-        //     if(sessionStorage.getItem('searchvalue')) {
-        //       this.leadTask.searchtext = sessionStorage.getItem('searchvalue');
-        //     }
-        //     this.cacheService.set("listFilterData", this.leadTask);
-        //   }
-        // }
       });
     }
     displayDeleteIcon() {
@@ -165,7 +171,7 @@ export class CreateOrderComponent implements OnInit {
     pushExtraSize() {
       for(let i=0; i< this.selectedProduct.length; i++) {
         const allsize = JSON.parse(JSON.stringify(this.allSize));
-        const availableSize = allsize.filter(x => x.PRODUCTID == this.selectedProduct[i].PRODUCTID);
+        const availableSize = allsize.filter(x => x.PRODUCTID == this.selectedProduct[i].PRODUCTID.PRODUCTID);
           for(let j=0; j< availableSize.length; j++) {
             let flag = true;
             for(let k=0; k< this.selectedProduct[i].ProductAvailableSize.length; k++) {
@@ -181,20 +187,23 @@ export class CreateOrderComponent implements OnInit {
 
         }
     }
-    onProductChange(item) {
+    onProductChange(e, row) {
       const allsize = JSON.parse(JSON.stringify(this.allSize));
-      const availableSize = allsize.filter(x => x.PRODUCTID == item.PRODUCTID);
+      const availableSize = allsize.filter(x => x.PRODUCTID == e.item.PRODUCTID);
       let sizeQuantity = [];
       if(this.selectedProduct.length > 0) {
         let len = 0;
         for(let i=0; i< this.selectedProduct.length; i++) {
-          if(this.selectedProduct[i].PRODUCTID == item.PRODUCTID) {
+          if(this.selectedProduct[i].PRODUCTID) {
+            if(this.selectedProduct[i].PRODUCTID.PRODUCTID == e.item.PRODUCTID) {
               len++;
+            }
           }
         }
-        if(len > 1) {
+        if(len > 0) {
           this.notification.error('error', 'Can not select same product again !!!');
-          item.PRODUCTID = 0;
+          e.item.PRODUCTID = '';
+          e.item.Product = '';
           return;
         }
       }
@@ -202,9 +211,9 @@ export class CreateOrderComponent implements OnInit {
         sizeQuantity.push({ProductId: availableSize[i].PRODUCTID,INVBalance: availableSize[i].INVBalance, name: availableSize[i].Size, SizeID: availableSize[i].SizeID , quantity: 0});
       }
       for(let i=0; i<this.allProducts.length; i++) {
-          if(this.allProducts[i].PRODUCTID == item.PRODUCTID) {
-            item.Rate = this.allProducts[i].Rate;
-            item.ProductAvailableSize = sizeQuantity;
+          if(this.allProducts[i].PRODUCTID == e.item.PRODUCTID) {
+            row.Rate = this.allProducts[i].Rate;
+            row.ProductAvailableSize = sizeQuantity;
           }
       } 
     }
@@ -287,6 +296,11 @@ export class CreateOrderComponent implements OnInit {
         this.createOrder.FreightCharge = allValues.FreightAmount;
         this.createOrder.Transporter = allValues.TransporterID;
         this.createOrder.Company = allValues.CompanyID;
+        this.createOrder.InvoiceNo = allValues.InvoiceNumber;
+        this.createOrder.BillingAddress = allValues.BillingAddress;
+        this.createOrder.GSTNo = allValues.GSTNO;
+        this.createOrder.MembershipNo = allValues.MembershipNo;
+        this.createOrder.TaxInvoice = allValues.IsTaxInvoice;
         this.createOrder.OrderDate = { year: +orderDateArray[2], month: +orderDateArray[0], day: +orderDateArray[1] };
         this.refreshDataHandler('typeChange');
       }
@@ -296,7 +310,7 @@ export class CreateOrderComponent implements OnInit {
         let j = 0;
         for(let i=0; i< allProductDetails.length; i++) {
           if(j == 0) {
-            this.selectedProduct.push({PRODUCTID: allProductDetails[i].ProductID,
+            this.selectedProduct.push({PRODUCTID: {PRODUCTID: allProductDetails[i].ProductID},
               ProductAvailableSize: [],
               Rate: allProductDetails[i].SP,
               Amount: 0,
@@ -305,8 +319,8 @@ export class CreateOrderComponent implements OnInit {
               alreadyStored: true})
               this.selectedProduct[j].ProductAvailableSize.push({PRODUCTID: allProductDetails[i].ProductID,name:allProductDetails[i].Size,INVBalance: allProductDetails[i].INVBalance,Size: allProductDetails[i].Size, SizeID: allProductDetails[i].SizeID,alreadySizeStored: true, quantity: allProductDetails[i].Quantity});
               j++;
-          } else if( j!= 0 && allProductDetails[i].ProductID != this.selectedProduct[j-1].PRODUCTID) {
-            this.selectedProduct.push({PRODUCTID: allProductDetails[i].ProductID,
+          } else if( j!= 0 && allProductDetails[i].ProductID != this.selectedProduct[j-1].PRODUCTID.PRODUCTID) {
+            this.selectedProduct.push({PRODUCTID: {PRODUCTID: allProductDetails[i].ProductID},
               ProductAvailableSize: [],
               Rate: allProductDetails[i].SP,
               Amount: 0,
@@ -315,7 +329,7 @@ export class CreateOrderComponent implements OnInit {
               alreadyStored: true})
               this.selectedProduct[j].ProductAvailableSize.push({PRODUCTID: allProductDetails[i].ProductID,name:allProductDetails[i].Size,INVBalance: allProductDetails[i].INVBalance,Size: allProductDetails[i].Size, SizeID: allProductDetails[i].SizeID,alreadySizeStored: true, quantity: allProductDetails[i].Quantity});
               j++;
-          } else if (j!= 0 && allProductDetails[i].ProductID == this.selectedProduct[j-1].PRODUCTID) {
+          } else if (j!= 0 && allProductDetails[i].ProductID == this.selectedProduct[j-1].PRODUCTID.PRODUCTID) {
             this.selectedProduct[j-1].ProductAvailableSize.push({PRODUCTID: allProductDetails[i].ProductID,name:allProductDetails[i].Size,INVBalance: allProductDetails[i].INVBalance,Size: allProductDetails[i].Size, SizeID: allProductDetails[i].SizeID,alreadySizeStored: true, quantity: allProductDetails[i].Quantity});
           }
         }
@@ -366,7 +380,7 @@ export class CreateOrderComponent implements OnInit {
     validateProducts() {
       let flag;
       for(let i=0; i< this.selectedProduct.length; i++) {
-        if(this.selectedProduct[i].PRODUCTID && this.selectedProduct[i].PRODUCTID !=0 ) {
+        if(this.selectedProduct[i].PRODUCTID && this.selectedProduct[i].PRODUCTID.PRODUCTID && this.selectedProduct[i].PRODUCTID.PRODUCTID !=0 ) {
           flag = true;
         } else {
           flag = false;
@@ -394,7 +408,7 @@ export class CreateOrderComponent implements OnInit {
         for(let j=0; j<this.selectedProduct[i].ProductAvailableSize.length; j++) {
           if(this.selectedProduct[i].ProductAvailableSize[j].quantity && this.selectedProduct[i].ProductAvailableSize[j].quantity != 0) {
             productDetails.push({
-              ProductID : this.selectedProduct[i].PRODUCTID,
+              ProductID : this.selectedProduct[i].PRODUCTID.PRODUCTID,
               SizeID: this.selectedProduct[i].ProductAvailableSize[j].SizeID,
               Quantity: this.selectedProduct[i].ProductAvailableSize[j].quantity,
               Rate: this.selectedProduct[i].Rate
@@ -416,6 +430,11 @@ export class CreateOrderComponent implements OnInit {
         "DispatchNo": this.createOrder.DispatchNo,
         "TransporterID": this.createOrder.Transporter ? this.createOrder.Transporter : 0,
         "FreightAmount": this.createOrder.FreightCharge,
+        "InvoiceNumber": this.createOrder.InvoiceNo ? this.createOrder.InvoiceNo : '',
+        "BillingAddress": this.createOrder.BillingAddress ? this.createOrder.BillingAddress : '',
+        "GSTNO": this.createOrder.GSTNo ? this.createOrder.GSTNo : '',
+        "MembershipNo": this.createOrder.MembershipNo ? this.createOrder.MembershipNo: '',
+        "IsTaxInvoice": this.createOrder.TaxInvoice,
         "CreatedBy": this.userID,
         "TotalAmount": this.finalAmount,
         "OrderDetail": productDetails
@@ -438,8 +457,17 @@ export class CreateOrderComponent implements OnInit {
               });
             }
           }
+          if(resp.Error[0].SMSAPI && resp.Error[0].SMSAPI !='') {
+            let textValue = encodeURI(resp.Error[0].SMSTEXT);
+            let messageUrl = resp.Error[0].SMSAPI.replace('MSGTEXT', textValue);
+            this.orderService.sendSMS(messageUrl).subscribe(res => {
+              console.log(res);
+            })
+          }
           this.notification.success('Success', resp.Error[0].Msg);
-          this.router.navigate(['pages/orders/list']);
+          setTimeout(()=> {
+            this.router.navigate(['pages/orders/list']);
+          },0);
         } else {
           this.notification.error('Error', resp.Error[0].Msg);
         }
@@ -517,6 +545,9 @@ export class CreateOrderComponent implements OnInit {
       if(item.Address) {
         this.searchKey = this.searchKey + `,${item.Address}`;
       }
-      this.createOrder.CustomerId = item.ID
+      this.createOrder.CustomerId = item.ID;
+      this.createOrder.BillingAddress = item.BillingAddress;
+      this.createOrder.GSTNo = item.GSTNO;
+      this.createOrder.MembershipNo = item.MembershipNo;
     }
 }

@@ -26,6 +26,7 @@ export class CreateLeadComponent implements OnInit {
   totalStatus = [];
   allStatus = [];
   allLeadSource = [];
+  allPriority = [];
   allCities = [];
   allState = [];
   allLeadTypes = [];
@@ -57,7 +58,7 @@ export class CreateLeadComponent implements OnInit {
       this.createLead.ShopName = '';
       this.createLead.LeadType = 0;
       this.createLead.LeadStatus = "L";
-      this.createLead.Priority = 2;
+      this.createLead.Priority = 0;
       this.createLead.PhoneNo = '';
       this.createLead.Quantity = '';
       this.createLead.Address = '';
@@ -90,6 +91,7 @@ export class CreateLeadComponent implements OnInit {
         this.allCustomer = lookUpData.Customer;
         this.totalStatus = JSON.parse(JSON.stringify(lookUpData.LeadStatus));
         this.allStatus = lookUpData.LeadStatus;
+        this.allPriority = lookUpData.Priority;
         this.allState = lookUpData.State;
         this.allLeadSource = lookUpData.LeadSource;
         this.totalCities = lookUpData.City;
@@ -208,7 +210,7 @@ export class CreateLeadComponent implements OnInit {
     validateData() {
       if(this.createLead.LeadType != 0 && this.createLead.LeadSourceId != 0 && this.createLead.LeadStatus != 0 
         && this.createLead.CustomerName != '' && this.createLead.PhoneNo != '' && this.createLead.Quantity >= 0
-        && this.createLead.Address != '' && this.createLead.State != 0) {
+        && this.createLead.Address != '' && this.createLead.State != 0 && this.createLead.Priority > 0) {
           return true;
         }
       return false;

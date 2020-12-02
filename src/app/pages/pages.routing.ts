@@ -17,6 +17,10 @@ export const routes: Routes = [
       { path: 'leads', loadChildren: './leads/leads.module#LeadsModule' },
       { path: 'orders', loadChildren: './orders/orders.module#OrdersModule' },
       { path: 'stock-management', loadChildren: './stock/stock.module#StockModule' },
+      { path: 'purchase-order', loadChildren: './purchase/purchase-order.module#PurchaseOrderModule' },
+      { path: 'cutting', loadChildren: './cutting/cutting.module#CuttingModule' },
+      { path: 'washing', loadChildren: './washing/washing.module#WashingModule' },
+      { path: 'costing', loadChildren: './costing/costing.module#CostingModule' },
     ]
   }
 ];

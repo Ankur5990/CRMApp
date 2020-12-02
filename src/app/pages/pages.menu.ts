@@ -49,6 +49,54 @@ export const PAGES_MENU = [
 				order: 0,
 			  },
 			},
+		},
+		{
+			path: 'purchase-order',
+			data: {
+			  menu: {
+				title: 'Purchase Order',
+				icon: 'ion-compose',
+				selected: false,
+				expanded: false,
+				order: 0,
+			  },
+			},
+		},
+		{
+			path: 'cutting',
+			data: {
+			  menu: {
+				title: 'Cutting',
+				icon: 'ion-compose',
+				selected: false,
+				expanded: false,
+				order: 0,
+			  },
+			},
+		},
+		{
+			path: 'washing',
+			data: {
+			  menu: {
+				title: 'Washing',
+				icon: 'ion-compose',
+				selected: false,
+				expanded: false,
+				order: 0,
+			  },
+			},
+		},
+		{
+			path: 'costing',
+			data: {
+			  menu: {
+				title: 'Costing',
+				icon: 'ion-compose',
+				selected: false,
+				expanded: false,
+				order: 0,
+			  },
+			},
 		}
     ]
   }

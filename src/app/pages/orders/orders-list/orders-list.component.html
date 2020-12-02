@@ -19,7 +19,7 @@
         <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="orderTask.searchorderby == 2">
             <label>Start Date</label>
             <div class="input-group">
-                <date-picker [(dateModel)]="orderTask.startDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+                <date-picker [(dateModel)]="orderTask.startDate" (Change)="refreshDataHandler()"></date-picker>
             </div>
         </div>
         <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="orderTask.searchorderby == 2">

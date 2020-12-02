@@ -1,0 +1,72 @@
+@import "../../../theme/sass/conf/conf.scss";
+
+.view-btn {
+    padding-top: 25px;
+    padding-left: 25px;
+}
+.createPOBtn {
+    padding: 10px 35px;
+    position: absolute;
+    right: -13px;
+    top: -3px;
+}
+.text-align-center {
+    text-align: center;
+}
+.printBtn {
+    padding: 10px 35px;
+    position: absolute;
+    right: 80px;
+    top: -3px;
+}
+.exportBtn {
+    padding: 10px 35px;
+    position: absolute;
+    right: 160px;
+    top: -3px;  
+}
+.text-align-left {
+    text-align: left;
+}
+
+.thVerticalAlign {
+    vertical-align: middle;
+  }
+
+table.purchase-list-table tbody tr td {
+    padding: 0px 5px !important;
+}
+
+table.purchase-list-table thead th {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+.createdOn {
+    width: 11%;
+}
+.PONumber {
+    width: 12%
+}
+.supplier {
+    width: 10%
+}
+.invoice-num {
+    width: 10%
+}
+.type {
+    width: 10%
+}
+.custom-tooltip-ion:hover .customTooltiptext {
+    visibility: visible;
+}
+input[type="radio"] {
+    margin-right: 3px;
+}
+.search-container {
+    padding-bottom: 12px;
+}
+.padding-eater {
+    padding-left: 15px;
+    padding-bottom: 10px;
+}

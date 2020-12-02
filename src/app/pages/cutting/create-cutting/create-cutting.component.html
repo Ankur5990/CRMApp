@@ -1,0 +1,96 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+    <div style="margin:auto;position:fixed;top:50%;left:50%;">
+        <img src="assets/crm/spinner.gif " width='25px'>
+    </div>
+</div>
+<ba-card cardTitle="{{cardTitle}}" id="newTicket" class="create-notification-screen">
+    <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-cutting' : 'backtocuttinglist'" (click)="goToListPage()">Back</button>
+    <button class="btn btn-danger buttonMargin btn-margin submit-create-cutting" *ngIf="!isViewOnly" (click)="submitCutting();">Submit</button>
+    <div class="row">
+        <div class="col-4">
+            <div class="form-group" *ngIf='CuttingID == 0'>
+                <label>Cutting Date <sup style="color:red;">*</sup></label>
+                <div>
+                    <date-picker [disabled]="isViewOnly" [(dateModel)]="createCutting.CuttingDate"></date-picker>
+                </div>
+            </div>
+            <div class="form-group" *ngIf='CuttingID != 0'>
+                <label>Cutting Date </label>
+                <input type='text' class="form-control" [disabled]="true" [(ngModel)]="displayDate">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Lot Number</label>
+                <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createCutting.LotNo">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Status </label>
+                <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createCutting.Status">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group" *ngIf="!detail">
+                <label>Fabric Sort <sup style="color:red;">*</sup></label>
+                <input name="fabricsort" [(ngModel)]="fabricKey" autocomplete="off" type="text" class="form-control" placeholder="Search Fabric" (keyup)="searchFabric$.next($event.target.value)">
+                <div class="search-container" *ngIf="showList">
+                    <div [hidden]="!showList" class="search-item" *ngFor="let c of fabricList" (click)="fabricSelected(c)">{{c.SortNO}}</div>
+                </div>
+            </div>
+            <div class="form-group" *ngIf="detail">
+                <label>Fabric Sort</label>
+                <input name="fabricvalue" [(ngModel)]="sortValue" type="text" [disabled] ="true" class="form-control">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Length</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createCutting.Length" (keyup)="calculateAverage()">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Width</label>
+                <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createCutting.Width">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Cutting Pcs <sup style="color:red;">*</sup></label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createCutting.CuttingPcs" (keyup)="calculateAverage()">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Sample Pcs</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createCutting.SamplePcs" (keyup)="calculateAverage()">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>No of Rolls</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createCutting.NoOfRoll">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Damage Pcs</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createCutting.DamagePcs">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Average</label>
+                <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createCutting.Average"/>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Remark</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createCutting.Remark">
+            </div>
+        </div>
+    </div>
+</ba-card>

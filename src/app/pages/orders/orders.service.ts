@@ -74,4 +74,7 @@ export class OrderService {
           map(res => res)
         )
   }
+  sendSMS(url) {
+   return this.http.get(url).pipe(map(res => res));
+  }
 }

@@ -1,0 +1,131 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+  <div style="margin:auto;position:fixed;top:50%;left:50%;">
+      <img src="assets/crm/spinner.gif " width='25px'>
+  </div>
+</div>
+
+<ba-card cardTitle="Cutting" class="smart-table-container" #cutting>
+    <div class="row">
+        <div class="col-12 search-container">
+            Search Cutting By: <input type="radio" name="type" [value]="1" [(ngModel)]="cuttingListTask.searchby" (change)="valueChange('phone')"/>Cutting <input type="radio" name="type" [value]="2" [(ngModel)]="cuttingListTask.searchby" (change)="valueChange('other')"/>Other filters
+        </div>
+    </div>
+    <div class="row" *ngIf="cuttingListTask.searchby == 1"> 
+        <div class="col-md-5 padding-eater">
+            <input name="cuttingnum" [(ngModel)]="searchCuttingKey" autocomplete="off" type="text" class="form-control" placeholder="Search Cutting" (keyup)="searchTerm$.next($event.target.value)">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="cuttingListTask.searchby == 2">
+            <label>Start Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="cuttingListTask.startDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="cuttingListTask.searchby == 2">
+            <label>End Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="cuttingListTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right view-btn" *ngIf="cuttingListTask.searchby == 2">
+            <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllCuttings()">View </button>
+        </div>
+        <div class="col-md-2 col-sm-12 createCuttingBtn">
+            <button [routerLink]="['../create']" class="btn btn-primary addCustBtn pull-right">
+                Create
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 printBtn">
+            <button (click)="printTable()" class="btn btn-primary addCustBtn pull-right" [disabled]="allCuttingList.length == 0">
+                Print
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 exportBtn">
+            <button (click)="exportToCSV()" class="btn btn-primary addCustBtn pull-right" [disabled]="allCuttingList.length == 0">
+                Export
+            </button>
+        </div>
+    </div>
+    <div class="table-container" style="overflow-x:auto;">
+        <table class="table table-striped table-condensed cutting-list-table" id="cutting-container">
+            <thead class="tableHeader">
+                <tr>
+                    <th class="table-id thVerticalAlign actionAlignCenter" style="width: 8%;">Actions</th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Lot No
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Sort No
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Length
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Quantity Issue
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Quantity Sample
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            No Of Rolls
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Quantity Damage
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Cutting Date
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Status
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr valign="middle" *ngFor="let item of allCuttingList let i=index">
+                    <td class="table-id">
+                        <a [routerLink]="['../view',item.CuttingID]">
+                            <i class="ion-eye custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">View</span>
+                            </i>
+                        </a>
+                        <a [routerLink]="['../edit',item.CuttingID]" *ngIf="item.IsEditable">
+                            <i class="ion-edit custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">Edit</span>
+                            </i>
+                        </a>
+                    </td>
+                    <td class='text-align-left lotnumber'>{{item.LotID}}</td>
+                    <td class='text-align-left sortNo'>{{item.SortNO}}</td>
+                    <td class='text-align-left length'>{{item.LengthMeter}}</td>
+                    <td class='text-align-left issue-qty'>{{item.QtyIssue}}</td>
+                    <td class='text-align-left issue-qty'>{{item.SampleQty}}</td>
+                    <td class='text-align-left issue-qty'>{{item.NoOfRoll || 'NA'}}</td>
+                    <td class='text-align-left issue-qty'>{{item.QtyDamage || 'NA'}}</td>
+                    <td class="text-align-left createdOn">{{item.CuttingDate}}</td>
+                    <td class="text-align-left status">{{item.Status}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="noCuttingFound == '' && allCuttingList.length == 0 && refreshMessage" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
+        <div *ngIf="noCuttingFound != '' && allCuttingList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noCuttingFound}}</div>
+    </div>
+</ba-card>

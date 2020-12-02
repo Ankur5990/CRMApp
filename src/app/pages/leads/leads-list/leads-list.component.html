@@ -32,9 +32,7 @@
             <label>Priority</label>
             <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="leadTask.Priority">
                 <option [value]="1">All Priority</option>
-                <option [value]="2">Low</option>
-                <option [value]="3">Medium</option>
-                <option [value]="4">High</option>
+                <option *ngFor='let priority of allPriority' [value]="priority.PriorityID">{{priority.PriorityDesc}}</option>
             </select>
         </div>
         <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="leadTask.searchby == 2">

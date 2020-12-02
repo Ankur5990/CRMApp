@@ -1,0 +1,113 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+    <div style="margin:auto;position:fixed;top:50%;left:50%;">
+        <img src="assets/crm/spinner.gif " width='25px'>
+    </div>
+</div>
+<ba-card cardTitle="{{cardTitle}}" id="newTicket">
+    <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-washing' : 'backtowashinglist'" (click)="goToListPage()">Back</button>
+    <button class="btn btn-danger buttonMargin btn-margin submit-create-washing" *ngIf="!isViewOnly" (click)="submitCutting();">Submit</button>
+    <div class="row">
+        <div class="col-4">
+            <div class="form-group" *ngIf="WashingID ==0">
+                <label>Washing Date <sup style="color:red;">*</sup></label>
+                <div>
+                    <date-picker [disabled]="isViewOnly" [(dateModel)]="createWashing.WashingDate"></date-picker>
+                </div>
+            </div>
+            <div class="form-group" *ngIf="WashingID !=0">
+                <label>Washing Date</label>
+                <input type='text' class="form-control" [disabled]="true" [(ngModel)]="displayDate">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Receive Date</label>
+                <div *ngIf="isEditOnly || isViewOnly">
+                    <date-picker [disabled]="isViewOnly" [(dateModel)]="createWashing.ReceiveDate"></date-picker>
+                </div>
+                <div *ngIf="!isEditOnly && !isViewOnly">
+                    <input type='text' class="form-control" [disabled]="true" placeholder="yyyy-mm-dd">
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-4">
+            <div class="form-group">
+                <label>Washing Days</label>
+                <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createWashing.WashingDay">
+            </div>
+        </div> -->
+        <div class="col-4">
+            <div class="form-group" *ngIf="!detail">
+                <label>Lot No <sup style="color:red;">*</sup></label>
+                <input name="lotnosort" [(ngModel)]="lotNoKey" autocomplete="off" type="text" class="form-control" placeholder="Search LotNo" (keyup)="searchLotNo$.next($event.target.value)">
+                <div class="search-container" [hidden]="!showList">
+                    <div [hidden]="!showList" class="search-item" *ngFor="let c of lotNoLists" (click)="lotNoSelected(c)">{{c.SortNO}}</div>
+                </div>
+            </div>
+            <div class="form-group" *ngIf="detail">
+                <label>Lot No</label>
+                <input name="lotnovalue" [(ngModel)]="lotNoValue" type="text" [disabled] ="true" class="form-control">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Washer <sup style="color:red;">*</sup></label>
+                <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createWashing.Washer">
+                    <option [value]="0">Select Washer</option>
+                    <option *ngFor='let washer of allWasher' [value]="washer.WasherID">{{washer.Washer}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Washing Type <sup style="color:red;">*</sup></label>
+                <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createWashing.WashingType">
+                    <option [value]="0">Select Washing Type</option>
+                    <option *ngFor='let type of allWashingType' [value]="type.WashingTypeID">{{type.WashingType}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Status </label>
+                <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createWashing.Status">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Washing Quantity <sup style="color:red;">*</sup></label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" (keyup)="changeQuantity()" [(ngModel)]="createWashing.WashingQty">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Receive Quantity</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly || (!isEditOnly)" (keyup)="changeQuantity()" [(ngModel)]="createWashing.ReceiveQty">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Rewash Quantity</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly || (!isEditOnly)" (keyup)="changeQuantity()" [(ngModel)]="createWashing.DamageQty">
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label>Balance</label>
+                <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createWashing.BalanceQty">
+            </div>
+        </div>
+        <!-- <div class="col-4">
+            <div class="form-group">
+                <label>No of days</label>
+                <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createWashing.NoOfDays">
+            </div>
+        </div> -->
+        <div class="col-4">
+            <div class="form-group">
+                <label>Remark</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createWashing.Remark">
+            </div>
+        </div>
+    </div>
+</ba-card>
