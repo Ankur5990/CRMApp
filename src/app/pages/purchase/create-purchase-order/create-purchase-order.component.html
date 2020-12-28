@@ -73,6 +73,8 @@
                                 </th>
                                 <th class="textAlignCenter width12" *ngIf="itemCode == 'FAB'">Length (Meter)</th>
                                 <th class="textAlignCenter width12" *ngIf="itemCode == 'FAB'">Width (Meter)</th>
+                                <th class="textAlignCenter width12" *ngIf="itemCode != 'FAB'">Bill Quantity</th>
+                                <th class="textAlignCenter width12" *ngIf="itemCode == 'FAB'">Bill Length</th>
                                 <th class="textAlignCenter width12">Rate <sup style="color:red;">*</sup></th>
                                 <th class="textAlignCenter">Action</th>
                             </thead>
@@ -95,6 +97,12 @@
                                     </td>
                                     <td class="textAlignCenter" *ngIf="itemCode == 'FAB'">
                                         <input class="input-width form-control" type="text" [(ngModel)]="item.WidthMeter" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter" *ngIf="itemCode != 'FAB'">
+                                        <input class="input-width form-control" type="text" [(ngModel)]="item.BillQuantity" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter" *ngIf="itemCode == 'FAB'">
+                                        <input class="input-width form-control" type="text" [(ngModel)]="item.BillLengthMeter" [disabled]="isViewOnly"/>
                                     </td>
                                     <td class="textAlignCenter">
                                         <input class="input-width form-control" type="text" [(ngModel)]="item.Rate" (focus)="removeZero(item, 'price')" (focusout)="addZero(item, 'price')" [disabled]="isViewOnly"/>

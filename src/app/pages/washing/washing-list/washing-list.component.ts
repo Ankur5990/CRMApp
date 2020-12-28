@@ -154,6 +154,7 @@ export class WashingListComponent implements OnInit {
         QtyIssue: washingInfo.QtyIssue,
         QtyReceive: washingInfo.QtyReceive,
         QtyDamage: washingInfo.QtyDamage,
+        Amount: washingInfo.Amount,
         UserName: washingInfo.UserName,
         WashingDate: washingInfo.WashingDate,
         ReceiveDate: washingInfo.ReceiveDate,
@@ -162,8 +163,8 @@ export class WashingListComponent implements OnInit {
       });
     });
 
-    const options = { 
-      headers: ['Lot Number', 'Washer', 'Washing Type','Issue Quantity','Receive Quantity', 'Damage Quantity', 'User Name','City', 'Washing Date', 'Receive Date','Status', 'Remark'],
+    const options = {
+      headers: ['Lot Number', 'Washer', 'Washing Type','Issue Quantity','Receive Quantity', 'Rewash Quantity','Amount', 'User Name', 'Washing Date', 'Receive Date','Status', 'Remark'],
       nullToEmptyString: true,
     };
     new ngxCsv(report, 'Washing-List', options);
@@ -356,4 +357,5 @@ export class WashingListComponent implements OnInit {
       this.notification.error('Error', 'Facing Issue while print !!!');
     })
   }
+  // <div>Amount: ${this.printHeaderInfo.Amount}</div>
 }

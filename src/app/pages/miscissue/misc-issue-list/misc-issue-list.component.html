@@ -1,0 +1,151 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+  <div style="margin:auto;position:fixed;top:50%;left:50%;">
+      <img src="assets/crm/spinner.gif " width='25px'>
+  </div>
+</div>
+
+<ba-card cardTitle="Misc Issue" class="smart-table-container" #issue>
+    <div class="row">
+        <div class="col-12 search-container">
+            Search Issue By: <input type="radio" name="type" [value]="1" [(ngModel)]="issueListTask.searchThrough" (change)="valueChange('issue')"/>Issue Number <input type="radio" name="type" [value]="2" [(ngModel)]="issueListTask.searchThrough" (change)="valueChange('other')"/>Other filters
+        </div>
+    </div>
+    <div class="row" *ngIf="issueListTask.searchThrough == 1"> 
+        <div class="col-md-5 padding-eater">
+            <input name="issuenum" [(ngModel)]="searchIssueKey" autocomplete="off" type="text" class="form-control" placeholder="Search Issue" (keyup)="searchIssueTerm$.next($event.target.value)">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="issueListTask.searchThrough == 2">
+            <label>Start Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="issueListTask.startDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="issueListTask.searchThrough == 2">
+            <label>End Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="issueListTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="issueListTask.searchThrough == 2">
+            <label>Issue Type</label>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="issueListTask.IssueType">
+                <option [value]="0">All Issue Type</option>
+                <option [value]="1">Lot</option>
+                <option [value]="2">Purchase</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="issueListTask.searchThrough == 2">
+            <label>Vendor</label>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="issueListTask.Vendor">
+                <option [value]="1">All Vendors</option>
+                <option *ngFor='let vendor of allVendor' [value]="vendor.VendorID">{{vendor.Vendor}}</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right view-btn" *ngIf="issueListTask.searchThrough == 2">
+            <button class="btn btn-primary" (click)="getAllMiscIssue()">View </button>
+        </div>
+        <div class="col-md-2 col-sm-12 createPOBtn">
+            <button [routerLink]="['../create']" class="btn btn-primary addCustBtn pull-right">
+                Create
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 printBtn">
+            <button (click)="printTable()" class="btn btn-primary addCustBtn pull-right" [disabled]="allIssueList.length == 0">
+                Print
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 exportBtn">
+            <button (click)="exportToCSV()" class="btn btn-primary addCustBtn pull-right" [disabled]="allIssueList.length == 0">
+                Export
+            </button>
+        </div>
+    </div>
+    <div class="table-container" style="overflow-x:auto;">
+        <table class="table table-striped table-condensed purchase-list-table" id="issue-container">
+            <thead class="tableHeader">
+                <tr>
+                    <th class="table-id thVerticalAlign actionAlignCenter" style="width: 8%;">Actions</th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Misc Issue No
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Lot No
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            PO Number
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Issue Type
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Vendor
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Remark
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Is Return
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Misc Issue Date
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Receive Date
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr valign="middle" *ngFor="let item of allIssueList let i=index">
+                    <td class="table-id">
+                        <i class="ion-ios-book custom-tooltip-ion" 
+                        (click)="printCashData(item.MiscIssueID)" style="margin-right: 5px">
+                            <span class="tooltiptext">Print Invoice</span>
+                        </i>
+                        <a [routerLink]="['../view',item.MiscIssueID]">
+                            <i class="ion-eye custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">View</span>
+                            </i>
+                        </a>
+                        <!-- *ngIf="item.IsEdit == 1" -->
+                        <a [routerLink]="['../edit',item.MiscIssueID]" *ngIf="item.IsEdit == 1">
+                            <i class="ion-edit custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">Edit</span>
+                            </i>
+                        </a>
+                    </td>
+                    <td class='text-align-left PONumber'>{{item.MiscIssueNo}}</td>
+                    <td class='text-align-left lot-no'>{{item.LOTID}}</td>
+                    <td class='text-align-left po-type'>{{item.PONumber}}</td>
+                    <td class='text-align-left lot-no'>{{item.IssueTypeID == 1 ? 'Lot' : 'Purchase'}}</td>
+                    <td class='text-align-left type' [title]="item.Vendor">{{item.Vendor}}</td>
+                    <td class='text-align-left type' [title]="item.Remark">{{item.Remark}}</td>
+                    <td class='text-align-left return'>{{item.IsReturn}}</td>
+                    <td class="text-align-left createdOn">{{item.MiscIssueDate}}</td>
+                    <td class="text-align-left createdOn">{{item.ReceiveDate}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="noIssueFound == '' && allIssueList.length == 0 && refreshMessage" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
+        <div *ngIf="noIssueFound != '' && allIssueList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noIssueFound}}</div>
+    </div>
+</ba-card>

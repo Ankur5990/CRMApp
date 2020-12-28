@@ -42,10 +42,10 @@ table.washing-list-table thead th {
     padding-right: 5px !important;
 }
 .createdOn {
-    width: 11%;
+    width: 9%;
 }
 .lotNumber {
-    width: 10%
+    width: 6%
 }
 .quantity {
     width: 9%
@@ -53,8 +53,14 @@ table.washing-list-table thead th {
 .status {
     width: 10%
 }
+.washer {
+    width: 10%;
+}
 .type {
-    width: 10%
+    width: 9%
+}
+.amount {
+    width: 7%;
 }
 .custom-tooltip-ion:hover .customTooltiptext {
     visibility: visible;

@@ -97,6 +97,18 @@ export const PAGES_MENU = [
 				order: 0,
 			  },
 			},
+		},
+		{
+			path: 'issue',
+			data: {
+			  menu: {
+				title: 'Misc Issue',
+				icon: 'ion-compose',
+				selected: false,
+				expanded: false,
+				order: 0,
+			  },
+			},
 		}
     ]
   }

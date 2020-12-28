@@ -95,7 +95,12 @@
                     </th>
                     <th class="thVerticalAlign text-align-left">
                         <span>
-                            Damage Quantity
+                            Rewash Quantity
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Amount
                         </span>
                     </th>
                     <th class="thVerticalAlign text-align-left">
@@ -134,11 +139,12 @@
                         </a>
                     </td>
                     <td class='text-align-left lotNumber'>{{item.LotID}}</td>
-                    <td class='text-align-left type'>{{item.Washer}}</td>
+                    <td class='text-align-left washer'>{{item.Washer}}</td>
                     <td class='text-align-left type'>{{item.WashingType}}</td>
                     <td class='text-align-left quantity'>{{item.QtyIssue || 'NA'}}</td>
                     <td class='text-align-left quantity'>{{item.QtyReceive || 'NA'}}</td>
                     <td class='text-align-left quantity'>{{item.QtyDamage || 'NA'}}</td>
+                    <td class='text-align-left amount'>{{item.Amount || 'NA'}}</td>
                     <td class="text-align-left createdOn">{{item.WashingDate}}</td>
                     <td class="text-align-left createdOn">{{item.ReceiveDate || 'NA'}}</td>
                     <td class="text-align-left status">{{item.Status || 'NA'}}</td>

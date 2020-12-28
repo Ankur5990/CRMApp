@@ -55,6 +55,7 @@ export class CreateWashingComponent implements OnInit {
       this.createWashing.Remark = '';
       this.createWashing.LotID = 0;
       this.createWashing.BalanceQty = 0;
+      this.createWashing.Amount = '';
       this.createWashing.Status = 'Washing Issue';
       this.getMasterData();
       const activatedRouteObject = this.activatedRoute.snapshot.data;
@@ -124,6 +125,7 @@ export class CreateWashingComponent implements OnInit {
         this.createWashing.Status = allValues.Status;
         this.createWashing.Washer = allValues.WasherID;
         this.createWashing.WashingType = allValues.WashingTypeID;
+        this.createWashing.Amount = allValues.Amount;
         this.calculateBalance();
       }
     }
@@ -173,6 +175,7 @@ export class CreateWashingComponent implements OnInit {
         "QtyReceive": this.createWashing.ReceiveQty,
         "QtyDamage": this.createWashing.DamageQty,
         "Remark": this.createWashing.Remark,
+        "Amount": this.createWashing.Amount,
         "UserID": this.userID,
       }
       this.showLoader = true;

@@ -211,12 +211,14 @@ export class OrdersListComponent implements OnInit {
         PaymentMode: orderInfo.PaymentMode,
         Transporter: orderInfo.Transporter,
         DispatchNo: orderInfo.DispatchNo,
+        InvoiceNumber: orderInfo.InvoiceNumber,
+        Quantity: orderInfo.Quantity,
         OrderStatus: orderInfo.OrderStatus,
       });
     });
 
     const options = { 
-      headers: ['Order Date','Lead Number','Order Number','Order Type', 'Customer Name','Total Amount','Discount(%)','Freight Amount', 'Payment Mode', 'Transporter', 'Dispatch No', 'Order Status'], 
+      headers: ['Order Date','Lead Number','Order Number','Order Type', 'Customer Name','Total Amount','Discount(%)','Freight Amount', 'Payment Mode', 'Transporter', 'Dispatch No', 'Invoice Number', 'Quantity', 'Order Status'], 
       nullToEmptyString: true,
     };
     new ngxCsv(report, 'Order-List', options);
@@ -265,13 +267,17 @@ export class OrdersListComponent implements OnInit {
             <div class="order-no-value">: ${this.printHeaderInfo.GSTNO ? this.printHeaderInfo.GSTNO : 'N/A'}</div>
           </div>
           <div class="order-item">
-          <div class="order-no-lbl">Transporter</div>
-          <div class="order-no-value">: ${this.printHeaderInfo.Transporter ? this.printHeaderInfo.Transporter : 'N/A'}</div>
-        </div>
-        <div class="order-item">
-          <div class="order-no-lbl">Shop Name</div>
-          <div class="order-no-value">: ${this.printHeaderInfo.Shop ? this.printHeaderInfo.Shop : 'N/A'}</div>
-        </div>
+            <div class="order-no-lbl">Transporter</div>
+            <div class="order-no-value">: ${this.printHeaderInfo.Transporter ? this.printHeaderInfo.Transporter : 'N/A'}</div>
+          </div>
+          <div class="order-item">
+            <div class="order-no-lbl">Shop Name</div>
+            <div class="order-no-value">: ${this.printHeaderInfo.Shop ? this.printHeaderInfo.Shop : 'N/A'}</div>
+          </div>
+          <div class="order-item">
+            <div class="order-no-lbl">Lead Type</div>
+            <div class="order-no-value">: ${this.printHeaderInfo.LeadType ? this.printHeaderInfo.LeadType : 'N/A'}</div>
+          </div>
         </div>
         <div class="Billing-section">
           <div class="billed-to-text">Billed to:</div>
@@ -292,12 +298,12 @@ export class OrdersListComponent implements OnInit {
               <div class="col-sm-10" style="overflow-x:auto;" id="cashContainer">
                   <table cellpadding="5" border=1 style="border-collapse: collapse;" width="100%">
                       <thead class="tableHeader">
-                          <th>SN</th>
-                          <th>Description of Goods</th>
-                          <th>Quantity</th>
-                          <th>Unit</th>
-                          <th>Price</th>
-                          <th>Amount</th>
+                        <th>SN</th>
+                        <th>Description of Goods</th>
+                        <th>Quantity</th>
+                        <th>Unit</th>
+                        <th>Price</th>
+                        <th>Amount</th>
                       </thead>
                       <tbody>
                         ${this.getTableRows(this.printDetailInfo)}
@@ -329,7 +335,7 @@ export class OrdersListComponent implements OnInit {
                 <div>E.& O.E.</div>
                 <div>1. Goods once sold will not be taken back</div>
                 <div>2. Interest @ 18% p.a. will be charged if the payment is not made with in the stipulated time.</div>
-                <div>3. Sunject to 'Delhi' Jurisdiction only.</div>
+                <div>3. Subject to 'Gurugram' Jurisdiction only.</div>
               </div>
               <div class="receiver-info">
                 <div class="receiver-sign">Receiver's Signature :</div>

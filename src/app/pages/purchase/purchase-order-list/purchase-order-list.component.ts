@@ -156,7 +156,7 @@ export class PurchaseOrderListComponent implements OnInit {
     });
 
     const options = { 
-      headers: ['PO Number', 'Item Type', 'Supplier','Priority','Ref Invoice Number', 'Purchase Date', 'User Name'], 
+      headers: ['PO Number', 'Item Type', 'Supplier','Ref Invoice Number', 'Purchase Date', 'User Name'], 
       nullToEmptyString: true,
     };
     new ngxCsv(report, 'Purchase-List', options);

@@ -122,7 +122,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
             break;
           }
         }
-        this.selectedProduct.push({ItemID: 0,SortNO: '',Quantity: 0,LengthMeter: '',WidthMeter: '',Rate: 0});
+        this.selectedProduct.push({ItemID: 0,SortNO: '',Quantity: 0,LengthMeter: '',WidthMeter: '', BillQuantity:'',BillLengthMeter:'',Rate: 0});
         this.filterItems();
       } else {
         this.selectedProduct = [];
@@ -131,7 +131,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
       }
     }
     addItemRow() {
-      this.selectedProduct.push({ItemID: 0,SortNO: '',Quantity: 0,LengthMeter: '',WidthMeter: '',Rate: 0});
+      this.selectedProduct.push({ItemID: 0,SortNO: '',Quantity: 0,LengthMeter: '',WidthMeter: '', BillQuantity:'',BillLengthMeter:'',Rate: 0});
     }
     onItemChange(item) {
       // let len = 0;
@@ -151,6 +151,8 @@ export class CreatePurchaseOrderComponent implements OnInit {
       item.Rate = 0;
       item.LengthMeter = '';
       item.WidthMeter = '';
+      item.BillQuantity = '';
+      item.BillLengthMeter = '';
     }
     filterItems() {
       const allItems = JSON.parse(JSON.stringify(this.allItems));
@@ -199,7 +201,7 @@ export class CreatePurchaseOrderComponent implements OnInit {
         this.showLoader = false;
         const response = JSON.parse(JSON.stringify(res));
         if(response.Error && response.Error[0].ERROR == 0) {
-          if (this.cacheService.has("allLeadList")) {
+          if (this.cacheService.has("allPurchaseList")) {
             this.cacheService.set("redirectAfterOrderSave", 'saved');
             if (this.cacheService.has("listPurchaseFilterData")) {
               this.cacheService.get("listPurchaseFilterData").subscribe((res) => {

@@ -21,6 +21,7 @@ export const routes: Routes = [
       { path: 'cutting', loadChildren: './cutting/cutting.module#CuttingModule' },
       { path: 'washing', loadChildren: './washing/washing.module#WashingModule' },
       { path: 'costing', loadChildren: './costing/costing.module#CostingModule' },
+      { path: 'issue', loadChildren: './miscissue/misc-issue.module#MiscIssueModule' },
     ]
   }
 ];

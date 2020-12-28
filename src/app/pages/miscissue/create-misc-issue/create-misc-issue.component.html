@@ -1,0 +1,138 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+    <div style="margin:auto;position:fixed;top:50%;left:50%;">
+        <img src="assets/crm/spinner.gif " width='25px'>
+    </div>
+</div>
+<ba-card cardTitle="{{cardTitle}}" id="newTicket" class="create-notification-screen">
+    <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-notification' : 'backtonotification'" (click)="goToListPage()">Back</button>
+    <button class="btn btn-danger buttonMargin btn-margin submit-create-notification" *ngIf="!isViewOnly" (click)="submitMiscIssue();">Submit</button>
+        <div class="row">
+            <div class="col-4">
+                <div class="form-group">
+                    <label>Misc Issue Date <sup style="color:red;">*</sup></label>
+                    <div>
+                        <date-picker [disabled]="isViewOnly" [(dateModel)]="createIssue.IssueDate"></date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label>Receive Date</label>
+                    <div>
+                        <date-picker [disabled]="isViewOnly" [(dateModel)]="createIssue.ReceiveDate"></date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label>Issue Type <sup style="color:red;">*</sup></label>
+                    <select class="form-control" [disabled]="isViewOnly || isEditOnly" [(ngModel)]="createIssue.IssueType">
+                        <option [value]="0">Select Issue Type</option>
+                        <option [value]="1">Lot</option>
+                        <option [value]="2">Purchase</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group" *ngIf="!detail">
+                    <label>Lot No</label>
+                    <input name="lotno" [(ngModel)]="LotNoKey" autocomplete="off" type="text" class="form-control" placeholder="Search Lot No" (keyup)="searchLotNo$.next($event.target.value)">
+                    <div class="search-container" *ngIf="showList">
+                        <div [hidden]="!showList" class="search-item" *ngFor="let l of allLotsList" (click)="lotNoSelected(l)">{{l.SortNO}}</div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="detail">
+                    <label>Lot No</label>
+                    <input name="lotnovalue" [(ngModel)]="lotNoValue" type="text" [disabled] ="true" class="form-control">
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group" *ngIf="!detail">
+                    <label>Purchase No</label>
+                    <input name="purchaseno" [(ngModel)]="PurchaseKey" autocomplete="off" type="text" class="form-control" placeholder="Search Purchase" (keyup)="searchPurchaseNo$.next($event.target.value)">
+                    <div class="search-container" *ngIf="showPurchaseList">
+                        <div [hidden]="!showPurchaseList" class="search-item" *ngFor="let purchase of allPurchaseList" (click)="PurchaseSelected(purchase)">{{purchase.PONumber}}</div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="detail">
+                    <label>Purchase No</label>
+                    <input name="lotnovalue" [(ngModel)]="PurchaseValue" type="text" [disabled] ="true" class="form-control">
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label>Vendor <sup style="color:red;">*</sup></label>
+                    <select class="form-control" [disabled]="isViewOnly || isEditOnly" [(ngModel)]="createIssue.Vendor">
+                        <option [value]="0">Select Vendor</option>
+                        <option *ngFor='let ven of allVendors' [value]="ven.VendorID">{{ven.Vendor}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label>Remark</label>
+                    <!--(focus)="removeZero(createIssue.RefInvoiceNumber, 'ref')" (focusout)="addZero(createIssue.RefInvoiceNumber, 'ref')"-->
+                    <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createIssue.Remark"/>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label>Is Return</label>
+                    <input type='checkbox' class='form-control' style="margin-top: 5px; zoom: 1.5" [disabled]="isViewOnly" [(ngModel)]="createIssue.IsReturn">
+                </div>
+            </div>
+        </div>
+        <div>
+            <fieldset>
+                <legend>Select Item</legend>
+                <div class="row">
+                    <div class="col-sm-9">
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-danger btn-placement" (click)="addItemRow()" [disabled]="isViewOnly" >Add Item</button>
+                    </div>
+                    <div class="col-sm-12">
+                        <table class="table table-condensed">
+                            <thead class="mttableHeader">
+                                <th>Item <sup style="color:red;">*</sup></th>
+                                <th class="textAlignCenter width13">Issue Quantity <sup style="color:red;">*</sup></th>
+                                <th class="textAlignCenter width13">Receive Quantity</th>
+                                <th class="textAlignCenter width13">Rate <sup style="color:red;">*</sup></th>
+                                <th class="textAlignCenter">Action</th>
+                            </thead>
+                            <tbody> 
+                                <tr *ngFor="let item of selectedProduct;let i = index">
+                                    <td id="prodDSD">
+                                        <select class="form-control prodListElement" name="product" (change)="onItemChange(item, i)" [(ngModel)]="item.ItemID" [disabled]="isViewOnly || item.MiscIssueDetailID" >
+                                            <option value="0">Select Item</option>
+                                            <option *ngFor="let product of allItems" [value]="product.ItemID">{{product.Item}}</option>
+                                        </select>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <input class="input-width form-control" type="text" [(ngModel)]="item.IssueQuantity" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <input class="input-width form-control" type="text" [(ngModel)]="item.ReceiveQuantity" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <!--(focus)="removeZero(item, 'price')" (focusout)="addZero(item, 'price')"-->
+                                        <input class="input-width form-control" type="text" [(ngModel)]="item.Rate" [disabled]="isViewOnly"/>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <i class="ion-trash-a" *ngIf="selectedProduct.length > 1 && !isViewOnly" (click)="onDelete(i)"></i>
+                                    </td>
+                                </tr>
+                                <!-- <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="textAlignRight"><b>Total Amount</b></td>
+                                    <td class="textAlignCenter"><b>{{finalAmount  | number : '1.2-2'}}</b></td>
+                                    <td></td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+</ba-card>
