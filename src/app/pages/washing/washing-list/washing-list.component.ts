@@ -246,6 +246,7 @@ export class WashingListComponent implements OnInit {
         </div>
         <div class="col-sm-10" style="overflow-x:auto;" id="cashContainer">
           <div>Washing Quantity: ${this.printHeaderInfo.QtyIssue}</div>
+          <div>Amount: ${this.printHeaderInfo.Amount}</div>
           <div>Remark: ${this.printHeaderInfo.Remark}</div>
         </div>
         <div class="footer-text">
