@@ -11,7 +11,7 @@
             <div class="col-6">
                 <div class="form-group">
                     <label>Lead Date <sup style="color:red;">*</sup></label>
-                    <div class="form-control">
+                    <div>
                         <date-picker [minDate]="todaysDate" [disabled]="isViewOnly" [(dateModel)]="createLead.LeadDate"></date-picker>
                     </div>
                 </div>
@@ -19,7 +19,7 @@
             <div class="col-6">
                 <div class="form-group">
                     <label>Follow Up Date</label>
-                    <div class="form-control">
+                    <div>
                         <date-picker [minDate]="todaysDate" [(dateModel)]="createLead.FollowUpDate" (dateModelChange)="followUpChangeHandler()" [disabled]="isViewOnly"></date-picker>
                     </div>
                 </div>
