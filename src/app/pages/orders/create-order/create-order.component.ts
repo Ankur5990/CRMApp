@@ -442,7 +442,12 @@ export class CreateOrderComponent implements OnInit {
           }
         }
       }
-      const statusResult = this.allStatus.find(x=> x.Code == this.createOrder.OrderStatus);
+      let statusResult;
+      if(action == 'approve') {
+        statusResult = this.allStatus.find(x=> x.Code == 'PD');
+      } else  {
+        statusResult = this.allStatus.find(x=> x.Code == this.createOrder.OrderStatus);
+      }
       let postData = {
         "Action": action,
         "OrderID": this.OrderID,
