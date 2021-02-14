@@ -21,7 +21,6 @@ export class CostingListComponent implements OnInit {
   buttonAction = false;
   allCostingList = [];
   allProductType = [];
-  allFitType = [];
   noCostingFound = '';
   refreshMessage = "Please click View button to get latest data";
   showLoader = false;
@@ -128,7 +127,6 @@ export class CostingListComponent implements OnInit {
       this.showLoader = false;
       let lookUpData = JSON.parse(JSON.stringify(res));
       this.allProductType = lookUpData.ProductType;
-      this.allFitType = lookUpData.FIT;
     },(error)=> {
       this.showLoader = false;
       this.notification.error('Error','Error While Lookup Master Data');
@@ -148,7 +146,6 @@ export class CostingListComponent implements OnInit {
       report.push({
         LotID: costingInfo.LotID,
         ProductType: costingInfo.ProductType,
-        FitType: costingInfo.FitType,
         FabricCost: costingInfo.FabricCost,
         TailorCost: costingInfo.TailorCost,
         ExtraTailorCost: costingInfo.ExtraTailorCost,
@@ -167,7 +164,7 @@ export class CostingListComponent implements OnInit {
     });
 
     const options = { 
-      headers: ['Lot No', 'Product Type', 'Fit Type','Fabric Cost','Fabric Cost','Tailor Cost','Extra Tailor Cost','Thread Cost','Lining Cost','Trims Cost','ZIP Cost','Finishing Cost','Overheads Cost','Extra Cost','GST Percentage', 'User Name', 'Costing Date','Status'], 
+      headers: ['Lot No', 'Product Type','Fabric Cost','Fabric Cost','Tailor Cost','Extra Tailor Cost','Thread Cost','Lining Cost','Trims Cost','ZIP Cost','Finishing Cost','Overheads Cost','Extra Cost','GST Percentage', 'User Name', 'Costing Date','Status'], 
       nullToEmptyString: true,
     };
     new ngxCsv(report, 'Costing-List', options);
@@ -182,7 +179,7 @@ export class CostingListComponent implements OnInit {
   }
 
   validateData() {
-    if (this.costingListTask.ProductType != 0 && this.costingListTask.FitType !=0) {
+    if (this.costingListTask.ProductType != 0) {
       this.buttonAction = true;
       return true;
     } else {

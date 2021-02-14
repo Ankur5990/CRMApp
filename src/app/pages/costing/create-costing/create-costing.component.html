@@ -40,7 +40,7 @@
             <div class="col-3">
                 <div class="form-group">
                     <label>Fit Type <sup style="color:red;">*</sup></label>
-                    <select class="form-control" [disabled]="isViewOnly || detail" [(ngModel)]="createCosting.FitType">
+                    <select class="form-control" [disabled]="true" [(ngModel)]="createCosting.FitType">
                         <option [value]="0">Select Fit Type</option>
                         <option *ngFor='let fit of allFitType' [value]="fit.FitID">{{fit.Fit}}</option>
                     </select>

@@ -41,10 +41,13 @@ export class CreateOrderComponent implements OnInit {
   totalAmount = 0;
   finalAmount = 0;
   showDelete = false;
-  disablePayment = false;
-  disableStatus = false;
-  disableOthers = false;
-  showOtherCustomer = false;
+  disablePayment: Boolean = false;
+  disableStatus: Boolean = false;
+  disableOthers: Boolean = false;
+  disableAmount: Boolean = false;
+  IsApprove: Boolean = false;
+  disableTransporter: Boolean = false;
+  showOtherCustomer: Boolean = false;
   statusId;
   customerNameWithAddress = '';
   notHavingSize = false;
@@ -98,8 +101,14 @@ export class CreateOrderComponent implements OnInit {
       this.createOrder.MembershipNo = '';
       this.createOrder.TaxInvoice = false;
       this.createOrder.Company = 1;
+      this.createOrder.CashAmount = '';
+      this.createOrder.ChequeAmount = '';
+      this.createOrder.OtherAmount = '';
+      this.createOrder.Remark = '';
       this.disablePayment = true;
       this.disableStatus = true;
+      this.disableAmount = true;
+      this.disableTransporter = true;
       this.getMasterData();
       this.getAllProducts();
       const id = this.activatedRoute.snapshot.queryParams.id;
@@ -280,14 +289,24 @@ export class CreateOrderComponent implements OnInit {
         let orderDateArray = allValues.OrderDate.split('/');
         this.createOrder.OrderType = allValues.OrderTypeID;
         this.createOrder.OrderStatus = allValues.OrderStatusCode;
+        this.IsApprove = allValues.IsApprove;
         if(allValues.OrderStatusCode == 'PD') {
           this.showOtherCustomer = true;
+          this.disableTransporter = false;
           this.disablePayment = true;
           this.disableOthers = true;
+        }
+        if(allValues.OrderStatusCode == 'PPA') {
+          this.disablePayment = true;
+          this.disableAmount = false;
         }
         if(allValues.OrderStatusCode == 'PP' && this.isEditOnly == true) {
           this.enableVoidOrder = true;
         }
+        this.createOrder.CashAmount = allValues.CashAmount;
+        this.createOrder.ChequeAmount = allValues.CheckAmount;
+        this.createOrder.OtherAmount = allValues.OtherAmount;
+        this.createOrder.Remark = allValues.Remark;
         this.customerNameWithAddress = `${allValues.CustomerName}, ${allValues.Address}`;
         this.createOrder.PaymentId = allValues.PaymentModeID;
         this.createOrder.CustomerId = allValues.LeadID == 0 ? allValues.CustomerID : allValues.LeadID;
@@ -356,16 +375,23 @@ export class CreateOrderComponent implements OnInit {
         this.showList = false;
         this.customerList = [];
         sessionStorage.setItem('type', this.createOrder.OrderType);
-      }
-      if(byType=="paymentMode" || byType=="transporter") {
-        if(this.createOrder.PaymentId > 0 && this.createOrder.Transporter == 0) {
-          this.createOrder.OrderStatus = "PD";
-          this.createOrder.DispatchNo = '';
-        } else if(this.createOrder.PaymentId > 0 && this.createOrder.Transporter > 0) {
-          this.createOrder.OrderStatus = "C";
+      } else if(byType =="paymentMode") {
+        if(this.createOrder.PaymentId > 0) {
+          this.disableAmount = false;
+          this.createOrder.OrderStatus = "PPA";
         } else if(this.createOrder.PaymentId == 0) {
           this.createOrder.OrderStatus = "PP";
-          this.createOrder.Transporter = 0;
+          this.disableAmount = true;
+          this.createOrder.CashAmount = '';
+          this.createOrder.ChequeAmount = '';
+          this.createOrder.OtherAmount = '';
+        }
+      } else if(byType == "transporter") {
+        if(this.createOrder.Transporter > 0) {
+          this.createOrder.OrderStatus = "C";
+        } else {
+          this.createOrder.OrderStatus = "PD";
+          this.createOrder.DispatchNo = '';
         }
       }
     }
@@ -398,7 +424,7 @@ export class CreateOrderComponent implements OnInit {
       }
       this.router.navigate(['/pages/orders/list']);
     }
-    submitOrder() {
+    submitOrder(action) {
       if(!this.validateData()) {
         this.notification.error('Error', 'Please fill all the mandatory information !!!')
         return;
@@ -418,6 +444,7 @@ export class CreateOrderComponent implements OnInit {
       }
       const statusResult = this.allStatus.find(x=> x.Code == this.createOrder.OrderStatus);
       let postData = {
+        "Action": action,
         "OrderID": this.OrderID,
         "OrderDate": `${this.createOrder.OrderDate.month}/${this.createOrder.OrderDate.day}/${this.createOrder.OrderDate.year}`,
         "OrderTypeID": this.createOrder.OrderType,
@@ -433,7 +460,11 @@ export class CreateOrderComponent implements OnInit {
         "InvoiceNumber": this.createOrder.InvoiceNo ? this.createOrder.InvoiceNo : '',
         "BillingAddress": this.createOrder.BillingAddress ? this.createOrder.BillingAddress : '',
         "GSTNO": this.createOrder.GSTNo ? this.createOrder.GSTNo : '',
+        "CashAmount": this.createOrder.CashAmount,
+        "CheckAmount": this.createOrder.ChequeAmount,
+        "OtherAmount": this.createOrder.OtherAmount,
         "MembershipNo": this.createOrder.MembershipNo ? this.createOrder.MembershipNo: '',
+        "Remark": this.createOrder.Remark,
         "IsTaxInvoice": this.createOrder.TaxInvoice,
         "CreatedBy": this.userID,
         "TotalAmount": this.finalAmount,

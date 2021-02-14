@@ -22,11 +22,11 @@ export class CreateCostingComponent implements OnInit {
   isEditOnly = false;
   createCosting;
   allColor = [];
-  allFitType = [];
   allProductType = [];
   filteredItems = [];
   selectedItems = [];
   allCostRange = [];
+  allFitType = [];
   userID = '';
   CostingID = 0;
   customerDetail = '';
@@ -95,7 +95,7 @@ export class CreateCostingComponent implements OnInit {
       .subscribe(results => {
         this.showList = true;
         if(results['CostingLotList']) {
-          this.allLotsList = results['CostingLotList']
+          this.allLotsList = results['CostingLotList'];
         }
       });
       this.selectedItems.push({ColorID: 0,IsDistressed: false,ProductCode: '',ProductDesc:'',
@@ -106,8 +106,8 @@ export class CreateCostingComponent implements OnInit {
       this.costingService.getMasterData().subscribe(res => {
         this.showLoader = false;
         let lookUpData = JSON.parse(JSON.stringify(res));
-        this.allColor = lookUpData.Color;
         this.allFitType = lookUpData.FIT;
+        this.allColor = lookUpData.Color;
         this.allProductType = lookUpData.ProductType;
         this.allCostRange = lookUpData.ProductCostSlab;
       },(error)=> {
@@ -183,9 +183,6 @@ export class CreateCostingComponent implements OnInit {
         return false
       } else if(this.createCosting.ProductType == 0) {
         this.notification.error('Error', 'Please Select Product Type');
-        return false;
-      } else if(this.createCosting.FitType == 0) {
-        this.notification.error('Error', 'Please Select Fit Type');
         return false;
       } else if(!this.validateItems()) {
         this.notification.error('Error', 'Please Select Color in Grid');
@@ -275,6 +272,7 @@ export class CreateCostingComponent implements OnInit {
     }
     lotNoSelected(item) {
       this.LotNoKey = item.SortNO;
+      this.createCosting.FitType = item.FitID;
       this.createCosting.LotID = item.LotID;
       this.createCosting.FabricPrice = item.FabricPrice;
       this.createCosting.Average = item.Average;

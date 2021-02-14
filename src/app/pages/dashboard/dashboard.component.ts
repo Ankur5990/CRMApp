@@ -14,6 +14,8 @@ export class DashboardComponent {
     allFollowUpLeads = [];
     allLeads;
     allOrders;
+    allLotSummary;
+    allLotDetails = [];
     showLoader = false;
     constructor(private dashboradService: DashboardService, private notification: NotificationsService){}
     ngOnInit() {
@@ -35,6 +37,12 @@ export class DashboardComponent {
             }
             if(res['OrderCount']) {
                 this.allOrders = res['OrderCount'][0];
+            }
+            if(res['LOTSummary']) {
+                this.allLotSummary = res['LOTSummary'][0];
+            }
+            if(res['PendingLOTDetail']) {
+                this.allLotDetails = res['PendingLOTDetail'];
             }
         }, err=> {
             this.showLoader = false;

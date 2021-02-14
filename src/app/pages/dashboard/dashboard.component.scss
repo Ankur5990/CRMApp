@@ -36,6 +36,22 @@
   display: inline-block;
   width: 18%;
 }
+.lot-no {
+  display: inline-block;
+  width: 22%;
+}
+.pending-qty {
+  display: inline-block;
+  width: 21%;
+}
+.washer {
+  display: inline-block;
+  width: 35%;
+}
+.lot-date {
+  display: inline-block;
+  width: 22%;
+}
 .item-count-box {
     padding-bottom: 5px;
 }
@@ -53,7 +69,7 @@
 .box-middle {
     background-color: #fff;
     padding: 10px 0px;
-    height: 200px;
+    height: 182px;
     overflow-y: scroll;
 }
 .no-lead {

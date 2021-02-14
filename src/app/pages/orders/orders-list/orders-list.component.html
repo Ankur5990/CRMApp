@@ -7,7 +7,7 @@
 <ba-card cardTitle="ORDERS" class="smart-table-container" #orders>
     <div class="row">
         <div class="col-12 search-container">
-            Search Leads By: <input type="radio" name="type" [value]="1" [(ngModel)]="orderTask.searchorderby" (change)="valueChange('phone')"/>Customer/Phone <input type="radio" name="type" [value]="2" [(ngModel)]="orderTask.searchorderby" (change)="valueChange('other')"/>Other filters
+            Search Orders By: <input type="radio" name="type" [value]="1" [(ngModel)]="orderTask.searchorderby" (change)="valueChange('phone')"/>Customer/Phone <input type="radio" name="type" [value]="2" [(ngModel)]="orderTask.searchorderby" (change)="valueChange('other')"/>Other filters
         </div>
     </div>
     <div class="row" *ngIf="orderTask.searchorderby == 1"> 
@@ -127,7 +127,7 @@
                                 <span class="tooltiptext">View</span>
                             </i>
                         </a>
-                        <a [routerLink]="['../edit',item.OrderID]" *ngIf="item.OrderStatusCode =='PP' || item.OrderStatusCode =='PD'">
+                        <a [routerLink]="['../edit',item.OrderID]" *ngIf="item.IsEdit">
                             <i class="ion-edit custom-tooltip-ion" style="margin-right: 5px">
                                 <span class="tooltiptext">Edit</span>
                             </i>

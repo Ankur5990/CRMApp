@@ -103,6 +103,10 @@
                     <div class="desciption-value">{{allOrders.TotalPendingPayment || 0}}</div>
                 </div>
                 <div class="item-count-box">
+                    <div class="desciption-heading">Total Pending Payment Approval</div>
+                    <div class="desciption-value">{{allOrders.PendingPaymentApproval || 0}}</div>
+                </div>
+                <div class="item-count-box">
                     <div class="desciption-heading">Total Pending Dispatch</div>
                     <div class="desciption-value">{{allOrders.TotalPendingDispatch || 0}}</div>
                 </div>
@@ -119,6 +123,65 @@
                     <div class="desciption-value">{{allOrders.TotalOrder || 0}}</div>
                 </div>
             </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="inner_container">
+            <div class='box-title lightGreen'>LOT Summary</div>
+            <div class='box-middle row'>
+            <div class='box-txt col-12' *ngIf="allLotSummary">
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Cutting</div>
+                    <div class="desciption-value">{{allLotSummary.TotalCutting || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Cutting Damage</div>
+                    <div class="desciption-value">{{allLotSummary.TotalCuttingDamage || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total GRN</div>
+                    <div class="desciption-value">{{allLotSummary.TotalGRN || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Washing Issue</div>
+                    <div class="desciption-value">{{allLotSummary.TotalWashingIssue || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Washing Receive</div>
+                    <div class="desciption-value">{{allLotSummary.TotalWashingReceive || 0}}</div>
+                </div>
+                <div class="item-count-box">
+                    <div class="desciption-heading">Total Washing Rewash</div>
+                    <div class="desciption-value">{{allLotSummary.TotalWashingRewash || 0}}</div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="inner_container">
+            <div class='box-title lightGreen'>Pending LOT Detail</div>
+            <div class='box-middle row'>
+                <div class="box-txt col-12" *ngIf="allLotDetails.length > 0">
+                    <div class="item-heading">
+                        <div class="lot-no"> LOT No </div>
+                        <div class="lot-date"> Lot Date </div>
+                        <div class="pending-qty"> Pending Qty </div>
+                        <div class="washer"> Washer </div>
+                    </div>
+                    <div class="item-value" *ngFor="let item of allLotDetails">
+                        <div class="lot-no">{{item.LOTNo}}</div>
+                        <div class="lot-date">{{item.LotDate}}</div>
+                        <div class="pending-qty">{{item.PendingQty}}</div>
+                        <div class="washer">{{item.Washer}}</div>
+                    </div>
+                </div>
+                <div class="box-txt col-12" *ngIf="allLotDetails.length == 0">
+                    <div class="item-heading no-lead">
+                        No Lot Details Available
+                    </div>
+                </div>
             </div>
         </div>
     </div>

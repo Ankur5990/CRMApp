@@ -6,9 +6,10 @@
 <ba-card cardTitle="{{cardTitle}}" id="newTicket">
     <button class="btn btn-danger buttonMargin btn-margin submit-void-order" *ngIf="!isViewOnly && enableVoidOrder" (click)="VoidOrder();">Void Order</button>
     <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-order' : 'backtolist'" (click)="goToListPage()">Back</button>
-    <button class="btn btn-danger buttonMargin btn-margin submit-create-order" *ngIf="!isViewOnly" (click)="submitOrder();">Submit</button>
+    <button class="btn btn-danger buttonMargin btn-margin submit-create-order" *ngIf="IsApprove" (click)="submitOrder('approve');">Approve</button>
+    <button class="btn btn-danger buttonMargin btn-margin submit-create-order" *ngIf="!isViewOnly && !IsApprove" (click)="submitOrder('save');">Submit</button>
         <div class="row">
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Order Date <sup style="color:red;">*</sup></label>
                     <div *ngIf="!disableOthers">
@@ -19,7 +20,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Order Type <sup style="color:red;">*</sup></label>
                     <select class="form-control" (change)="refreshDataHandler('typeChange')" [disabled]="isViewOnly || disableOthers || leadAlreadySelected || disableLeadCustomer" [(ngModel)]="createOrder.OrderType">
@@ -28,7 +29,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Company<sup style="color:red;">*</sup></label>
                     <select class="form-control" (change)="refreshDataHandler()" [disabled]="isViewOnly || disableOthers" [(ngModel)]="createOrder.Company">
@@ -36,7 +37,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group" *ngIf="createOrder.OrderType == 2 || createOrder.OrderType == 3">
                     <label>Customer Detail<sup style="color:red;">*</sup></label>
                     <input name="riUser" *ngIf="(!disableLeadCustomer) && (!leadAlreadySelected)" [(ngModel)]="searchKey" autocomplete="off" type="text" class="form-control" placeholder="Type Here to Start Search" (keyup)="searchCustomer$.next($event.target.value)">
@@ -49,7 +50,7 @@
                     <div class="form-control" *ngIf="disableLeadCustomer || leadAlreadySelected"> <div class="customer-value">{{customerNameWithAddress}}</div></div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Payment Mode</label>
                     <select class="form-control" (change)="refreshDataHandler('paymentMode')" [disabled]="isViewOnly || disablePayment" [(ngModel)]="createOrder.PaymentId">
@@ -58,22 +59,22 @@
                     </select>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Dispatch No</label>
                     <input type='text' class='form-control' [disabled]="isViewOnly || createOrder.Transporter == 0" [(ngModel)]="createOrder.DispatchNo">
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Transporter</label>
-                    <select class="form-control" (change)="refreshDataHandler('transporter')" [disabled]="isViewOnly || createOrder.PaymentId == 0" [(ngModel)]="createOrder.Transporter">
+                    <select class="form-control" (change)="refreshDataHandler('transporter')" [disabled]="isViewOnly || disableTransporter" [(ngModel)]="createOrder.Transporter">
                         <option [value]="0">Select Transporter</option>
                         <option *ngFor='let transporter of allTransporter' [value]="transporter.TransporterID">{{transporter.Transporter}}</option>
                     </select>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Status <sup style="color:red;">*</sup></label>
                     <select class="form-control" (change)="refreshDataHandler()" [disabled]="isViewOnly || disableStatus" [(ngModel)]="createOrder.OrderStatus">
@@ -81,46 +82,70 @@
                     </select>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Discount(%)</label>
                     <input type='text' class='form-control' [disabled]="isViewOnly || disableOthers" (focus)="removeZero('discount')" (focusout)="addZero('discount')" [(ngModel)]="createOrder.discount" (ngModelChange)="onDiscountChange()">
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Freight Amount</label>
                     <input type='text' class='form-control' [disabled]="isViewOnly" (focus)="removeZero('frieght')" (focusout)="addZero('frieght')" [(ngModel)]="createOrder.FreightCharge" (ngModelChange)="onFreightChargeChange()">
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Invoice Number</label>
                     <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createOrder.InvoiceNo">
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Billing Address</label>
                     <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createOrder.BillingAddress">
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Cash Amount</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly || disableAmount" [(ngModel)]="createOrder.CashAmount">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Cheque Amount</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly || disableAmount" [(ngModel)]="createOrder.ChequeAmount">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Other Amount</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly || disableAmount" [(ngModel)]="createOrder.OtherAmount">
+                </div>
+            </div>
+            <div class="col-3">
                 <div class="form-group">
                     <label>GST No</label>
                     <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createOrder.GSTNo">
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label>Membership No</label>
                     <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createOrder.MembershipNo">
                 </div>
             </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Remark</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createOrder.Remark">
+                </div>
+            </div>
             <div class="col-2">
                 <div class="form-group">
                     <label>Is Tax Invoice</label>
-                    <input type='checkbox' class='form-control' style="margin-top: 5px; zoom: 1.5" [disabled]="isViewOnly" [(ngModel)]="createOrder.TaxInvoice">
+                    <input type='checkbox' class='form-control' style="margin-top: 5px; zoom: 0.5" [disabled]="isViewOnly" [(ngModel)]="createOrder.TaxInvoice">
                 </div>
             </div>
         </div>

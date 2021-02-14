@@ -22,6 +22,7 @@ export class CreateCuttingComponent implements OnInit {
   isEditOnly = false;
   createCutting;
   fabricList = [];
+  allFitType = [];
   userID = '';
   CuttingID = 0;
   showList = false;
@@ -53,7 +54,8 @@ export class CreateCuttingComponent implements OnInit {
       this.createCutting.Remark = '';
       this.createCutting.Status = 'Cutting';
       this.createCutting.FabricId = 0;
-      //this.getMasterData();
+      this.createCutting.FitType = 0;
+      this.getMasterData();
       const activatedRouteObject = this.activatedRoute.snapshot.data;
       if(activatedRouteObject['viewMode'] === true) {
         this.isViewOnly = true;
@@ -76,16 +78,17 @@ export class CreateCuttingComponent implements OnInit {
         }
       });
     }
-    // getMasterData() {
-    //   this.showLoader = true;
-    //   this.cuttingService.getMasterData(this.userID).subscribe(res => {
-    //     this.showLoader = false;
-    //     let lookUpData = JSON.parse(JSON.stringify(res));
-    //   },(error)=> {
-    //     this.showLoader = false;
-    //     this.notification.error('Error','Error While Lookup Master Data');
-    //   })
-    // }
+    getMasterData() {
+      this.showLoader = true;
+      this.cuttingService.getProductionMaster().subscribe(res => {
+        this.showLoader = false;
+        let lookUpData = JSON.parse(JSON.stringify(res));
+        this.allFitType = lookUpData.FIT;
+      },(error)=> {
+        this.showLoader = false;
+        this.notification.error('Error','Error While Lookup Master Data');
+      })
+    }
     getDetails(id) {
       this.detail = true;
       this.showLoader = true;
@@ -106,6 +109,7 @@ export class CreateCuttingComponent implements OnInit {
         this.displayDate = allValues.CuttingDate;
         this.createCutting.LotNo = allValues.LotID;
         this.createCutting.CuttingPcs = allValues.QtyIssue;
+        this.createCutting.FitType = allValues.FitID;
         this.createCutting.SamplePcs = allValues.SampleQty;
         this.createCutting.NoOfRoll = allValues.NoOfRoll;
         this.createCutting.DamagePcs = allValues.QtyDamage;
@@ -120,7 +124,7 @@ export class CreateCuttingComponent implements OnInit {
     }
 
     validateData() {
-      if(this.createCutting.FabricId && this.createCutting.FabricId > 0 && this.createCutting.CuttingPcs > 0) {
+      if(this.createCutting.FabricId && this.createCutting.FabricId > 0 && this.createCutting.CuttingPcs > 0 && this.createCutting.FitType >0) {
         return true;
       }
       return false;
@@ -141,6 +145,7 @@ export class CreateCuttingComponent implements OnInit {
         "CuttingID": +this.CuttingID,
         "CuttingDate": `${this.createCutting.CuttingDate.month}/${this.createCutting.CuttingDate.day}/${this.createCutting.CuttingDate.year}`,
         "PurchaseDetailID": this.createCutting.FabricId,
+        "FitID": this.createCutting.FitType,
         "LengthMeter": this.createCutting.Length,
         "QtyIssue": this.createCutting.CuttingPcs,
         "SampleQty": this.createCutting.SamplePcs,
@@ -161,6 +166,7 @@ export class CreateCuttingComponent implements OnInit {
                 let resp = JSON.parse(JSON.stringify(res));
                 resp.startDate = this.createCutting.CuttingDate;
                 resp.endDate = this.createCutting.CuttingDate;
+                resp.FitType = 1;
                 this.cacheService.set("listCuttingFilterData", resp);
               });
             }

@@ -35,13 +35,13 @@
                 <option *ngFor='let product of allProductType' [value]="product.ProductTypeID">{{product.ProductType}}</option>
             </select>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="costingListTask.searchBy == 2">
+        <!-- <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="costingListTask.searchBy == 2">
             <label>Fit Type</label>
             <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="costingListTask.FitType">
                 <option [value]="1">All Fit Type</option>
                 <option *ngFor='let fit of allFitType' [value]="fit.FitID">{{fit.Fit}}</option>
             </select>
-        </div>
+        </div> -->
         <div class="col-md-2 col-sm-12 no-padding-right view-btn" *ngIf="costingListTask.searchBy == 2">
             <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllCostings()">View </button>
         </div>
@@ -76,11 +76,11 @@
                             Product Type
                         </span>
                     </th>
-                    <th class="thVerticalAlign text-align-left">
+                    <!-- <th class="thVerticalAlign text-align-left">
                         <span>
                             Fit Type
                         </span>
-                    </th>
+                    </th> -->
                     <th class="thVerticalAlign text-align-center">
                         <span>
                             Fabric Cost
@@ -114,7 +114,7 @@
                     </td>
                     <td class='text-align-center'>{{item.LotID}}</td>
                     <td class='text-align-left'>{{item.ProductType}}</td>
-                    <td class='text-align-left'>{{item.FitType}}</td>
+                    <!-- <td class='text-align-left'>{{item.FitType}}</td> -->
                     <td class='text-align-center'>{{item.FabricCost}}</td>
                     <td class="text-align-left">{{item.CostingDate}}</td>
                     <td class="text-align-left">{{item.Status}}</td>

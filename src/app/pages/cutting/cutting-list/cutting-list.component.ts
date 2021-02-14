@@ -20,6 +20,7 @@ export class CuttingListComponent implements OnInit {
   todaysDate;
   buttonAction = false;
   allCuttingList = [];
+  allFitType = [];
   noCuttingFound = '';
   refreshMessage = "Please click View button to get latest data";
   showLoader = false;
@@ -40,6 +41,7 @@ export class CuttingListComponent implements OnInit {
     this.cuttingListTask = this.cuttingService.getCuttingObject();
     this.cuttingListTask = JSON.parse(JSON.stringify(this.cuttingListTask));
     this.cuttingListTask.searchby = 1;
+    this.cuttingListTask.FitType = 1;
     const now = new Date();
     this.todaysDate = { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() };
     this.cuttingListTask.startDate = this.todaysDate;
@@ -120,9 +122,10 @@ export class CuttingListComponent implements OnInit {
 
   getMasterData() {
     this.showLoader = true;
-    this.cuttingService.getMasterData(this.userID).subscribe(res => {
+    this.cuttingService.getProductionMaster().subscribe(res => {
       this.showLoader = false;
       let lookUpData = JSON.parse(JSON.stringify(res));
+      this.allFitType = lookUpData.FIT;
     },(error)=> {
       this.showLoader = false;
       this.notification.error('Error','Error While Lookup Master Data');
@@ -142,6 +145,7 @@ export class CuttingListComponent implements OnInit {
       report.push({
         LotNumber: cuttingInfo.LotID,
         SortNO: cuttingInfo.SortNO,
+        FitType: cuttingInfo.FitType,
         LengthMeter: cuttingInfo.LengthMeter,
         QtyIssue: cuttingInfo.QtyIssue,
         SampleQty: cuttingInfo.SampleQty,
@@ -155,7 +159,7 @@ export class CuttingListComponent implements OnInit {
     });
 
     const options = { 
-      headers: ['Lot Number', 'Sort No','Length', 'Issue Quantity', 'Sample Quantity','No Of Rolls','Damage Quantity', 'Average','Cutting Date', 'Status', 'Remark'], 
+      headers: ['Lot Number', 'Sort No', 'Fit Type','Length', 'Issue Quantity', 'Sample Quantity','No Of Rolls','Damage Quantity', 'Average','Cutting Date', 'Status', 'Remark'], 
       nullToEmptyString: true,
     };
     new ngxCsv(report, 'Cutting-List', options);
@@ -194,7 +198,7 @@ export class CuttingListComponent implements OnInit {
     const startDate = `${cuttingTask.startDate.month}/${cuttingTask.startDate.day}/${cuttingTask.startDate.year}`;
     const endDate = `${cuttingTask.endDate.month}/${cuttingTask.endDate.day}/${cuttingTask.endDate.year}`;
     this.showLoader = true;
-    this.cuttingService.getAllCuttings(startDate,endDate,this.userID).subscribe((res) => {
+    this.cuttingService.getAllCuttings(startDate,endDate, cuttingTask.FitType ,this.userID).subscribe((res) => {
       this.showLoader = false;
       if (!res['CuttingList'].length) {
         this.allCuttingList = [];

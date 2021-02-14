@@ -32,6 +32,15 @@
             </div>
         </div>
         <div class="col-4">
+            <div class="form-group">
+                <label>Fit Type <sup style="color:red;">*</sup></label>
+                <select class="form-control" [disabled]="isViewOnly || detail" [(ngModel)]="createCutting.FitType">
+                    <option [value]="0">Select Fit Type</option>
+                    <option *ngFor='let fit of allFitType' [value]="fit.FitID">{{fit.Fit}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-4">
             <div class="form-group" *ngIf="!detail">
                 <label>Fabric Sort <sup style="color:red;">*</sup></label>
                 <input name="fabricsort" [(ngModel)]="fabricKey" autocomplete="off" type="text" class="form-control" placeholder="Search Fabric" (keyup)="searchFabric$.next($event.target.value)">

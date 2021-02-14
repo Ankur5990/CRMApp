@@ -52,9 +52,13 @@ export class CuttingService {
         return res;
       }));
   }
+
+  getProductionMaster() {
+    return this.http.get(`${this.API_ENDPOINT}api/ProductionMasterData`).pipe(map(res => res));
+  }
   //http://styloxcrm.azurewebsites.net/api/CRMLeadList?StartDate=5/1/2020&EndDate=5/30/2020&CustomerName=''&StatusID=1
-  getAllCuttings(StartDate,EndDate,userID) {
-    return this.http.get(`${this.API_ENDPOINT}api/CuttingList?StartDate=${StartDate}&EndDate=${EndDate}&UserID=${userID}`).pipe(map( res => res));
+  getAllCuttings(StartDate,EndDate,FitType,userID) {
+    return this.http.get(`${this.API_ENDPOINT}api/CuttingList?StartDate=${StartDate}&EndDate=${EndDate}&FitID=${FitType}&UserID=${userID}`).pipe(map( res => res));
   }
   getCuttingDetails(CuttingId,UserId) {
     return this.http.get(`${this.API_ENDPOINT}api/CuttingDetail?CuttingID=${CuttingId}&UserID=${UserId}`).pipe(map( res => res));

@@ -213,12 +213,17 @@ export class OrdersListComponent implements OnInit {
         DispatchNo: orderInfo.DispatchNo,
         InvoiceNumber: orderInfo.InvoiceNumber,
         Quantity: orderInfo.Quantity,
+        PhoneNo: orderInfo.PhoneNo,
+        Cash: orderInfo.CashAmount,
+        Cheque: orderInfo.CheckAmount,
+        Other: orderInfo.OtherAmount,
         OrderStatus: orderInfo.OrderStatus,
+        Remark: orderInfo.Remarks
       });
     });
 
     const options = { 
-      headers: ['Order Date','Lead Number','Order Number','Order Type', 'Customer Name','Total Amount','Discount(%)','Freight Amount', 'Payment Mode', 'Transporter', 'Dispatch No', 'Invoice Number', 'Quantity', 'Order Status'], 
+      headers: ['Order Date','Lead Number','Order Number','Order Type', 'Customer Name','Total Amount','Discount(%)','Freight Amount', 'Payment Mode', 'Transporter', 'Dispatch No', 'Invoice Number', 'Quantity','Phone No','Cash Amount','Cheque Amount',' Other Amount', 'Order Status','Remarks'], 
       nullToEmptyString: true,
     };
     new ngxCsv(report, 'Order-List', options);

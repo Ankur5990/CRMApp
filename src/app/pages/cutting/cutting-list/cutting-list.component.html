@@ -28,6 +28,13 @@
                 <date-picker [(dateModel)]="cuttingListTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
             </div>
         </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="cuttingListTask.searchby == 2">
+            <label>Fit Type</label>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="cuttingListTask.FitType">
+                <option [value]="1">All Fit Type</option>
+                <option *ngFor='let fit of allFitType' [value]="fit.FitID">{{fit.Fit}}</option>
+            </select>
+        </div>
         <div class="col-md-2 col-sm-12 no-padding-right view-btn" *ngIf="cuttingListTask.searchby == 2">
             <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllCuttings()">View </button>
         </div>
@@ -60,6 +67,11 @@
                     <th class="thVerticalAlign text-align-left">
                         <span>
                             Sort No
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Fit Type
                         </span>
                     </th>
                     <th class="thVerticalAlign text-align-left">
@@ -115,6 +127,7 @@
                     </td>
                     <td class='text-align-left lotnumber'>{{item.LotID}}</td>
                     <td class='text-align-left sortNo'>{{item.SortNO}}</td>
+                    <td class='text-align-left fitType'>{{item.FitType}}</td>
                     <td class='text-align-left length'>{{item.LengthMeter}}</td>
                     <td class='text-align-left issue-qty'>{{item.QtyIssue}}</td>
                     <td class='text-align-left issue-qty'>{{item.SampleQty}}</td>
