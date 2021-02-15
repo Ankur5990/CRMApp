@@ -38,6 +38,7 @@
               "node_modules/easy-pie-chart/dist/jquery.easypiechart.js",
               "node_modules/jquery-slimscroll/jquery.slimscroll.js",
               "node_modules/tether/dist/js/tether.js",
+              "node_modules/popper.js/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",
               "node_modules/multiple-select/multiple-select.js",
               "src/assets/js/user.js"

@@ -71,6 +71,7 @@
     "ngx-uploader": "^7.1.0",
     "node-sass": "^4.11.0",
     "normalize.css": "6.0.0",
+    "popper.js": "^1.16.1-lts",
     "primeng": "^4.1.0",
     "roboto-fontface": "0.7.0",
     "rxjs": "6.5.2",
