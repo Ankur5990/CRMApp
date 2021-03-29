@@ -22,6 +22,8 @@ export const routes: Routes = [
       { path: 'washing', loadChildren: './washing/washing.module#WashingModule' },
       { path: 'costing', loadChildren: './costing/costing.module#CostingModule' },
       { path: 'issue', loadChildren: './miscissue/misc-issue.module#MiscIssueModule' },
+      { path: 'grn', loadChildren: './grn/grn.module#GRNModule' },
+      { path: 'return', loadChildren: './return/return.module#ReturnModule' },
     ]
   }
 ];

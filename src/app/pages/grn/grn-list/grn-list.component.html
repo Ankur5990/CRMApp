@@ -1,0 +1,140 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+  <div style="margin:auto;position:fixed;top:50%;left:50%;">
+      <img src="assets/crm/spinner.gif " width='25px'>
+  </div>
+</div>
+
+<ba-card cardTitle="GRN" class="smart-table-container" #grn>
+    <div class="row">
+        <div class="col-12 search-container">
+            Search GRN By: <input type="radio" name="type" [value]="1" [(ngModel)]="grnTask.searchgrnby" (change)="valueChange('phone')"/>GRN No <input type="radio" name="type" [value]="2" [(ngModel)]="grnTask.searchgrnby" (change)="valueChange('other')"/>Other filters
+        </div>
+    </div>
+    <div class="row" *ngIf="grnTask.searchgrnby == 1"> 
+        <div class="col-md-5 padding-eater">
+            <input name="riUser" [(ngModel)]="searchKey" autocomplete="off" type="text" class="form-control" placeholder="Search" (keyup)="searchGrnTerm$.next($event.target.value)">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="grnTask.searchgrnby == 2">
+            <label>Start Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="grnTask.startDate" (Change)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="grnTask.searchgrnby == 2">
+            <label>End Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="grnTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="grnTask.searchgrnby == 2">
+            <label>Select Source</label>
+            <select (change)="refreshDataHandler()" class="form-control"
+                [(ngModel)]="grnTask.SourceID" id="exampleSelect1">
+                <option [value]="1">All Type</option>
+                <option [value]="2">Lot</option>
+                <option [value]="3">External</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="grnTask.searchgrnby == 2">
+            <label>Vendor</label>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="grnTask.VendorID">
+                <option [value]="1">All Vendors</option>
+                <option *ngFor='let vendor of allVendors' [value]="vendor.VendorID">{{vendor.Vendor}}</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="grnTask.searchgrnby == 2">
+            <label>Warehouse</label>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="grnTask.WareHouseID">
+                <option [value]="1">All WareHouse</option>
+                <option *ngFor='let warehouse of allWarehouse' [value]="warehouse.WareHouseID">{{warehouse.WareHouse}}</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right view-btn" *ngIf="grnTask.searchgrnby == 2">
+            <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllGrn()">View </button>
+        </div>
+        <div class="col-md-2 col-sm-12 createGrnBtn">
+            <button [routerLink]="['../create']" class="btn btn-primary addCustBtn pull-right">
+                Create
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 printBtn">
+            <button (click)="printTable()" class="btn btn-primary addCustBtn pull-right" [disabled]="allGrnList.length == 0">
+                Print
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 exportBtn">
+            <button (click)="exportToCSV()" class="btn btn-primary addCustBtn pull-right" [disabled]="allGrnList.length == 0">
+                Export
+            </button>
+        </div>
+    </div>
+    <div class="table-container" style="overflow-x:auto;">
+        <table class="table table-striped table-condensed grn-list-table" id="grn-table">
+            <thead class="tableHeader">
+                <tr>
+                    <th class="table-id thVerticalAlign actionAlignCenter" style="width: 8%;">Actions</th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Good Receive No
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            LOT Number
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Source
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Vendor
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            WareHouse
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            GRN Date
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr valign="middle" *ngFor="let item of allGrnList let i=index">
+                    <td class="table-id">
+                        <i class="ion-ios-book custom-tooltip-ion" 
+                        (click)="printGrnData(item.GoodReceiveHeaderID)" style="margin-right: 5px">
+                            <span class="tooltiptext">Print Invoice</span>
+                        </i>
+                        <a [routerLink]="['../view',item.GoodReceiveHeaderID]">
+                            <i class="ion-eye custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">View</span>
+                            </i>
+                        </a>
+                        <a [routerLink]="['../edit',item.GoodReceiveHeaderID]" *ngIf="item.IsEdit">
+                            <i class="ion-edit custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">Edit</span>
+                            </i>
+                        </a>
+                    </td>
+                    <td class='text-align-left grnNumber'>{{item.GoodReceiveNo}}</td>
+                    <td class='text-align-left lotNumber'>{{item.LOTNumber}}</td>
+                    <td class='text-align-center source'>{{item.SourceID == 2 ? 'Lot' : 'External'}}</td>
+                    <td class='text-align-center vendor'>{{item.Vendor}}</td>
+                    <td class='text-align-center warehouse'>{{item.WareHouse}}</td>
+                    <td class="text-align-left createdOn">{{item.GoodReceiveDate}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="noGrnFound == '' && allGrnList.length == 0 && refreshMessage" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
+        <div *ngIf="noGrnFound != '' && allGrnList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noGrnFound}}</div>
+    </div>
+</ba-card>

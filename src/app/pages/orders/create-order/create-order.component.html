@@ -181,9 +181,9 @@
                                             <ng-template #rt let-r="result" let-t="term">
                                                 {{ r.Product}}
                                             </ng-template>
-                                            <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="item.PRODUCTID" [ngbTypeahead]="searchProduct" [resultTemplate]="rt"
+                                            <input type="text" class="form-control" [(ngModel)]="item.PRODUCTID" [ngbTypeahead]="searchProduct" [resultTemplate]="rt"
                                                 placeholder="Search Product" [inputFormatter]="inputFormatter" (selectItem)="onProductChange($event, item)"
-                                                [disabled]="isViewOnly || (isEditOnly && item.alreadyStored)" [editable]="false" />
+                                                [disabled]="isViewOnly || (isEditOnly && item.alreadyStored)" [editable]="false" [ngClass]="{'error-value': item.isError}" />
                                             </div>
                                         <div *ngIf="item.alreadyStored" class="form-control product-list-div">{{item.ProductName}}</div>
                                     </td>            

@@ -1,0 +1,130 @@
+@import "../../../theme/sass/conf/conf.scss";
+
+$arrow-top: 33%;
+
+label {
+  text-align: right;
+  padding-right: 10px;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+.error-value {
+  border-color: red;
+}
+.pt4 {
+  padding-top: 4px;
+}
+.form-control:focus {
+  border-color: #cbcbcb;
+}
+.mandatory {
+  color: #f11c1c;
+}
+.quantityforsize {
+  width: 60%;
+}
+
+.btn-placement {
+  margin-bottom: 5px;
+  margin-right: 5px;
+  float: right;
+}
+.product-list-div{
+  height: 2rem;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  text-align: left;
+}
+.searchtext {
+  border-color: rgb(169, 169, 169);
+}
+.fa-search:before {
+  position: absolute;
+  right: 20px;
+  top: 12px;
+}
+
+.buttonMargin {
+  margin-left:10px;
+}
+
+.mttableHeader {
+  color: black;
+}
+
+.showError:after {
+  content: '';
+  display: inline;
+  position: absolute;
+  right: -5px;
+  margin: -5px;
+  top: 3%;
+  border: 5px solid #ed7878;
+  border-right-color: transparent;
+  border-bottom-color: transparent; 
+  border-top-color: #ed7878;
+  border-left-color: transparent;
+  left: 56%;
+}
+.search-container{
+  position: absolute;
+     max-height: 200px;
+     overflow-y: scroll;
+     width: calc(100%);
+     padding:0px;
+     border: 1px solid #ccc;
+     background: #fff;
+     z-index: 12;
+     .search-item{
+       padding: 6px 12px;
+       border-bottom: 1px solid #d6cccc;
+       cursor: pointer;
+       &:hover{
+         background: #5bc0de;
+         color:#fff;
+       }
+ 
+     }
+     .search-item:last-child{
+        border-bottom: 0px solid #d6cccc;
+     }
+ }
+
+.textAlignRight {
+  text-align: right;
+}
+
+.textAlignCenter {
+  text-align: center;
+}
+
+.backtolist {
+  position: absolute;
+  top: 7px;
+  right: 108px;
+}
+.space-between {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.input-width {
+  margin-top: 2px;
+  width: 8%;
+  display: inline-block;
+}
+
+.submit-create-return {
+  position: absolute;
+  top: 7px;
+  right: 20px;
+}
+
+
+
+
+
+
+

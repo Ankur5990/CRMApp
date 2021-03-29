@@ -200,6 +200,9 @@ export class CreateOrderComponent implements OnInit {
       const allsize = JSON.parse(JSON.stringify(this.allSize));
       const availableSize = allsize.filter(x => x.PRODUCTID == e.item.PRODUCTID);
       let sizeQuantity = [];
+      if(row.isError) {
+        row.isError = false;
+      }
       if(this.selectedProduct.length > 0) {
         let len = 0;
         for(let i=0; i< this.selectedProduct.length; i++) {
@@ -409,6 +412,7 @@ export class CreateOrderComponent implements OnInit {
         if(this.selectedProduct[i].PRODUCTID && this.selectedProduct[i].PRODUCTID.PRODUCTID && this.selectedProduct[i].PRODUCTID.PRODUCTID !=0 ) {
           flag = true;
         } else {
+          this.selectedProduct[i].isError = true;
           flag = false;
           return false;
         }

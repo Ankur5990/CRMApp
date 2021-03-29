@@ -1,0 +1,126 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+    <div style="margin:auto;position:fixed;top:50%;left:50%;">
+        <img src="assets/crm/spinner.gif " width='25px'>
+    </div>
+</div>
+<ba-card cardTitle="{{cardTitle}}" id="newTicket">
+    <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-return' : 'backtolist'" (click)="goToListPage()">Back</button>
+    <button class="btn btn-danger buttonMargin btn-margin submit-create-return" *ngIf="!isViewOnly" (click)="submitReturn();">Submit</button>
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Return Date <sup style="color:red;">*</sup></label>
+                    <div *ngIf="!detailPage">
+                        <date-picker [minDate]="todaysDate" [disabled]="isViewOnly" [(dateModel)]="createReturn.ReturnDate"></date-picker>
+                    </div>
+                    <div class="form-control" *ngIf="detailPage">
+                        {{createReturn.ReturnDate.year}}-{{createReturn.ReturnDate.month}}-{{createReturn.ReturnDate.day}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Return Number</label>
+                    <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createReturn.ReturnNumber">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group" *ngIf="!detailPage">
+                    <label>Customer <sup style="color:red;">*</sup></label>
+                    <input name="customer" [(ngModel)]="CustomerKey" autocomplete="off" type="text" class="form-control" placeholder="Search Customer" (keyup)="searchCustomer$.next($event.target.value)">
+                    <div class="search-container" *ngIf="showList && customerList.length > 0">
+                        <div [hidden]="!showList" class="search-item" *ngFor="let c of customerList" (click)="customerSelected(c)">{{c.CustomerName}},{{c.Address}}</div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf="detailPage">
+                    <label>Customer</label>
+                    <input name="customerValue" [(ngModel)]="CustomerValue" type="text" [disabled] ="true" class="form-control">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Return Type <sup style="color:red;">*</sup></label>
+                    <select class="form-control" [disabled]="isViewOnly || detailPage" [(ngModel)]="createReturn.ReturnType">
+                        <option [value]="0">Select Return Type</option>
+                        <option *ngFor='let return of allReturnType' [value]="return.ReturnTypeID">{{return.ReturnType}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Ware House</label>
+                    <select class="form-control" [disabled]="isViewOnly || detailPage" [(ngModel)]="createReturn.WareHouseID">
+                        <option [value]="0">Select Ware House</option>
+                        <option *ngFor='let warehouse of allWarehouse' [value]="warehouse.WareHouseID">{{warehouse.WareHouse}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Vendor <sup style="color:red;">*</sup></label>
+                    <select class="form-control" [disabled]="isViewOnly || detailPage" [(ngModel)]="createReturn.VendorID">
+                        <option [value]="0">Select Vendor</option>
+                        <option *ngFor='let vendor of allVendors' [value]="vendor.VendorID">{{vendor.Vendor}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Remark</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createReturn.Remark">
+                </div>
+            </div>
+        </div>
+        <div>
+            <fieldset>
+                <legend>Select Product</legend>
+                <div class="row">
+                    <div class="col-sm-9">
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-danger btn-placement" (click)="addProductRow()" [disabled]="isViewOnly" >Add Product</button>
+                    </div>
+                    <div class="col-sm-12">
+                        <table class="table table-condensed">
+                            <thead class="mttableHeader">
+                                <th>Product <sup style="color:red;">*</sup></th>
+                                <th class="textAlignCenter quantityforsize">Quantity for Different Size <sup style="color:red;">*</sup></th>
+                                <th class="textAlignCenter">Action</th>
+                            </thead>
+                            <tbody> 
+                                <tr *ngFor="let item of selectedProduct;let i = index">
+                                    <!-- <td id="prodDSD">
+                                        <select id="brow" *ngIf="!item.alreadyStored" class="form-control prodListElement" name="product" (change)="onProductChange(item)" [(ngModel)]="item.PRODUCTID" [disabled]="isViewOnly || (isEditOnly && item.alreadyStored)" >
+                                            <option value="0">Select Product</option>
+                                            <option *ngFor="let product of allProducts" [value]="product.PRODUCTID">{{product.Product}}</option>
+                                        </select>
+                                        <div *ngIf="item.alreadyStored" class="form-control product-list-div">{{item.ProductName}}</div>
+                                    </td> -->
+                                    <td>
+                                        <div *ngIf="!item.alreadyStored" class="pt4">
+                                            <ng-template #rt let-r="result" let-t="term">
+                                                {{ r.Product}}
+                                            </ng-template>
+                                            <input type="text" class="form-control" [(ngModel)]="item.PRODUCTID" [ngbTypeahead]="searchProduct" [resultTemplate]="rt"
+                                                placeholder="Search Product" [inputFormatter]="inputFormatter" (selectItem)="onProductChange($event, item)"
+                                                [disabled]="isViewOnly || (isEditOnly && item.alreadyStored)" [editable]="false" [ngClass]="{'error-value': item.isError}" />
+                                            </div>
+                                        <div *ngIf="item.alreadyStored" class="form-control product-list-div">{{item.ProductName}}</div>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <ng-container *ngFor="let quan of item.ProductAvailableSize ">
+                                            <span class="name-space-between"><b>{{quan.name}}</b></span>
+                                            <span class="space-between"><input class="input-width form-control" type="number" (focus)="removeQuantityZero(quan)" (focusout)="addQuantityZero(quan)" [(ngModel)]="quan.quantity" [disabled]="isViewOnly"/></span>
+                                        </ng-container>
+                                    </td>
+                                    <td class="textAlignCenter">
+                                        <i class="ion-trash-a" *ngIf="selectedProduct.length > 1 && !isViewOnly" (click)="onDelete(i)"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+</ba-card>

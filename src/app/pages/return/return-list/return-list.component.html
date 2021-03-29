@@ -1,0 +1,138 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+  <div style="margin:auto;position:fixed;top:50%;left:50%;">
+      <img src="assets/crm/spinner.gif " width='25px'>
+  </div>
+</div>
+
+<ba-card cardTitle="Return" class="smart-table-container" #return>
+    <div class="row">
+        <div class="col-12 search-container">
+            Search Return By: <input type="radio" name="type" [value]="1" [(ngModel)]="returnTask.searchReturnby" (change)="valueChange('phone')"/>Return No <input type="radio" name="type" [value]="2" [(ngModel)]="returnTask.searchReturnby" (change)="valueChange('other')"/>Other filters
+        </div>
+    </div>
+    <div class="row" *ngIf="returnTask.searchReturnby == 1"> 
+        <div class="col-md-5 padding-eater">
+            <input name="return-search" [(ngModel)]="searchReturnKey" autocomplete="off" type="text" class="form-control" placeholder="Search" (keyup)="searchReturnTerm$.next($event.target.value)">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="returnTask.searchReturnby == 2">
+            <label>Start Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="returnTask.startDate" (Change)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="returnTask.searchReturnby == 2">
+            <label>End Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="returnTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="returnTask.searchReturnby == 2">
+            <label>Vendor</label>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="returnTask.ReturnType">
+                <option [value]="1">All Return Type</option>
+                <option *ngFor='let return of allReturnType' [value]="return.ReturnTypeID">{{return.ReturnType}}</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="returnTask.searchReturnby == 2">
+            <label>Vendor</label>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="returnTask.VendorID">
+                <option [value]="1">All Vendors</option>
+                <option *ngFor='let vendor of allVendors' [value]="vendor.VendorID">{{vendor.Vendor}}</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="returnTask.searchReturnby == 2">
+            <label>Warehouse</label>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="returnTask.WareHouseID">
+                <option [value]="1">All WareHouse</option>
+                <option *ngFor='let warehouse of allWarehouse' [value]="warehouse.WareHouseID">{{warehouse.WareHouse}}</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right view-btn" *ngIf="returnTask.searchReturnby == 2">
+            <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllReturns()">View </button>
+        </div>
+        <div class="col-md-2 col-sm-12 createReturnBtn">
+            <button [routerLink]="['../create']" class="btn btn-primary addCustBtn pull-right">
+                Create
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 printBtn">
+            <button (click)="printTable()" class="btn btn-primary addCustBtn pull-right" [disabled]="allReturnsList.length == 0">
+                Print
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 exportBtn">
+            <button (click)="exportToCSV()" class="btn btn-primary addCustBtn pull-right" [disabled]="allReturnsList.length == 0">
+                Export
+            </button>
+        </div>
+    </div>
+    <div class="table-container" style="overflow-x:auto;">
+        <table class="table table-striped table-condensed return-list-table" id="return-table">
+            <thead class="tableHeader">
+                <tr>
+                    <th class="table-id thVerticalAlign actionAlignCenter" style="width: 8%;">Actions</th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Good Return No
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Customer
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Return Type
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Vendor
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            WareHouse
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Return Date
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr valign="middle" *ngFor="let item of allReturnsList let i=index">
+                    <td class="table-id">
+                        <i class="ion-ios-book custom-tooltip-ion" 
+                        (click)="printReturnData(item.GoodReturnHeaderID)" style="margin-right: 5px">
+                            <span class="tooltiptext">Print Invoice</span>
+                        </i>
+                        <a [routerLink]="['../view',item.GoodReturnHeaderID]">
+                            <i class="ion-eye custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">View</span>
+                            </i>
+                        </a>
+                        <a [routerLink]="['../edit',item.GoodReturnHeaderID]" *ngIf="item.IsEdit">
+                            <i class="ion-edit custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">Edit</span>
+                            </i>
+                        </a>
+                    </td>
+                    <td class='text-align-left returnNumber'>{{item.GoodReturnNo}}</td>
+                    <td class='text-align-left customer'>{{item.Customer}}</td>
+                    <td class='text-align-center return-type'>{{item.ReturnType}}</td>
+                    <td class='text-align-center vendor'>{{item.Vendor}}</td>
+                    <td class='text-align-center warehouse'>{{item.WareHouse}}</td>
+                    <td class="text-align-left createdOn">{{item.GoodReturnDate}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="noReturnFound == '' && allReturnsList.length == 0 && refreshMessage" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
+        <div *ngIf="noReturnFound != '' && allReturnsList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noReturnFound}}</div>
+    </div>
+</ba-card>

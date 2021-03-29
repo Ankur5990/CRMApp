@@ -11,6 +11,9 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none; 
   margin: 0; 
 }
+.error-value {
+  border-color: red;
+}
 .pt4 {
   padding-top: 4px;
 }
