@@ -28,7 +28,7 @@
                 <date-picker [(dateModel)]="orderTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
             </div>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="orderTask.searchorderby == 2">
+        <div class="filter-width no-padding-right" *ngIf="orderTask.searchorderby == 2">
             <label>Select Type</label>
             <select (change)="refreshDataHandler()" class="form-control"
                 [(ngModel)]="orderTask.OrderType" id="exampleSelect1">
@@ -37,14 +37,28 @@
                 <option [value]="3">Customer</option>
             </select>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="orderTask.searchorderby == 2">
+        <div class="filter-width no-padding-right" *ngIf="orderTask.searchorderby == 2">
+            <label>Vendor</label>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="orderTask.VendorID">
+                <option [value]="1">All Vendors</option>
+                <option *ngFor='let vendor of allVendors' [value]="vendor.VendorID">{{vendor.Vendor}}</option>
+            </select>
+        </div>
+        <div class="filter-width no-padding-right" *ngIf="orderTask.searchorderby == 2">
+            <label>WareHouse</label>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="orderTask.WareHouseID">
+                <option [value]="1">All WareHouse</option>
+                <option *ngFor='let warehouse of allWareHouse' [value]="warehouse.WareHouseID">{{warehouse.WareHouse}}</option>
+            </select>
+        </div>
+        <div class="filter-width no-padding-right" *ngIf="orderTask.searchorderby == 2">
             <label>Status</label>
             <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="orderTask.OrderStatus">
                 <option [value]="1">All Status</option>
                 <option *ngFor='let status of allOrderStatus' [value]="status.OrderStatusID">{{status.OrderStatus}}</option>
             </select>
         </div>
-        <div class="col-md-2 col-sm-12 no-padding-right view-btn" *ngIf="orderTask.searchorderby == 2">
+        <div class="col-1 no-padding-right view-btn" *ngIf="orderTask.searchorderby == 2">
             <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllOrders()">View </button>
         </div>
         <div class="col-md-2 col-sm-12 createTicketBtn">
@@ -119,8 +133,12 @@
                 <tr valign="middle" *ngFor="let item of allOrdersList let i=index">
                     <td class="table-id">
                         <i class="ion-ios-book custom-tooltip-ion" 
-                        (click)="printCashData(item.OrderID)" style="margin-right: 5px">
+                        (click)="printCashData(item.OrderID, 'CRM')" style="margin-right: 5px">
                             <span class="tooltiptext">Print Invoice</span>
+                        </i>
+                        <i class="fa fa-print custom-tooltip-ion" 
+                        (click)="printCashData(item.OrderID, 'IMS')" style="margin-right: 5px">
+                            <span class="tooltiptext">Print Issue</span>
                         </i>
                         <a [routerLink]="['../view',item.OrderID]">
                             <i class="ion-eye custom-tooltip-ion" style="margin-right: 5px">

@@ -21,6 +21,8 @@ export class OrdersListComponent implements OnInit {
   todaysDate;
   buttonAction = false;
   allOrdersList = [];
+  allVendors = [];
+  allWareHouse = [];
   noOrderFound = '';
   refreshMessage = "Please click View button to get latest data";
   showLoader = false;
@@ -46,6 +48,8 @@ export class OrdersListComponent implements OnInit {
     this.orderTask = JSON.parse(JSON.stringify(this.orderTask));
     this.orderTask.OrderType = 1;
     this.orderTask.OrderStatus = 1;
+    this.orderTask.VendorID = 1;
+    this.orderTask.WareHouseID = 1;
     this.orderTask.searchorderby = 1;
     const now = new Date();
     this.todaysDate = { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() };
@@ -86,7 +90,7 @@ export class OrdersListComponent implements OnInit {
           this.showLoader = false;
           if(res['OrderList'].length == 0) {
             this.allOrdersList = [];
-            this.noOrderFound = "No Lead Found";
+            this.noOrderFound = "No Order Found";
             this.refreshMessage = '';
           } else {
             this.allOrdersList = res['OrderList'];
@@ -108,7 +112,7 @@ export class OrdersListComponent implements OnInit {
     .subscribe(results => {
       if(results['OrderList'].length == 0) {
         this.allOrdersList = [];
-        this.noOrderFound = "No Lead Found";
+        this.noOrderFound = "No Order Found";
         this.refreshMessage = '';
       } else {
         this.allOrdersList = results['OrderList'];
@@ -122,6 +126,7 @@ export class OrdersListComponent implements OnInit {
       }
     });
     this.getMasterData();
+    this.getImsMasterData();
     this.validateData();
   }
   valueChange(txt) {
@@ -146,7 +151,18 @@ export class OrdersListComponent implements OnInit {
       this.notification.error('Error','Error While Lookup Master Data');
     })
   }
-
+  getImsMasterData() {
+    this.showLoader = true;
+    this.orderService.getImsMasterData(this.userID).subscribe(resp =>{
+      this.showLoader = false;
+      let imsMasterData = JSON.parse(JSON.stringify(resp));
+      this.allVendors = imsMasterData.Vendor;
+      this.allWareHouse = imsMasterData.Warehouse;
+    }, error => {
+      this.showLoader = false;
+      this.notification.error('Error', 'Error while IMS master data');
+    })
+  }
   refreshDataHandler() {
     this.validateData();
     if (this.allOrdersList.length || this.noOrderFound != '') {
@@ -157,7 +173,8 @@ export class OrdersListComponent implements OnInit {
   }
 
   validateData() {
-    if (this.orderTask.OrderType != '' && this.orderTask.OrderStatus !=0) {
+    if (this.orderTask.OrderType != '' && this.orderTask.OrderStatus !=0 &&
+     this.orderTask.VendorID >0 && this.orderTask.WareHouseID > 0) {
       this.buttonAction = true;
       return true;
     } else {
@@ -171,7 +188,7 @@ export class OrdersListComponent implements OnInit {
     const startDate = `${orderTask.startDate.month}/${orderTask.startDate.day}/${orderTask.startDate.year}`;
     const endDate = `${orderTask.endDate.month}/${orderTask.endDate.day}/${orderTask.endDate.year}`;
     this.showLoader = true;
-    this.orderService.getAllOrders(startDate,endDate,orderTask.OrderType,orderTask.OrderStatus,this.userID).subscribe((res) => {
+    this.orderService.getAllOrders(startDate,endDate,orderTask.OrderType,orderTask.OrderStatus,orderTask.VendorID,orderTask.WareHouseID,this.userID).subscribe((res) => {
       this.showLoader = false;
       if (!res['OrderList'].length) {
         this.allOrdersList = [];
@@ -205,6 +222,8 @@ export class OrdersListComponent implements OnInit {
         OrderNumber: orderInfo.OrderNumber,
         OrderType: orderInfo.OrderType,
         CustomerName: orderInfo.CustomerName,
+        Vendor: orderInfo.Vendor,
+        Warehouse: orderInfo.Warehouse,
         TotalAmount: orderInfo.TotalAmount,
         DiscountPercentage: orderInfo.DiscountPercentage,
         FreightAmount: orderInfo.FreightAmount,
@@ -223,14 +242,14 @@ export class OrdersListComponent implements OnInit {
     });
 
     const options = { 
-      headers: ['Order Date','Lead Number','Order Number','Order Type', 'Customer Name','Total Amount','Discount(%)','Freight Amount', 'Payment Mode', 'Transporter', 'Dispatch No', 'Invoice Number', 'Quantity','Phone No','Cash Amount','Cheque Amount',' Other Amount', 'Order Status','Remarks'], 
+      headers: ['Order Date','Lead Number','Order Number','Order Type', 'Customer Name','Vendor','Warehouse','Total Amount','Discount(%)','Freight Amount', 'Payment Mode', 'Transporter', 'Dispatch No', 'Invoice Number', 'Quantity','Phone No','Cash Amount','Cheque Amount',' Other Amount', 'Order Status','Remarks'], 
       nullToEmptyString: true,
     };
     new ngxCsv(report, 'Order-List', options);
   }
-  printCashData(id) {
+  printCashData(id,type) {
     let table = '';
-    this.orderService.getPrintableData(id,this.userID).subscribe(res=> {
+    this.orderService.getPrintableData(id,this.userID,type).subscribe(res=> {
       let resp = JSON.parse(JSON.stringify(res));
       this.printHeaderInfo = resp['Header'][0];
       this.printDetailInfo = resp['Detail'];
@@ -303,35 +322,11 @@ export class OrdersListComponent implements OnInit {
               <div class="col-sm-10" style="overflow-x:auto;" id="cashContainer">
                   <table cellpadding="5" border=1 style="border-collapse: collapse;" width="100%">
                       <thead class="tableHeader">
-                        <th>SN</th>
-                        <th>Description of Goods</th>
-                        <th>Quantity</th>
-                        <th>Unit</th>
-                        <th>Price</th>
-                        <th>Amount</th>
+                        ${this.getHeaderData(type)}
                       </thead>
                       <tbody>
-                        ${this.getTableRows(this.printDetailInfo)}
-                        <tr>
-                          <td colspan="5"></td>
-                          <td class="text-align-right">${this.printHeaderInfo.SubTotalAmount}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="5" class="text-align-right">Frieght Charges</td>
-                          <td class="text-align-right">${this.printHeaderInfo.FreightAmount}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="5" class="text-align-right">Discount</td>
-                          <td class="text-align-right">${this.printHeaderInfo.DiscountAmount}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="2" class="text-align-right">Grand Total</td>
-                          <td colspan="3" class="total-quantity">${this.printHeaderInfo.TotalQuantity}</td>
-                          <td class="text-align-right">${this.printHeaderInfo.TotalAmount}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="6"><b>${this.printHeaderInfo.TotalAmountWords}</b></td>
-                        </tr>
+                        ${this.getTableRows(this.printDetailInfo, type)}
+                        ${this.getOtherRows(type)}
                       </tbody>
                   </table>
               </div>
@@ -441,7 +436,7 @@ export class OrdersListComponent implements OnInit {
               }
                 </style>
               </head>
-              <body>${table}</body>
+                <body>${table}</body>
             </html>`
               );
               newWin.print();  
@@ -450,18 +445,83 @@ export class OrdersListComponent implements OnInit {
       this.notification.error('Error', 'Facing Issue while print !!!');
     })
   }
-  getTableRows(data) {
+  getTableRows(data, type) {
     let html = '';
     for(let i=0; i< data.length; i++) {
       html = html + `<tr>
         <td>${i+1}</td>
-        <td>${data[i].PRODUCTCODE}</td>
-        <td class="text-align-right">${data[i].Quantity}</td>
+        <td>${data[i].PRODUCTCODE}</td>`;
+      if(type == 'IMS') {
+        html = html + `<td class="text-align-right">${data[i].Size}</td>`;
+      }
+      html = html +`<td class="text-align-right">${data[i].Quantity}</td>
         <td>${data[i].Unit}</td>
         <td class="text-align-right">${data[i].Price}</td>
         <td class="text-align-right">${data[i].Amount}</td>
-      </tr>`
+      </tr>`;
     }
     return html;
+  }
+  getHeaderData(type) {
+    let html ='';
+    html = html + `
+      <th>SN</th>
+      <th>Description of Goods</th>`;
+    if(type == 'IMS') {
+      html = html + `<th>Size</th>`;
+    }
+    html = html + ` <th>Quantity</th>
+      <th>Unit</th>
+      <th>Price</th>
+      <th>Amount</th>`;
+    return html;
+  }
+  getOtherRows(type) {
+    if(type == 'IMS'){
+      return `
+      <tr>
+      <td colspan="6"></td>
+      <td class="text-align-right">${this.printHeaderInfo.SubTotalAmount}</td>
+    </tr>
+    <tr>
+      <td colspan="6" class="text-align-right">Frieght Charges</td>
+      <td class="text-align-right">${this.printHeaderInfo.FreightAmount}</td>
+    </tr>
+    <tr>
+      <td colspan="6" class="text-align-right">Discount</td>
+      <td class="text-align-right">${this.printHeaderInfo.DiscountAmount}</td>
+    </tr>
+    <tr>
+      <td colspan="3" class="text-align-right">Grand Total</td>
+      <td colspan="3" class="total-quantity">${this.printHeaderInfo.TotalQuantity}</td>
+      <td class="text-align-right">${this.printHeaderInfo.TotalAmount}</td>
+    </tr>
+    <tr>
+      <td colspan="7"><b>${this.printHeaderInfo.TotalAmountWords}</b></td>
+    </tr>
+      `;
+    }
+    return `
+    <tr>
+      <td colspan="5"></td>
+      <td class="text-align-right">${this.printHeaderInfo.SubTotalAmount}</td>
+    </tr>
+    <tr>
+      <td colspan="5" class="text-align-right">Frieght Charges</td>
+      <td class="text-align-right">${this.printHeaderInfo.FreightAmount}</td>
+    </tr>
+    <tr>
+      <td colspan="5" class="text-align-right">Discount</td>
+      <td class="text-align-right">${this.printHeaderInfo.DiscountAmount}</td>
+    </tr>
+    <tr>
+      <td colspan="2" class="text-align-right">Grand Total</td>
+      <td colspan="3" class="total-quantity">${this.printHeaderInfo.TotalQuantity}</td>
+      <td class="text-align-right">${this.printHeaderInfo.TotalAmount}</td>
+    </tr>
+    <tr>
+      <td colspan="6"><b>${this.printHeaderInfo.TotalAmountWords}</b></td>
+    </tr>
+    `
   }
 }

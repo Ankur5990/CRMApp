@@ -32,6 +32,7 @@ export class ReturnListComponent implements OnInit {
   userID = '';
   printHeaderInfo;
   printDetailInfo = [];
+  totalQuantity = 0;
   searchReturnKey = '';
   popupWin: any;
   searchReturnTerm$ = new Subject<string>();
@@ -275,6 +276,11 @@ export class ReturnListComponent implements OnInit {
               </thead>
               <tbody>
                 ${this.getTableRows(this.printDetailInfo)}
+                <tr>
+                  <td colspan="3" class="text-align-right"> Total Quantity</td>
+                  <td class="text-align-right">${this.totalQuantity}</td>
+                  <td></td>
+                </tr>
               </tbody>
           </table>
         </div>
@@ -364,7 +370,9 @@ export class ReturnListComponent implements OnInit {
   }
   getTableRows(data) {
     let html = '';
+    this.totalQuantity = 0;
     for(let i=0; i< data.length; i++) {
+      this.totalQuantity = this.totalQuantity + (+data[i].Quantity);
       html = html + `<tr>
         <td>${i+1}</td>
         <td>${data[i].PRODUCTCODE}</td>

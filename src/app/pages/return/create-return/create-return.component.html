@@ -48,7 +48,7 @@
             </div>
             <div class="col-3">
                 <div class="form-group">
-                    <label>Ware House</label>
+                    <label>Ware House <sup style="color:red;">*</sup></label>
                     <select class="form-control" [disabled]="isViewOnly || detailPage" [(ngModel)]="createReturn.WareHouseID">
                         <option [value]="0">Select Ware House</option>
                         <option *ngFor='let warehouse of allWarehouse' [value]="warehouse.WareHouseID">{{warehouse.WareHouse}}</option>

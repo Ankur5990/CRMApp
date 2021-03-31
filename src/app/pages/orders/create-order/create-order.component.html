@@ -84,6 +84,24 @@
             </div>
             <div class="col-3">
                 <div class="form-group">
+                    <label>Vendor <sup style="color:red;">*</sup></label>
+                    <select class="form-control" (change)="onVendorWarehouseChange()" [disabled]="isViewOnly || detailPage" [(ngModel)]="createOrder.VendorID">
+                        <option [value]="0">Select Vendor</option>
+                        <option *ngFor='let vendor of allVendors' [value]="vendor.VendorID">{{vendor.Vendor}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Ware House <sup style="color:red;">*</sup></label>
+                    <select class="form-control" (change)="onVendorWarehouseChange()" [disabled]="isViewOnly || detailPage" [(ngModel)]="createOrder.WarehouseID">
+                        <option [value]="0">Select Ware House</option>
+                        <option *ngFor='let warehouse of allWareHouse' [value]="warehouse.WareHouseID">{{warehouse.WareHouse}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
                     <label>Discount(%)</label>
                     <input type='text' class='form-control' [disabled]="isViewOnly || disableOthers" (focus)="removeZero('discount')" (focusout)="addZero('discount')" [(ngModel)]="createOrder.discount" (ngModelChange)="onDiscountChange()">
                 </div>
@@ -149,7 +167,7 @@
                 </div>
             </div>
         </div>
-        <div>
+        <div *ngIf="createOrder.VendorID > 0 && createOrder.WarehouseID >0">
             <fieldset>
                 <legend>Select Product</legend>
                 <div class="row">

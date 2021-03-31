@@ -7,7 +7,6 @@ import { UserService } from '../../../shared/user.service';
 import { GenericSort } from '../../../shared/pipes/generic-sort.pipe';
 import { CacheService } from '../../../shared/cache.service';
 import * as _ from 'lodash';
-import { isNgTemplate } from '@angular/compiler';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
@@ -32,6 +31,9 @@ export class CreateOrderComponent implements OnInit {
   allTransporter = [];
   allCompany = [];
   allSize = [];
+  allWareHouse = [];
+  allVendors = [];
+  totalProducts = [];
   userID = '';
   OrderID = 0;
   ProductId;
@@ -41,6 +43,7 @@ export class CreateOrderComponent implements OnInit {
   totalAmount = 0;
   finalAmount = 0;
   showDelete = false;
+  detailPage: Boolean = false;
   disablePayment: Boolean = false;
   disableStatus: Boolean = false;
   disableOthers: Boolean = false;
@@ -89,6 +92,8 @@ export class CreateOrderComponent implements OnInit {
       this.createOrder.OrderType = 2;
       this.refreshDataHandler('typeChange');
       this.createOrder.OrderStatus = 'PP';
+      this.createOrder.VendorID = 0;
+      this.createOrder.WarehouseID = 0;
       this.createOrder.PaymentId = 0;
       this.createOrder.CustomerId = 0;
       this.createOrder.DispatchNo = '';
@@ -110,6 +115,7 @@ export class CreateOrderComponent implements OnInit {
       this.disableAmount = true;
       this.disableTransporter = true;
       this.getMasterData();
+      this.getImsMasterData();
       this.getAllProducts();
       const id = this.activatedRoute.snapshot.queryParams.id;
       if(id) {
@@ -165,22 +171,49 @@ export class CreateOrderComponent implements OnInit {
         this.notification.error('Error','Error While Lookup Master Data');
       })
     }
+
+    getImsMasterData() {
+      this.showLoader = true;
+      this.orderService.getImsMasterData(this.userID).subscribe(resp =>{
+        this.showLoader = false;
+        let imsMasterData = JSON.parse(JSON.stringify(resp));
+        this.allVendors = imsMasterData.Vendor;
+        this.allWareHouse = imsMasterData.Warehouse;
+      }, error => {
+        this.showLoader = false;
+        this.notification.error('Error', 'Error while IMS master data');
+      })
+    }
+    onVendorWarehouseChange() {
+      this.filterProducts();
+    }
     getAllProducts() {
       const id = 0
       this.orderService.getAllProducts().subscribe(res => {
-        this.allProducts = res['Product'];
+        this.totalProducts = res['Product'];
+        this.filterProducts();
+        //this.allProducts = res['Product'];
         this.allSize = res['ProductSize'];
         if(this.notHavingSize == true && (this.isEditOnly || this.isViewOnly)){
           this.pushExtraSize();
         }
       }, err=> {
         console.log(err);
+        this.goToListPage();
       })
+    }
+
+    filterProducts() {
+      if(this.createOrder.VendorID > 0 && this.createOrder.WarehouseID > 0) {
+        this.allProducts = this.totalProducts.filter(x => x.VendorID == this.createOrder.VendorID && x.WarehouseID == this.createOrder.WarehouseID);
+      } else {
+        this.allProducts = JSON.parse(JSON.stringify(this.totalProducts));
+      }
     }
     pushExtraSize() {
       for(let i=0; i< this.selectedProduct.length; i++) {
         const allsize = JSON.parse(JSON.stringify(this.allSize));
-        const availableSize = allsize.filter(x => x.PRODUCTID == this.selectedProduct[i].PRODUCTID.PRODUCTID);
+        const availableSize = allsize.filter(x => x.PRODUCTID == this.selectedProduct[i].PRODUCTID.PRODUCTID && x.VendorID == this.createOrder.VendorID && x.WarehouseID == this.createOrder.WarehouseID);
           for(let j=0; j< availableSize.length; j++) {
             let flag = true;
             for(let k=0; k< this.selectedProduct[i].ProductAvailableSize.length; k++) {
@@ -198,7 +231,7 @@ export class CreateOrderComponent implements OnInit {
     }
     onProductChange(e, row) {
       const allsize = JSON.parse(JSON.stringify(this.allSize));
-      const availableSize = allsize.filter(x => x.PRODUCTID == e.item.PRODUCTID);
+      const availableSize = allsize.filter(x => x.PRODUCTID == e.item.PRODUCTID && x.VendorID == this.createOrder.VendorID && x.WarehouseID == this.createOrder.WarehouseID);
       let sizeQuantity = [];
       if(row.isError) {
         row.isError = false;
@@ -276,6 +309,7 @@ export class CreateOrderComponent implements OnInit {
     }
     getDetails(id) {
       this.showLoader = true;
+      this.detailPage = true;
       this.orderService.getOrderDetails(id,this.userID).subscribe(res => {
         this.showLoader = false;
         const resp = JSON.parse(JSON.stringify(res));
@@ -311,6 +345,8 @@ export class CreateOrderComponent implements OnInit {
         this.createOrder.OtherAmount = allValues.OtherAmount;
         this.createOrder.Remark = allValues.Remark;
         this.customerNameWithAddress = `${allValues.CustomerName}, ${allValues.Address}`;
+        this.createOrder.VendorID = allValues.VendorID;
+        this.createOrder.WarehouseID = allValues.WarehouseID;
         this.createOrder.PaymentId = allValues.PaymentModeID;
         this.createOrder.CustomerId = allValues.LeadID == 0 ? allValues.CustomerID : allValues.LeadID;
         this.createOrder.DispatchNo = allValues.DispatchNo;
@@ -357,6 +393,7 @@ export class CreateOrderComponent implements OnInit {
         }
         this.calculateAmount();
         if(this.allSize.length > 0) {
+          this.filterProducts();
           this.pushExtraSize();
         } else {
           this.notHavingSize = true;
@@ -460,6 +497,8 @@ export class CreateOrderComponent implements OnInit {
         "LeadID": this.createOrder.OrderType == 2 ? this.createOrder.CustomerId : 0,
         "CustomerID": this.createOrder.OrderType == 3 ? this.createOrder.CustomerId : 0,
         "CompanyID": this.createOrder.Company,
+        "VendorID": this.createOrder.VendorID,
+        "WarehouseID": this.createOrder.WarehouseID,
         "DiscountPercentage": this.createOrder.discount,
         "OrderStatusID": statusResult.OrderStatusID,
         "PaymentModeID": this.createOrder.PaymentId,

@@ -22,9 +22,16 @@ export class OrderService {
         return res;
       }));
   }
+  getImsMasterData(userID) {
+    if (this.cache.has("purchaseMasterData")) { return this.cache.get("purchaseMasterData"); }
+    return this.http.get(`${this.API_ENDPOINT}api/IMSMasterData?UserID=${userID}`).pipe(map( res => {
+      this.cache.set("purchaseMasterData", res);
+      return res;
+    }));
+  }
   //http://styloxcrm.azurewebsites.net/api/CRMLeadList?StartDate=5/1/2020&EndDate=5/30/2020&CustomerName=''&StatusID=1
-  getAllOrders(StartDate,EndDate,TypeId,StatusId,userID) {
-    return this.http.get(`${this.API_ENDPOINT}api/CRMOrderList?OrderFromdate=${StartDate}&OrderEnddate=${EndDate}&OrderTypeID=${TypeId}&OrderStatusID=${StatusId}&UserID=${userID}`).pipe(map( res => res));
+  getAllOrders(StartDate,EndDate,TypeId,StatusId,VendorID,WareHouseID,userID) {
+    return this.http.get(`${this.API_ENDPOINT}api/CRMOrderList?OrderFromdate=${StartDate}&OrderEnddate=${EndDate}&OrderTypeID=${TypeId}&OrderStatusID=${StatusId}&UserID=${userID}&VendorID=${VendorID}&WarehouseID=${WareHouseID}`).pipe(map( res => res));
   }
   getListOnType(type, userID) {
     return this.http.get(`${this.API_ENDPOINT}api/CRMCustomerforOrder?Type=${type}&UserID=${userID}`).pipe(map( res => res));
@@ -38,8 +45,8 @@ export class OrderService {
   createOrder(obj) {
     return this.http.post(`${this.API_ENDPOINT}api/CreateOrder`, obj).pipe(map( res => res));
   }
-  getPrintableData(id,usedID) {
-    return this.http.get(`${this.API_ENDPOINT}api/CRMOrderInvoice?OrderID=${id}&LoginUserID=${usedID}`).pipe(map( res => res));
+  getPrintableData(id,usedID,FormatType) {
+    return this.http.get(`${this.API_ENDPOINT}api/CRMOrderInvoice?OrderID=${id}&LoginUserID=${usedID}&FormatType=${FormatType}`).pipe(map( res => res));
   }
   voidOrder(id,userID) {
     const obj = {"OrderID": id, "CreatedBy": userID};
