@@ -30,8 +30,8 @@ export class OrderService {
     }));
   }
   //http://styloxcrm.azurewebsites.net/api/CRMLeadList?StartDate=5/1/2020&EndDate=5/30/2020&CustomerName=''&StatusID=1
-  getAllOrders(StartDate,EndDate,TypeId,StatusId,VendorID,WareHouseID,userID) {
-    return this.http.get(`${this.API_ENDPOINT}api/CRMOrderList?OrderFromdate=${StartDate}&OrderEnddate=${EndDate}&OrderTypeID=${TypeId}&OrderStatusID=${StatusId}&UserID=${userID}&VendorID=${VendorID}&WarehouseID=${WareHouseID}`).pipe(map( res => res));
+  getAllOrders(StartDate,EndDate,TypeId,StatusId,WareHouseID,userID) {
+    return this.http.get(`${this.API_ENDPOINT}api/CRMOrderList?OrderFromdate=${StartDate}&OrderEnddate=${EndDate}&OrderTypeID=${TypeId}&OrderStatusID=${StatusId}&UserID=${userID}&WarehouseID=${WareHouseID}`).pipe(map( res => res));
   }
   getListOnType(type, userID) {
     return this.http.get(`${this.API_ENDPOINT}api/CRMCustomerforOrder?Type=${type}&UserID=${userID}`).pipe(map( res => res));
