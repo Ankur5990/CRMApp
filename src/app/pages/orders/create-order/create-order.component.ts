@@ -32,7 +32,7 @@ export class CreateOrderComponent implements OnInit {
   allCompany = [];
   allSize = [];
   allWareHouse = [];
-  allVendors = [];
+  // allVendors = [];
   totalProducts = [];
   userID = '';
   OrderID = 0;
@@ -92,7 +92,6 @@ export class CreateOrderComponent implements OnInit {
       this.createOrder.OrderType = 2;
       this.refreshDataHandler('typeChange');
       this.createOrder.OrderStatus = 'PP';
-      this.createOrder.VendorID = 0;
       this.createOrder.WarehouseID = 0;
       this.createOrder.PaymentId = 0;
       this.createOrder.CustomerId = 0;
@@ -177,7 +176,7 @@ export class CreateOrderComponent implements OnInit {
       this.orderService.getImsMasterData(this.userID).subscribe(resp =>{
         this.showLoader = false;
         let imsMasterData = JSON.parse(JSON.stringify(resp));
-        this.allVendors = imsMasterData.Vendor;
+        // this.allVendors = imsMasterData.Vendor;
         this.allWareHouse = imsMasterData.Warehouse;
       }, error => {
         this.showLoader = false;
@@ -204,8 +203,8 @@ export class CreateOrderComponent implements OnInit {
     }
 
     filterProducts() {
-      if(this.createOrder.VendorID > 0 && this.createOrder.WarehouseID > 0) {
-        this.allProducts = this.totalProducts.filter(x => x.VendorID == this.createOrder.VendorID && x.WarehouseID == this.createOrder.WarehouseID);
+      if(this.createOrder.WarehouseID > 0) {
+        this.allProducts = this.totalProducts.filter(x => x.WarehouseID == this.createOrder.WarehouseID);
       } else {
         this.allProducts = JSON.parse(JSON.stringify(this.totalProducts));
       }
@@ -213,7 +212,7 @@ export class CreateOrderComponent implements OnInit {
     pushExtraSize() {
       for(let i=0; i< this.selectedProduct.length; i++) {
         const allsize = JSON.parse(JSON.stringify(this.allSize));
-        const availableSize = allsize.filter(x => x.PRODUCTID == this.selectedProduct[i].PRODUCTID.PRODUCTID && x.VendorID == this.createOrder.VendorID && x.WarehouseID == this.createOrder.WarehouseID);
+        const availableSize = allsize.filter(x => x.PRODUCTID == this.selectedProduct[i].PRODUCTID.PRODUCTID && x.WarehouseID == this.createOrder.WarehouseID);
           for(let j=0; j< availableSize.length; j++) {
             let flag = true;
             for(let k=0; k< this.selectedProduct[i].ProductAvailableSize.length; k++) {
@@ -231,7 +230,7 @@ export class CreateOrderComponent implements OnInit {
     }
     onProductChange(e, row) {
       const allsize = JSON.parse(JSON.stringify(this.allSize));
-      const availableSize = allsize.filter(x => x.PRODUCTID == e.item.PRODUCTID && x.VendorID == this.createOrder.VendorID && x.WarehouseID == this.createOrder.WarehouseID);
+      const availableSize = allsize.filter(x => x.PRODUCTID == e.item.PRODUCTID && x.WarehouseID == this.createOrder.WarehouseID);
       let sizeQuantity = [];
       if(row.isError) {
         row.isError = false;
@@ -345,7 +344,6 @@ export class CreateOrderComponent implements OnInit {
         this.createOrder.OtherAmount = allValues.OtherAmount;
         this.createOrder.Remark = allValues.Remark;
         this.customerNameWithAddress = `${allValues.CustomerName}, ${allValues.Address}`;
-        this.createOrder.VendorID = allValues.VendorID;
         this.createOrder.WarehouseID = allValues.WarehouseID;
         this.createOrder.PaymentId = allValues.PaymentModeID;
         this.createOrder.CustomerId = allValues.LeadID == 0 ? allValues.CustomerID : allValues.LeadID;
@@ -497,7 +495,6 @@ export class CreateOrderComponent implements OnInit {
         "LeadID": this.createOrder.OrderType == 2 ? this.createOrder.CustomerId : 0,
         "CustomerID": this.createOrder.OrderType == 3 ? this.createOrder.CustomerId : 0,
         "CompanyID": this.createOrder.Company,
-        "VendorID": this.createOrder.VendorID,
         "WarehouseID": this.createOrder.WarehouseID,
         "DiscountPercentage": this.createOrder.discount,
         "OrderStatusID": statusResult.OrderStatusID,
