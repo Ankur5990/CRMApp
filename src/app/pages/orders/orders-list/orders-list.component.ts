@@ -21,7 +21,6 @@ export class OrdersListComponent implements OnInit {
   todaysDate;
   buttonAction = false;
   allOrdersList = [];
-  allVendors = [];
   allWareHouse = [];
   noOrderFound = '';
   refreshMessage = "Please click View button to get latest data";
@@ -48,7 +47,6 @@ export class OrdersListComponent implements OnInit {
     this.orderTask = JSON.parse(JSON.stringify(this.orderTask));
     this.orderTask.OrderType = 1;
     this.orderTask.OrderStatus = 1;
-    this.orderTask.VendorID = 1;
     this.orderTask.WareHouseID = 1;
     this.orderTask.searchorderby = 1;
     const now = new Date();
@@ -156,7 +154,6 @@ export class OrdersListComponent implements OnInit {
     this.orderService.getImsMasterData(this.userID).subscribe(resp =>{
       this.showLoader = false;
       let imsMasterData = JSON.parse(JSON.stringify(resp));
-      this.allVendors = imsMasterData.Vendor;
       this.allWareHouse = imsMasterData.Warehouse;
     }, error => {
       this.showLoader = false;
@@ -173,8 +170,7 @@ export class OrdersListComponent implements OnInit {
   }
 
   validateData() {
-    if (this.orderTask.OrderType != '' && this.orderTask.OrderStatus !=0 &&
-     this.orderTask.VendorID >0 && this.orderTask.WareHouseID > 0) {
+    if (this.orderTask.OrderType != '' && this.orderTask.OrderStatus !=0 && this.orderTask.WareHouseID > 0) {
       this.buttonAction = true;
       return true;
     } else {
@@ -188,7 +184,7 @@ export class OrdersListComponent implements OnInit {
     const startDate = `${orderTask.startDate.month}/${orderTask.startDate.day}/${orderTask.startDate.year}`;
     const endDate = `${orderTask.endDate.month}/${orderTask.endDate.day}/${orderTask.endDate.year}`;
     this.showLoader = true;
-    this.orderService.getAllOrders(startDate,endDate,orderTask.OrderType,orderTask.OrderStatus,orderTask.VendorID,orderTask.WareHouseID,this.userID).subscribe((res) => {
+    this.orderService.getAllOrders(startDate,endDate,orderTask.OrderType,orderTask.OrderStatus,orderTask.WareHouseID,this.userID).subscribe((res) => {
       this.showLoader = false;
       if (!res['OrderList'].length) {
         this.allOrdersList = [];
@@ -222,7 +218,6 @@ export class OrdersListComponent implements OnInit {
         OrderNumber: orderInfo.OrderNumber,
         OrderType: orderInfo.OrderType,
         CustomerName: orderInfo.CustomerName,
-        Vendor: orderInfo.Vendor,
         Warehouse: orderInfo.Warehouse,
         TotalAmount: orderInfo.TotalAmount,
         DiscountPercentage: orderInfo.DiscountPercentage,
@@ -242,7 +237,7 @@ export class OrdersListComponent implements OnInit {
     });
 
     const options = { 
-      headers: ['Order Date','Lead Number','Order Number','Order Type', 'Customer Name','Vendor','Warehouse','Total Amount','Discount(%)','Freight Amount', 'Payment Mode', 'Transporter', 'Dispatch No', 'Invoice Number', 'Quantity','Phone No','Cash Amount','Cheque Amount',' Other Amount', 'Order Status','Remarks'], 
+      headers: ['Order Date','Lead Number','Order Number','Order Type', 'Customer Name','Warehouse','Total Amount','Discount(%)','Freight Amount', 'Payment Mode', 'Transporter', 'Dispatch No', 'Invoice Number', 'Quantity','Phone No','Cash Amount','Cheque Amount',' Other Amount', 'Order Status','Remarks'], 
       nullToEmptyString: true,
     };
     new ngxCsv(report, 'Order-List', options);
