@@ -84,15 +84,6 @@
             </div>
             <div class="col-3">
                 <div class="form-group">
-                    <label>Vendor <sup style="color:red;">*</sup></label>
-                    <select class="form-control" (change)="onVendorWarehouseChange()" [disabled]="isViewOnly || detailPage" [(ngModel)]="createOrder.VendorID">
-                        <option [value]="0">Select Vendor</option>
-                        <option *ngFor='let vendor of allVendors' [value]="vendor.VendorID">{{vendor.Vendor}}</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="form-group">
                     <label>Ware House <sup style="color:red;">*</sup></label>
                     <select class="form-control" (change)="onVendorWarehouseChange()" [disabled]="isViewOnly || detailPage" [(ngModel)]="createOrder.WarehouseID">
                         <option [value]="0">Select Ware House</option>
@@ -167,7 +158,7 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="createOrder.VendorID > 0 && createOrder.WarehouseID >0">
+        <div *ngIf="createOrder.WarehouseID > 0">
             <fieldset>
                 <legend>Select Product</legend>
                 <div class="row">
