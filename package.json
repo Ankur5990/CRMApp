@@ -60,7 +60,7 @@
     "jquery": "3.2.1",
     "jquery-slimscroll": "1.3.8",
     "karma": "^4.1.0",
-    "lodash": "4.17.4",
+    "lodash": "4.17.21",
     "multiple-select": "^1.2.3",
     "ng2-completer": "^2.0.8",
     "ng2-slim-loading-bar": "^4.0.0",
