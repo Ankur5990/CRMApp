@@ -49,7 +49,7 @@
     "bootstrap": "^4.0.0-alpha.6",
     "browserslist": "^4.8.4",
     "caniuse-lite": "^1.0.30001022",
-    "chart.js": "1.1.1",
+    "chart.js": "2.9.4",
     "chartist": "0.10.1",
     "crypto-js": "^3.1.9-1",
     "easy-pie-chart": "2.1.7",
