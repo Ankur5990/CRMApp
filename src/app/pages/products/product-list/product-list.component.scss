@@ -1,0 +1,119 @@
+@import "../../../theme/sass/conf/conf.scss";
+
+.view-btn {
+    padding-top: 20px;
+    padding-left: 10px;
+}
+.createProductBtn {
+    padding: 10px 35px;
+    position: absolute;
+    right: -13px;
+    top: -3px;
+}
+.text-align-center {
+    text-align: center;
+}
+.col-custom-2 {
+    flex: 0 0 15%;
+    max-width: 15%;
+    padding: 0 15px;
+}
+.printBtn {
+    padding: 10px 35px;
+    position: absolute;
+    right: 80px;
+    top: -3px;
+}
+.exportBtn {
+    padding: 10px 35px;
+    position: absolute;
+    right: 160px;
+    top: -3px;  
+}
+.text-align-left {
+    text-align: left;
+}
+
+.thVerticalAlign {
+    vertical-align: middle;
+  }
+.table-container {
+    padding-top: 15px;
+}
+table.product-list-table tbody tr td {
+    padding: 0 5px !important;
+}
+
+table.product-list-table thead th {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+.code {
+    width: 7%;
+}
+.desc {
+    width: 9%;
+}
+.catogery {
+    width: 9%;
+}
+.type {
+    width: 9%;
+}
+.gender {
+    width: 7%;
+}
+.color {
+    width: 7%;
+}
+.fit {
+    width: 8%;
+}
+.price {
+    width: 8%;
+}
+.custom-tooltip-ion:hover .customTooltiptext {
+    visibility: visible;
+}
+input[type='radio'] {
+    margin-right: 3px;
+}
+.search-container {
+    padding-bottom: 12px;
+}
+.padding-eater {
+    padding-left: 15px;
+    padding-bottom: 10px;
+}
+.customTooltiptext {
+    z-index: 999;
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    width: auto;
+    text-align: center;
+    border-radius: 6px;
+    position: relative;
+    padding: 2px 5px;
+    line-height: 15px;
+    font-size: 12px;
+}
+  
+@media only screen and (min-width: 769px) {
+    .tooltip-position {
+        position: absolute;
+        width: 64px !important;
+        margin-left: 10px;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .tooltip-position {
+        position: relative;
+    }
+}
+@media only screen and (min-width: 769px) {
+    .filter-max-width {
+        max-width: 14.2% !important;
+    }
+}
