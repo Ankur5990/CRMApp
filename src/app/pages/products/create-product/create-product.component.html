@@ -1,1 +1,130 @@
-test
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+    <div style="margin:auto;position:fixed;top:50%;left:50%;">
+        <img src="assets/crm/spinner.gif " width='25px'>
+    </div>
+</div>
+<ba-card cardTitle="{{cardTitle}}" id="newTicket">
+    <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-washing' : 'backtowashinglist'" (click)="goToListPage()">Back</button>
+    <button class="btn btn-danger buttonMargin btn-margin submit-create-washing" *ngIf="!isViewOnly" (click)="submitProduct();">Submit</button>
+    <div class="row">
+        <div class="col-3">
+            <div class="form-group">
+                <label>Product Code <sup style="color:red;">*</sup></label>
+                <input type='text' class='form-control' [disabled]="isViewOnly || isEditOnly" [(ngModel)]="createProduct.ProductCode">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Product Desc</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createProduct.ProductDesc">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>MRP</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createProduct.Mrp">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Cost Price</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createProduct.CostPrice">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Sale Price</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createProduct.SalePrice">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Source</label>
+                <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createProduct.SourceID">
+                    <option [value]="0">Select Source</option>
+                    <option [value]="2">Internal</option>
+                    <option [value]="3">External</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Product Type</label>
+                <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createProduct.ProductTypeID">
+                    <option [value]="0">Select Product Type</option>
+                    <option *ngFor='let type of allProductType' [value]="type.ProductTypeID">{{type.ProductType}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Bar Code </label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createProduct.BarCode">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Color</label>
+                <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createProduct.ColorID">
+                    <option [value]="0">Select Color</option>
+                    <option *ngFor='let color of allColor' [value]="color.ColorID">{{color.Color}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Gender</label>
+                <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createProduct.GenderID">
+                    <option [value]="0">Select Gender</option>
+                    <option [value]="2">Male</option>
+                    <option [value]="3">Female</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Category</label>
+                <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createProduct.ProductCatogeryID">
+                    <option [value]="0">Select Category</option>
+                    <option *ngFor='let category of allCategory' [value]="category.ProductCategoryID">{{category.ProductCategory}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Fit</label>
+                <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createProduct.FitID">
+                    <option [value]="0">Select Fit</option>
+                    <option *ngFor='let type of allFit' [value]="type.FitID">{{type.Fit}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Varient</label>
+                <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createProduct.VarientID">
+                    <option [value]="0">Select Varient</option>
+                    <option *ngFor='let varient of allVarient' [value]="varient.ProductVarientID">{{varient.ProductVarient}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Lot</label>
+                <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createProduct.Lot">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Remark</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createProduct.Remark">
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group">
+                <label>Is Active</label>
+                <input type='checkbox' class='form-control' style="margin-top: 5px; zoom: 0.5" [disabled]="isViewOnly" [(ngModel)]="createProduct.IsActive">
+            </div>
+        </div>
+    </div>
+</ba-card>
