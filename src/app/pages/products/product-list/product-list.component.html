@@ -1,1 +1,179 @@
-test
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+  <div style="margin:auto;position:fixed;top:50%;left:50%;">
+      <img src="assets/crm/spinner.gif " width='25px'>
+  </div>
+</div>
+
+<ba-card cardTitle="Products" class="smart-table-container" #product>
+    <div class="row">
+        <div class="col-12 search-container">
+            Search Product By: <input type="radio" name="type" [value]="1" [(ngModel)]="productListTask.searchby" (change)="valueChange('product')"/>Product Code <input type="radio" name="type" [value]="2" [(ngModel)]="productListTask.searchby" (change)="valueChange('other')"/>Other filters
+        </div>
+    </div>
+    <div class="row" *ngIf="productListTask.searchby == 1"> 
+        <div class="col-md-5 padding-eater">
+            <input name="productnum" [(ngModel)]="searchProductKey" autocomplete="off" type="text" class="form-control" placeholder="Search Product" (keyup)="searchProductTerm$.next($event.target.value)">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-custom-2 no-padding-right" *ngIf="productListTask.searchby == 2">
+            <label>Product Type</label>
+            <select class="form-control"
+                [(ngModel)]="productListTask.ProductTypeID" (change)="refreshDataHandler()">
+                <option [value]="1">All Product Type</option>
+                <option *ngFor="let type of allProductType" [value]="type.ProductTypeID">{{type.ProductType}}</option>
+            </select>
+        </div>
+        <div class="col-custom-2 no-padding-right" *ngIf="productListTask.searchby == 2">
+            <label>Fit Type</label>
+            <select class="form-control"
+                [(ngModel)]="productListTask.FitID" (change)="refreshDataHandler()">
+                <option [value]="1">All Fit Type</option>
+                <option *ngFor="let fit of allFit" [value]="fit.FitID">{{fit.Fit}}</option>
+            </select>
+        </div>
+        <div class="col-custom-2 no-padding-right" *ngIf="productListTask.searchby == 2">
+            <label>Select Color</label>
+            <select class="form-control"
+                [(ngModel)]="productListTask.ColorID" (change)="refreshDataHandler()">
+                <option [value]="1">All Colors</option>
+                <option *ngFor="let color of allColor" [value]="color.ColorID">{{color.Color}}</option>
+            </select>
+        </div>
+        <div class="col-custom-2 no-padding-right" *ngIf="productListTask.searchby == 2">
+            <label>Category</label>
+            <select class="form-control"
+                [(ngModel)]="productListTask.ProductCategoryID" (change)="refreshDataHandler()">
+                <option [value]="1">All Category</option>
+                <option *ngFor="let cats of allCategory" [value]="cats.ProductCategoryID">{{cats.ProductCategory}}</option>
+            </select>
+        </div>
+        <div class="col-custom-2 no-padding-right" *ngIf="productListTask.searchby == 2">
+            <label>Select Gender</label>
+            <select class="form-control"
+                [(ngModel)]="productListTask.GenderID" (change)="refreshDataHandler()">
+                <option [value]="1">All Type</option>
+                <option [value]="2">Male</option>
+                <option [value]="3">Female</option>
+            </select>
+        </div>
+        <div class="col-custom-2 no-padding-right" *ngIf="productListTask.searchby == 2">
+            <label>Select Source</label>
+            <select class="form-control"
+                [(ngModel)]="productListTask.SourceID" (change)="refreshDataHandler()">
+                <option [value]="1">All Source</option>
+                <option [value]="2">Internal</option>
+                <option [value]="3">External</option>
+            </select>
+        </div>
+        <div class="col-1 no-padding-right view-btn" *ngIf="productListTask.searchby == 2">
+            <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllProducts()">View </button>
+        </div>
+        <div class="col-md-2 col-sm-12 createProductBtn">
+            <button [routerLink]="['../create']" class="btn btn-primary addCustBtn pull-right">
+                Create
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 printBtn">
+            <button (click)="printTable()" class="btn btn-primary addCustBtn pull-right" [disabled]="allProductList.length == 0">
+                Print
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 exportBtn">
+            <button (click)="exportToCSV()" class="btn btn-primary addCustBtn pull-right" [disabled]="allProductList.length == 0">
+                Export
+            </button>
+        </div>
+    </div>
+    <div class="table-container" style="overflow-x:auto;">
+        <table class="table table-striped table-condensed product-list-table" id="product-container">
+            <thead class="tableHeader">
+                <tr>
+                    <th class="table-id thVerticalAlign actionAlignCenter" style="width: 8%;">Actions</th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Product Code
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Product Desc
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Product Catogery
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Product Type
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Gender
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Color
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Fit
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            MRP
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Cost Price
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Selling Price
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr valign="middle" *ngFor="let item of allProductList let i=index">
+                    <td class="table-id">
+                        <!-- <i class="ion-ios-book custom-tooltip-ion" 
+                        (click)="printCashData(item.WashingID)" style="margin-right: 5px">
+                            <span class="tooltiptext">Print Invoice</span>
+                        </i> -->
+                        <a [routerLink]="['../view',item.ProductID]">
+                            <i class="ion-eye custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">View</span>
+                            </i>
+                        </a>
+                        <a [routerLink]="['../edit',item.ProductID]">
+                            <i class="ion-edit custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">Edit</span>
+                            </i>
+                        </a>
+                    </td>
+                    <td class='text-align-left code'>{{item.ProductCode}}</td>
+                    <td class='text-align-left desc'>{{item.ProductDesc}}</td>
+                    <td class='text-align-left catogery'>{{item.ProductCatogery}}</td>
+                    <td class='text-align-left type'>{{item.ProductType || 'NA'}}</td>
+                    <td class='text-align-left gender'>{{item.Gender || 'NA'}}</td>
+                    <td class='text-align-left color'>{{item.Color || 'NA'}}</td>
+                    <td class='text-align-left fit'>{{item.Fit || 'NA'}}</td>
+                    <td class="text-align-left price">{{item.MRP}}</td>
+                    <td class="text-align-left price">{{item.CostPrice || 'NA'}}</td>
+                    <td class="text-align-left price">{{item.SellingPrice || 'NA'}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="noProductFound == '' && allProductList.length == 0 && refreshMessage" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
+        <div *ngIf="noProductFound != '' && allProductList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noProductFound}}</div>
+    </div>
+</ba-card>
