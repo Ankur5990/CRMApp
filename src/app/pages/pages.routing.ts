@@ -24,6 +24,7 @@ export const routes: Routes = [
       { path: 'issue', loadChildren: './miscissue/misc-issue.module#MiscIssueModule' },
       { path: 'grn', loadChildren: './grn/grn.module#GRNModule' },
       { path: 'return', loadChildren: './return/return.module#ReturnModule' },
+      { path: 'product', loadChildren: './products/product.module#ProductModule' },
     ]
   }
 ];
