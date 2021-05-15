@@ -110,6 +110,18 @@ export const PAGES_MENU = [
 			  },
 			},
 		},
+	    	{
+			path: 'product',
+			data: {
+			  menu: {
+				title: 'Product',
+				icon: 'ion-compose',
+				selected: false,
+				expanded: false,
+				order: 0,
+			  },
+			},
+		},
 		{
 			path: 'grn',
 			data: {
