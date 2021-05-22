@@ -20,6 +20,7 @@ export class CreateLeadComponent implements OnInit {
   cardTitle = 'CREATE NEW LEAD';
   isViewOnly = false;
   isEditOnly = false;
+  editOrView = false;
   createLead;
   commentList = [];
   allCustomer = [];
@@ -60,14 +61,23 @@ export class CreateLeadComponent implements OnInit {
       this.createLead.LeadStatus = "L";
       this.createLead.Priority = 0;
       this.createLead.PhoneNo = '';
-      this.createLead.Quantity = '';
       this.createLead.Address = '';
       this.createLead.State = 0;
       this.createLead.City = 0;
       this.createLead.ZipCode = '';
       this.createLead.Comment = '';
-      this.getMasterData();
       const activatedRouteObject = this.activatedRoute.snapshot.data;
+      if((activatedRouteObject['viewMode'] == true) || (activatedRouteObject['editMode'] == true )) {
+        this.editOrView = true;
+      } else {
+        this.editOrView = false;
+      }
+      if(this.editOrView == false) {
+        this.createLead.Quantity = 50;
+      } else {
+        this.createLead.Quantity = '';
+      }
+      this.getMasterData();
       if(activatedRouteObject['viewMode'] === true) {
         this.isViewOnly = true;
         this.cardTitle = 'VIEW LEAD'
@@ -96,6 +106,17 @@ export class CreateLeadComponent implements OnInit {
         this.allLeadSource = lookUpData.LeadSource;
         this.totalCities = lookUpData.City;
         this.allLeadTypes = lookUpData.LeadType;
+        if(this.editOrView == false) {
+          if(this.allLeadTypes.length > 0) {
+            this.createLead.LeadType = this.allLeadTypes[0].LeadTypeID;
+          }
+          if(this.allPriority.length > 0) {
+            this.createLead.Priority = this.allPriority[0].PriorityID;
+          }
+          if(this.allLeadSource.length > 0) {
+            this.createLead.LeadSourceId = this.allLeadSource[0].LeadSourceID;
+          }
+        }
         if(this.filterStateData == true && (this.isEditOnly || this.isViewOnly)) {
           this.refreshDataHandler('statechange');
         }
