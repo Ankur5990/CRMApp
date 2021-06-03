@@ -145,6 +145,18 @@ export const PAGES_MENU = [
 				order: 0,
 			  },
 			},
+		},
+	    	{
+			path: 'report',
+			data: {
+			  menu: {
+				title: 'Report',
+				icon: 'ion-compose',
+				selected: false,
+				expanded: false,
+				order: 0,
+			  },
+			},
 		}
     ]
   }
