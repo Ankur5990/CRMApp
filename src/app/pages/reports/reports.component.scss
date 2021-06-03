@@ -1,0 +1,29 @@
+
+.input-value {
+    display: inline-block;
+    margin-left: 15px;
+}
+.col-3-value {
+    flex: 0 0 27%;
+    max-width: 27%;
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.lbl-text {
+    vertical-align: top;
+    padding-top: 10px;
+}
+
+.table-container {
+    padding-top: 20px;
+}
+
+.exportBtn {
+    padding: 10px 35px;
+    position: absolute;
+    right: 160px;
+    top: -3px;  
+}
+
