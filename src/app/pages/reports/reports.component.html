@@ -1,0 +1,54 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+    <div style="margin:auto;position:fixed;top:50%;left:50%;">
+        <img src="assets/crm/spinner.gif " width='25px'>
+    </div>
+</div>
+<ba-card cardTitle="Reports" class="smart-table-container" #report>
+    <div class="row">
+        <div class="col-3-value">
+            <label class="lbl-text"> Select Report Type </label>
+            <div class="input-value">
+                <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="reportTask.ReportType">
+                    <option [value]="0">Select Reports Type</option>
+                    <option *ngFor='let report of allReportType' [value]="report.ReportType">{{report.Report}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-3-value" *ngIf="dateIsRequired">
+            <label class="lbl-text"> Start Date </label>
+            <div class="input-value">
+                <date-picker [(dateModel)]="reportTask.StartDate" (dateModelChange)="dateChangeHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-3-value" *ngIf="dateIsRequired">
+            <label class="lbl-text"> End Date </label>
+            <div class="input-value">
+                <date-picker [(dateModel)]="reportTask.EndDate" (dateModelChange)="dateChangeHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-2" *ngIf="dateIsRequired">
+            <button class="btn btn-primary" (click)="getReportData(false)">View Report</button>
+        </div>
+        <div class="col-md-2 col-sm-12 exportBtn">
+            <button (click)="exportToCSV()" class="btn btn-primary addCustBtn pull-right" [disabled]="reportData.length == 0">
+                Export
+            </button>
+        </div>
+    </div>
+    <div class="table-container" style="overflow-x:auto;">
+        <table class="table table-striped table-condensed return-list-table" id="return-table" *ngIf="header.length > 0">
+            <thead class="tableHeader">
+                <tr>
+                    <th class="table-id thVerticalAlign actionAlignCenter" *ngFor="let head of header let j=index">{{head}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr valign="middle" *ngFor="let item of reportData let i=index">
+                    <td class='text-align-center' *ngFor="let col of header let k=index">{{item[col]}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="noData == '' && reportData.length == 0 && refreshMessage && dateIsRequired == true && reportTask.ReportType != 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
+        <div *ngIf="noData != '' && reportData.length == 0 && refreshMessage == '' " style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noData}}</div>
+    </div>
+</ba-card>
