@@ -5,8 +5,9 @@
 </div>
 <ba-card cardTitle="{{cardTitle}}" id="newTicket">
     <button class="btn btn-danger buttonMargin btn-margin submit-void-order" *ngIf="!isViewOnly && enableVoidOrder" (click)="VoidOrder();">Void Order</button>
-    <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-order' : 'backtolist'" (click)="goToListPage()">Back</button>
-    <button class="btn btn-danger buttonMargin btn-margin submit-create-order" *ngIf="IsApprove" (click)="submitOrder('approve');">Approve</button>
+    <button class="btn btn-danger buttonMargin backBtn" [ngClass]="isViewOnly ? 'submit-create-order' : 'back-order'" (click)="goToListPage()">Back</button>
+    <button class="btn btn-danger buttonMargin btn-margin reject-order" *ngIf="IsApprove && !isViewOnly" (click)="submitOrder('reject');">Reject</button>
+    <button class="btn btn-danger buttonMargin btn-margin approve-order" *ngIf="IsApprove && !isViewOnly" (click)="submitOrder('approve');">Approve</button>
     <button class="btn btn-danger buttonMargin btn-margin submit-create-order" *ngIf="!isViewOnly && !IsApprove" (click)="submitOrder('save');">Submit</button>
         <div class="row">
             <div class="col-3">
@@ -99,7 +100,7 @@
             </div>
             <div class="col-3">
                 <div class="form-group">
-                    <label>Freight Amount</label>
+                    <label>Pic-up Amount</label>
                     <input type='text' class='form-control' [disabled]="isViewOnly" (focus)="removeZero('frieght')" (focusout)="addZero('frieght')" [(ngModel)]="createOrder.FreightCharge" (ngModelChange)="onFreightChargeChange()">
                 </div>
             </div>
