@@ -39,6 +39,7 @@ export class CreateLeadComponent implements OnInit {
   filterStateData = false;
   IsfollowUpDate = false;
   showCreateOrder = false;
+  isWarning = 0;
   constructor(protected userService: UserService, private leadService: LeadService,
     private router: Router, private activatedRoute: ActivatedRoute,
     protected cacheService: CacheService, protected modalService: NgbModal,
@@ -266,13 +267,20 @@ export class CreateLeadComponent implements OnInit {
         "ShopName": this.createLead.ShopName,
         "LeadStatusID": findResult.LeadStatusID,
         "UserID": this.userID,
-        "Comment": this.createLead.Comment
+        "Comment": this.createLead.Comment,
+        "IsWarningAllowed": this.isWarning
       }
       this.showLoader = true;
       this.leadService.createLead(postData).subscribe(res => {
         this.showLoader = false;
         const resp = JSON.parse(JSON.stringify(res));
         if(resp.Error[0].ERROR == 0) {
+          if(resp.Error[0].IsWarningAllowed == 1) {
+            this.showWarningPopUp(resp.Error[0].Msg);
+            return;
+          } else {
+            this.isWarning = 0;
+          }
           if (this.cacheService.has("allLeadList")) {
             this.cacheService.set("redirectAfterSave", 'saved');
             if (this.cacheService.has("listFilterData")) {
@@ -331,5 +339,24 @@ export class CreateLeadComponent implements OnInit {
     }
     goToOrderDetail(id) {
       this.router.navigate(['pages/orders/create'], { queryParams: { id: id,customer: this.customerDetail } })
+    }
+
+    showWarningPopUp(msg) {
+      const activeModal = this.modalService.open(ModalComponent, {
+        size: 'sm',
+        backdrop: 'static',
+      });
+      activeModal.componentInstance.BUTTONS.OK = 'Continue';
+      activeModal.componentInstance.BUTTONS.Cancel = 'Cancel';
+      activeModal.componentInstance.showCancel = true;
+      activeModal.componentInstance.modalHeader = 'Warning!';
+      activeModal.componentInstance.modalContent = `${msg}`;
+      activeModal.componentInstance.closeModalHandler = (() => {
+        this.isWarning = 1;
+        this.submitLead();
+      });
+      activeModal.componentInstance.dismissHandler = (() => {
+        this.isWarning = 0;
+      });
     }
 }
