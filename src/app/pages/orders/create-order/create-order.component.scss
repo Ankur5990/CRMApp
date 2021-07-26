@@ -310,10 +310,25 @@ input[type=number]::-webkit-outer-spin-button {
   top: 7px;
   right: 20px;
 }
+.reject-order {
+  position: absolute;
+  top: 7px;
+  right: 130px;
+}
+.approve-order {
+  position: absolute;
+  top: 7px;
+  right: 20px;
+}
 .submit-void-order {
   position: absolute;
   top: 7px;
-  right: 188px;
+  right: 110px;
+}
+.back-order {
+  position: absolute;
+  top: 7px;
+  right: 225px;
 }
 
 /* The switch - the box around the slider */
