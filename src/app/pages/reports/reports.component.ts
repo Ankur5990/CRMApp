@@ -17,6 +17,7 @@ export class ReportsComponent {
     allReportType = [];
     userID;
     dateIsRequired = false;
+    textIsRequired = false;
     header = [];
     reportData = [];
     noData = '';
@@ -33,19 +34,23 @@ export class ReportsComponent {
         this.reportTask.ReportType = 0;
         this.reportTask.StartDate = this.todaysDate;
         this.reportTask.EndDate = this.todaysDate;
+        this.reportTask.SearchValue = '';
         this.getAllReportTypes();
     }
 
     refreshDataHandler() {
         this.header = [];
         this.reportData = [];
+        this.reportTask.SearchValue = '';
         if(this.reportTask.ReportType == 0) {
             this.dateIsRequired = false;
+            this.textIsRequired = false;
             return;
         }
         const report = this.allReportType.filter(report => report.ReportType == this.reportTask.ReportType);
         this.dateIsRequired = report[0].IsDateRequired == 1 ? true : false;
-        if(this.dateIsRequired == false) {
+        this.textIsRequired =  report[0].IsTextRequired == 1 ? true : false;
+        if(this.dateIsRequired == false && this.textIsRequired == false) {
             this.flag = true;
             this.getReportData(this.flag);
         } else {
@@ -64,6 +69,7 @@ export class ReportsComponent {
             ReportType: this.reportTask.ReportType,
             StartDate: `${this.reportTask.StartDate.month}/${this.reportTask.StartDate.day}/${this.reportTask.StartDate.year}`,
             EndDate: `${this.reportTask.EndDate.month}/${this.reportTask.EndDate.day}/${this.reportTask.EndDate.year}`,
+            SearchKey: this.reportTask.SearchValue,
             userID: this.userID
         }
         this.showLoader = true;
