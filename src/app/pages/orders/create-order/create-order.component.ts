@@ -9,6 +9,7 @@ import { CacheService } from '../../../shared/cache.service';
 import * as _ from 'lodash';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { ModalComponent } from 'app/shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-create-order',
@@ -62,6 +63,7 @@ export class CreateOrderComponent implements OnInit {
   searchKey = '';
   searchCustomer$ = new Subject<string>();
   disableLeadCustomer = false;
+  isWarning = 0;
   constructor(protected userService: UserService, private orderService: OrderService,
     private router: Router, private activatedRoute: ActivatedRoute,
     protected cacheService: CacheService, protected modalService: NgbModal,
@@ -484,6 +486,8 @@ export class CreateOrderComponent implements OnInit {
       let statusResult;
       if(action == 'approve') {
         statusResult = this.allStatus.find(x=> x.Code == 'PD');
+      } else if(action == 'reject') {
+        statusResult = this.allStatus.find(x=> x.Code == 'PP');
       } else  {
         statusResult = this.allStatus.find(x=> x.Code == this.createOrder.OrderStatus);
       }
@@ -513,13 +517,20 @@ export class CreateOrderComponent implements OnInit {
         "IsTaxInvoice": this.createOrder.TaxInvoice,
         "CreatedBy": this.userID,
         "TotalAmount": this.finalAmount,
-        "OrderDetail": productDetails
+        "OrderDetail": productDetails,
+        "IsWarningAllowed": this.isWarning
       }
       this.showLoader = true;
       this.orderService.createOrder(postData).subscribe(res => {
         this.showLoader = false;
         const resp = JSON.parse(JSON.stringify(res));
         if(resp.Error[0].ERROR == 0) {
+          if(resp.Error[0].IsWarningAllowed == 1) {
+            this.showWarningPopUp(resp.Error[0].Msg);
+            return;
+          } else {
+            this.isWarning = 0;
+          }
           if (this.cacheService.has("allOrdersList")) {
             this.cacheService.set("redirectAfterOrderSave", 'ordersaved');
             if (this.cacheService.has("orderListFilterData")) {
@@ -625,5 +636,23 @@ export class CreateOrderComponent implements OnInit {
       this.createOrder.BillingAddress = item.BillingAddress;
       this.createOrder.GSTNo = item.GSTNO;
       this.createOrder.MembershipNo = item.MembershipNo;
+    }
+    showWarningPopUp(msg) {
+      const activeModal = this.modalService.open(ModalComponent, {
+        size: 'sm',
+        backdrop: 'static',
+      });
+      activeModal.componentInstance.BUTTONS.OK = 'Continue';
+      activeModal.componentInstance.BUTTONS.Cancel = 'Cancel';
+      activeModal.componentInstance.showCancel = true;
+      activeModal.componentInstance.modalHeader = 'Warning!';
+      activeModal.componentInstance.modalContent = `${msg}.`;
+      activeModal.componentInstance.closeModalHandler = (() => {
+        this.isWarning = 1;
+        this.submitOrder('save');
+      });
+      activeModal.componentInstance.dismissHandler = (() => {
+        this.isWarning = 0;
+      });
     }
 }
