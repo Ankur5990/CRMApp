@@ -23,9 +23,14 @@ export class ReportsService {
   getReportData(obj, flag) {
     let apiPath = '';
     if(flag == true) {
-      apiPath = `api/ReportData?ReportType=${obj.ReportType}&LoginUserID=${obj.userID}`
+      apiPath = `api/ReportData?ReportType=${obj.ReportType}&LoginUserID=${obj.userID}`;
     } else {
-      apiPath = `api/ReportData?ReportType=${obj.ReportType}&FromDate=${obj.StartDate}&EndDate=${obj.EndDate}&LoginUserID=${obj.userID}`
+      if(obj.SearchKey == ''){
+        apiPath = `api/ReportData?ReportType=${obj.ReportType}&FromDate=${obj.StartDate}&EndDate=${obj.EndDate}&LoginUserID=${obj.userID}`
+      } else {
+        apiPath = `api/ReportData?ReportType=${obj.ReportType}&FromDate=${obj.StartDate}&EndDate=${obj.EndDate}&IsText=${obj.SearchKey}&LoginUserID=${obj.userID}`
+      }
+      
     }
     return this.http.get(`${this.API_ENDPOINT}${apiPath}`).pipe(map( res => res));
   }
