@@ -237,7 +237,7 @@ export class OrdersListComponent implements OnInit {
     });
 
     const options = { 
-      headers: ['Order Date','Lead Number','Order Number','Order Type', 'Customer Name','Warehouse','Total Amount','Discount(%)','Freight Amount', 'Payment Mode', 'Transporter', 'Dispatch No', 'Invoice Number', 'Quantity','Phone No','Cash Amount','Cheque Amount',' Other Amount', 'Order Status','Remarks'], 
+      headers: ['Order Date','Lead Number','Order Number','Order Type', 'Customer Name','Warehouse','Total Amount','Discount(%)','Pic-up Amount', 'Payment Mode', 'Transporter', 'Dispatch No', 'Invoice Number', 'Quantity','Phone No','Cash Amount','Cheque Amount',' Other Amount', 'Order Status','Remarks'], 
       nullToEmptyString: true,
     };
     new ngxCsv(report, 'Order-List', options);
@@ -447,7 +447,7 @@ export class OrdersListComponent implements OnInit {
         <td>${i+1}</td>
         <td>${data[i].PRODUCTCODE}</td>`;
       if(type == 'IMS') {
-        html = html + `<td class="text-align-right">${data[i].Size}</td>`;
+        html = html + `<td class="text-align-right">${data[i].Rack}</td>` + `<td class="text-align-right">${data[i].Size}</td>`;
       }
       html = html +`<td class="text-align-right">${data[i].Quantity}</td>
         <td>${data[i].Unit}</td>
@@ -463,7 +463,7 @@ export class OrdersListComponent implements OnInit {
       <th>SN</th>
       <th>Description of Goods</th>`;
     if(type == 'IMS') {
-      html = html + `<th>Size</th>`;
+      html = html + `<th>Rack No</th>` + `<th>Size</th>`;
     }
     html = html + ` <th>Quantity</th>
       <th>Unit</th>
@@ -475,24 +475,24 @@ export class OrdersListComponent implements OnInit {
     if(type == 'IMS'){
       return `
       <tr>
-      <td colspan="6"></td>
+      <td colspan="7"></td>
       <td class="text-align-right">${this.printHeaderInfo.SubTotalAmount}</td>
     </tr>
     <tr>
-      <td colspan="6" class="text-align-right">Frieght Charges</td>
+      <td colspan="7" class="text-align-right">Pic-up Charges</td>
       <td class="text-align-right">${this.printHeaderInfo.FreightAmount}</td>
     </tr>
     <tr>
-      <td colspan="6" class="text-align-right">Discount</td>
+      <td colspan="7" class="text-align-right">Discount</td>
       <td class="text-align-right">${this.printHeaderInfo.DiscountAmount}</td>
     </tr>
     <tr>
-      <td colspan="3" class="text-align-right">Grand Total</td>
+      <td colspan="4" class="text-align-right">Grand Total</td>
       <td colspan="3" class="total-quantity">${this.printHeaderInfo.TotalQuantity}</td>
       <td class="text-align-right">${this.printHeaderInfo.TotalAmount}</td>
     </tr>
     <tr>
-      <td colspan="7"><b>${this.printHeaderInfo.TotalAmountWords}</b></td>
+      <td colspan="8"><b>${this.printHeaderInfo.TotalAmountWords}</b></td>
     </tr>
       `;
     }
@@ -502,7 +502,7 @@ export class OrdersListComponent implements OnInit {
       <td class="text-align-right">${this.printHeaderInfo.SubTotalAmount}</td>
     </tr>
     <tr>
-      <td colspan="5" class="text-align-right">Frieght Charges</td>
+      <td colspan="5" class="text-align-right">Pic-up Charges</td>
       <td class="text-align-right">${this.printHeaderInfo.FreightAmount}</td>
     </tr>
     <tr>
