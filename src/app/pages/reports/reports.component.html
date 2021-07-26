@@ -5,28 +5,26 @@
 </div>
 <ba-card cardTitle="Reports" class="smart-table-container" #report>
     <div class="row">
-        <div class="col-3-value">
+        <div class="col-2">
             <label class="lbl-text"> Select Report Type </label>
-            <div class="input-value">
-                <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="reportTask.ReportType">
-                    <option [value]="0">Select Reports Type</option>
-                    <option *ngFor='let report of allReportType' [value]="report.ReportType">{{report.Report}}</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-3-value" *ngIf="dateIsRequired">
-            <label class="lbl-text"> Start Date </label>
-            <div class="input-value">
-                <date-picker [(dateModel)]="reportTask.StartDate" (dateModelChange)="dateChangeHandler()"></date-picker>
-            </div>
-        </div>
-        <div class="col-3-value" *ngIf="dateIsRequired">
-            <label class="lbl-text"> End Date </label>
-            <div class="input-value">
-                <date-picker [(dateModel)]="reportTask.EndDate" (dateModelChange)="dateChangeHandler()"></date-picker>
-            </div>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="reportTask.ReportType">
+                <option [value]="0">Select Reports Type</option>
+                <option *ngFor='let report of allReportType' [value]="report.ReportType">{{report.Report}}</option>
+            </select>
         </div>
         <div class="col-2" *ngIf="dateIsRequired">
+            <label class="lbl-text"> Start Date </label>
+            <date-picker [(dateModel)]="reportTask.StartDate" (dateModelChange)="dateChangeHandler()"></date-picker>
+        </div>
+        <div class="col-2" *ngIf="dateIsRequired">
+            <label class="lbl-text"> End Date </label>
+            <date-picker [(dateModel)]="reportTask.EndDate" (dateModelChange)="dateChangeHandler()"></date-picker>
+        </div>
+        <div class="col-3" *ngIf="textIsRequired">
+            <label class="lbl-text"> Search Value </label>
+            <input type='text' class="form-control" [(ngModel)]="reportTask.SearchValue" (keyup)="dateChangeHandler()" />
+        </div>
+        <div class="col-2 mt32" *ngIf="dateIsRequired || textIsRequired">
             <button class="btn btn-primary" (click)="getReportData(false)">View Report</button>
         </div>
         <div class="col-md-2 col-sm-12 exportBtn">
