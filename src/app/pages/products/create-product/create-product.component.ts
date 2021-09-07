@@ -115,7 +115,7 @@ export class CreateProductComponent implements OnInit {
         this.createProduct.GenderID = allValues.GenderID ? allValues.GenderID : 1;
         this.createProduct.ProductCatogeryID = allValues.ProductCatogeryID ? allValues.ProductCatogeryID : 1;
         this.createProduct.FitID = allValues.FitID ? allValues.FitID : 1;
-        this.createProduct.VarientID = allValues.VarientID ? allValues.VarientID : 1;
+        this.createProduct.VarientID = allValues.ProductVarientID ? allValues.ProductVarientID : 1;
         this.createProduct.Lot = allValues.Lot;
         this.createProduct.Remark = allValues.Remark;
         this.createProduct.IsActive = allValues.Active;
@@ -170,6 +170,8 @@ export class CreateProductComponent implements OnInit {
         "FitID": this.createProduct.FitID,
         "ColorID": this.createProduct.ColorID,
         "ProductCatogeryID": this.createProduct.ProductCatogeryID,
+        "ProductVarientID": this.createProduct.VarientID,
+        "SourceID": this.createProduct.SourceID,
         "Remark": this.createProduct.Remark,
         "Active": this.createProduct.IsActive,
         "CreatedBy": this.userID,
