@@ -25,6 +25,7 @@ export class CreateProductComponent implements OnInit {
   allVarient = [];
   allCategory = [];
   allColor = [];
+  allSleeveType = [];
   userID = '';
   ProductID = 0;
   detail = false;
@@ -52,6 +53,9 @@ export class CreateProductComponent implements OnInit {
       this.createProduct.ProductCatogeryID = 0;
       this.createProduct.FitID = 0;
       this.createProduct.VarientID = 0;
+      this.createProduct.SleeveTypeID = 0;
+      this.createProduct.DiscountPercentage = 0;
+      this.createProduct.RackNo = '';
       this.createProduct.Lot = '';
       this.createProduct.Remark = '';
       this.createProduct.IsActive = true;
@@ -82,6 +86,7 @@ export class CreateProductComponent implements OnInit {
         this.allCategory = lookUpData.ProductCategory;
         this.allProductType = lookUpData.ProductType;
         this.allVarient = lookUpData.ProductVarient;
+        this.allSleeveType = lookUpData.SleeveType;
       },(error)=> {
         this.showLoader = false;
         this.notification.error('Error','Error While Lookup Master Data');
@@ -116,6 +121,9 @@ export class CreateProductComponent implements OnInit {
         this.createProduct.ProductCatogeryID = allValues.ProductCatogeryID ? allValues.ProductCatogeryID : 1;
         this.createProduct.FitID = allValues.FitID ? allValues.FitID : 1;
         this.createProduct.VarientID = allValues.ProductVarientID ? allValues.ProductVarientID : 1;
+        this.createProduct.SleeveTypeID = allValues.SleeveTypeID;
+        this.createProduct.DiscountPercentage = allValues.DiscountPercentage;
+        this.createProduct.RackNo = allValues.RackNo;
         this.createProduct.Lot = allValues.Lot;
         this.createProduct.Remark = allValues.Remark;
         this.createProduct.IsActive = allValues.Active;
@@ -172,6 +180,9 @@ export class CreateProductComponent implements OnInit {
         "ProductCatogeryID": this.createProduct.ProductCatogeryID,
         "ProductVarientID": this.createProduct.VarientID,
         "SourceID": this.createProduct.SourceID,
+        "SleeveTypeID": this.createProduct.SleeveTypeID,
+        "DiscountPercentage": this.createProduct.DiscountPercentage,
+        "RackNo": this.createProduct.RackNo,
         "Remark": this.createProduct.Remark,
         "Active": this.createProduct.IsActive,
         "CreatedBy": this.userID,
@@ -205,6 +216,17 @@ export class CreateProductComponent implements OnInit {
         this.showLoader = false;
         this.notification.error('Error', 'Something went wrong!');
       })
+    }
+
+    addZero() {
+      if(this.createProduct.DiscountPercentage == '') {
+        this.createProduct.DiscountPercentage = 0;
+      }
+    }
+    removeZero() {
+      if(this.createProduct.DiscountPercentage == 0) {
+        this.createProduct.DiscountPercentage = '';
+      }
     }
 
 }
