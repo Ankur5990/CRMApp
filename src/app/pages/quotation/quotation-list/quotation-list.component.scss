@@ -1,0 +1,98 @@
+@import "../../../theme/sass/conf/conf.scss";
+.page-header {
+    border: 1px solid;
+}
+.slip-header-section {
+    text-align: center;
+}
+input[type="radio"] {
+    margin-right: 3px;
+}
+.search-container {
+    padding-bottom: 12px;
+}
+.padding-eater {
+    padding-left: 15px;
+    padding-bottom: 10px;
+}
+.quotation-section {
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+}
+.quotation-no-lbl {
+    display: inline-block;
+    width: 30%;
+}
+.quotation-no-value {
+    display: inline-block;
+    width: 70%;
+}
+.view-btn {
+    padding-top: 20px;
+    padding-left: 20px;
+}
+.createTicketBtn {
+    padding: 10px 35px;
+    position: absolute;
+    right: -13px;
+    top: -3px;
+}
+.printBtn {
+    padding: 10px 35px;
+    position: absolute;
+    right: 80px;
+    top: -3px;
+}
+.exportBtn {
+    padding: 10px 35px;
+    position: absolute;
+    right: 160px;
+    top: -3px;  
+}
+.text-align-center {
+    text-align: center;
+}
+
+.text-align-left {
+    text-align: left;
+}
+
+.thVerticalAlign {
+    vertical-align: middle;
+  }
+
+table.notification-list-table tbody tr td {
+    padding: 0px 5px !important;
+}
+
+table.notification-list-table thead th {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+.createdOn {
+    width: 9%;
+}
+.payment-mode {
+    width: 9%
+}
+.leadNumber {
+    width: 11%
+}
+.custname {
+    width: 12%
+}
+.total-amount {
+    width: 10%
+}
+.discount {
+    width: 7%
+}
+.type {
+    width: 9%
+}
+.filter-width {
+    width: 13%;
+    padding-left: 5px;
+    margin-right: 10px;
+}
+

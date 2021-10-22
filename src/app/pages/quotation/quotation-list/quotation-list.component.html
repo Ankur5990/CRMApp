@@ -1,0 +1,151 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+  <div style="margin:auto;position:fixed;top:50%;left:50%;">
+      <img src="assets/crm/spinner.gif " width='25px'>
+  </div>
+</div>
+
+<ba-card cardTitle="QUOTATIONS" class="smart-table-container" #quotations>
+    <div class="row">
+        <div class="col-12 search-container">
+            Search Quotation By: <input type="radio" name="type" [value]="1" [(ngModel)]="quotationTask.searchquotationby" (change)="valueChange('phone')"/>Customer/Phone <input type="radio" name="type" [value]="2" [(ngModel)]="quotationTask.searchquotationby" (change)="valueChange('other')"/>Other filters
+        </div>
+    </div>
+    <div class="row" *ngIf="quotationTask.searchquotationby == 1"> 
+        <div class="col-md-5 padding-eater">
+            <input name="riUser" [(ngModel)]="searchKey" autocomplete="off" type="text" class="form-control" placeholder="Search" (keyup)="searchQuotationsTerm$.next($event.target.value)">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="quotationTask.searchquotationby == 2">
+            <label>Start Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="quotationTask.startDate" (Change)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="quotationTask.searchquotationby == 2">
+            <label>End Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="quotationTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="filter-width no-padding-right" *ngIf="quotationTask.searchquotationby == 2">
+            <label>Select Quotation Type</label>
+            <select (change)="refreshDataHandler()" class="form-control"
+                [(ngModel)]="quotationTask.QuotationType" id="exampleSelect1">
+                <option [value]="1">All Type</option>
+                <option [value]="2">Lead</option>
+                <option [value]="3">Customer</option>
+            </select>
+        </div>
+        <div class="filter-width no-padding-right" *ngIf="quotationTask.searchquotationby == 2">
+            <label>WareHouse</label>
+            <select class="form-control" (change)="refreshDataHandler()" [(ngModel)]="quotationTask.WareHouseID">
+                <option [value]="1">All WareHouse</option>
+                <option *ngFor='let warehouse of allWareHouse' [value]="warehouse.WareHouseID">{{warehouse.WareHouse}}</option>
+            </select>
+        </div>
+        <div class="col-1 no-padding-right view-btn" *ngIf="quotationTask.searchquotationby == 2">
+            <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllQuotations()">View </button>
+        </div>
+        <div class="col-md-2 col-sm-12 createTicketBtn">
+            <button [routerLink]="['../create']" class="btn btn-primary addCustBtn pull-right">
+                Create
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 printBtn">
+            <button (click)="printTable()" class="btn btn-primary addCustBtn pull-right" [disabled]="allQuotationsList.length == 0">
+                Print
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 exportBtn">
+            <button (click)="exportToCSV()" class="btn btn-primary addCustBtn pull-right" [disabled]="allQuotationsList.length == 0">
+                Export
+            </button>
+        </div>
+    </div>
+    <div class="table-container" style="overflow-x:auto;">
+        <table class="table table-striped table-condensed notification-list-table" id="quotation-table">
+            <thead class="tableHeader">
+                <tr>
+                    <th class="table-id thVerticalAlign actionAlignCenter" style="width: 8%;">Actions</th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Lead Number
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Quotation Number
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Quotation Type
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Customer Name
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Warehouse
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Discount(%)
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Freight Charge
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-center">
+                        <span>
+                            Total Amount
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Quotation Date
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr valign="middle" *ngFor="let item of allQuotationsList let i=index">
+                    <td class="table-id">
+                        <i class="ion-ios-book custom-tooltip-ion" 
+                        (click)="printCashData(item.QuotationID)" style="margin-right: 5px">
+                            <span class="tooltiptext">Print Invoice</span>
+                        </i>
+                        <a [routerLink]="['../view',item.QuotationID]">
+                            <i class="ion-eye custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">View</span>
+                            </i>
+                        </a>
+                        <a [routerLink]="['../edit',item.QuotationID]">
+                            <i class="ion-edit custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">Edit</span>
+                            </i>
+                        </a>
+                    </td>
+                    <td class='text-align-left leadNumber'>{{item.LeadNumber}}</td>
+                    <td class='text-align-left leadNumber'>{{item.QuotationNumber}}</td>
+                    <td class='text-align-center type'>{{item.QuotationType}}</td>
+                    <td class='text-align-left custname'>{{item.CustomerName}}</td>
+                    <td class='text-align-center payment-mode'>{{item.Warehouse}}</td>
+                    <td class='text-align-center discount'>{{item.DiscountPercentage}}</td>
+                    <td class='text-align-center total-amount'>{{item.FreightAmount}}</td>
+                    <td class='text-align-center total-amount'>{{item.TotalAmount}}</td>
+                    <td class="text-align-left createdOn">{{item.QuotationDate}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="noQuotationFound == '' && allQuotationsList.length == 0 && refreshMessage" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
+        <div *ngIf="noQuotationFound != '' && allQuotationsList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noQuotationFound}}</div>
+    </div>
+</ba-card>
