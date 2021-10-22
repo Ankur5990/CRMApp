@@ -110,6 +110,27 @@
         </div>
         <div class="col-3">
             <div class="form-group">
+                <label>Sleeve Type</label>
+                <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createProduct.SleeveTypeID">
+                    <option [value]="0">Select Sleeve Type</option>
+                    <option *ngFor='let sleeve of allSleeveType' [value]="sleeve.SleeveTypeID">{{sleeve.SleeveType}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Discount (%)</label>
+                <input type='number' class='form-control' [disabled]="isViewOnly" (focus)="removeZero('dp')" (focusout)="addZero('dp')" [(ngModel)]="createProduct.DiscountPercentage">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label>Rack No</label>
+                <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createProduct.RackNo">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
                 <label>Lot</label>
                 <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createProduct.Lot">
             </div>
