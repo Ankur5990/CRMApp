@@ -38,6 +38,18 @@ export const PAGES_MENU = [
 			  },
 			},
 		},
+	    	{
+			path: 'quotation',
+			data: {
+			  menu: {
+				title: 'Quotation',
+				icon: 'ion-compose',
+				selected: false,
+				expanded: false,
+				order: 0,
+			  },
+			},
+		},
 		{
 			path: 'stock-management',
 			data: {
