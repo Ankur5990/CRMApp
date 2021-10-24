@@ -120,7 +120,7 @@
         <div class="col-3">
             <div class="form-group">
                 <label>Discount (%)</label>
-                <input type='number' class='form-control' [disabled]="isViewOnly" (focus)="removeZero('dp')" (focusout)="addZero('dp')" [(ngModel)]="createProduct.DiscountPercentage">
+                <input type='number' class='form-control' [disabled]="isViewOnly" (focus)="removeZero()" (focusout)="addZero()" [(ngModel)]="createProduct.DiscountPercentage">
             </div>
         </div>
         <div class="col-3">
