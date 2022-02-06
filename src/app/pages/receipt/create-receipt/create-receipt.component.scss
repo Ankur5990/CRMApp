@@ -1,0 +1,94 @@
+@import "../../../theme/sass/conf/conf.scss";
+
+$arrow-top: 33%;
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+.width10 {
+  width: 10%;
+}
+.width12 {
+  width: 12%;
+}
+.width13 {
+  width: 13%;
+}
+.input-width {
+  margin-top: 4px;
+}
+.btn-placement {
+  margin-bottom: 5px;
+  margin-right: 5px;
+  float: right;
+}
+label {
+  text-align: right;
+  padding-right: 10px;
+}
+.form-control:focus {
+  border-color: #cbcbcb;
+}
+.row {
+  padding: 5px 0;
+}
+
+.buttonMargin {
+  margin-left:10px;
+}
+
+.custom-tooltip {
+  background: #ed7878;
+  color: white;
+  padding: 5px;
+  display: inline;
+  position: absolute;
+  border-radius: 4px;
+  top: -19px;
+  right: 1%;
+}
+
+.search-container {
+  position: absolute;
+  max-height: 200px;
+  overflow-y: scroll;
+  width: calc(92%);
+  padding:0px;
+  border: 1px solid #ccc;
+  background: #fff;
+  z-index: 12;
+  .search-item{
+    padding: 6px 12px;
+    border-bottom: 1px solid #d6cccc;
+    cursor: pointer;
+    &:hover{
+      background: #5bc0de;
+      color:#fff;
+    }
+  }
+  .search-item:last-child{
+    border-bottom: 0px solid #d6cccc;
+  }
+}
+
+.backtoreceiptlist {
+  position: absolute;
+  top: 7px;
+  right: 110px;
+}
+
+.submit-create-receipt {
+  position: absolute;
+  top: 7px;
+  right: 20px;
+}
+
+.customer-value {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 300px;
+}
