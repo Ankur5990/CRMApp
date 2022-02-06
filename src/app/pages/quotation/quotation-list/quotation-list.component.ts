@@ -284,6 +284,10 @@ export class QuotationListComponent implements OnInit {
                 <div>1. Goods once sold will not be taken back</div>
                 <div>2. Interest @ 18% p.a. will be charged if the payment is not made with in the stipulated time.</div>
                 <div>3. Subject to 'Gurugram' Jurisdiction only.</div>
+                <div>4. Advance booking would be considered only with 10% Advance payment.</div>
+                <div>5. Booked stock cannot be cancelled.</div>
+                <div>6. Company keeps the full right to cancel the Order in case of non availability of raw material and any other unavoidable circumstances.</div>
+                <div>7. Based on advance booking 70-80 % stock would be deliver on the committed dates.</div>
               </div>
               <div class="receiver-info">
                 <div class="receiver-sign">Receiver's Signature :</div>
