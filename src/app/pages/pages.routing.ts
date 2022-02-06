@@ -26,7 +26,8 @@ export const routes: Routes = [
       { path: 'grn', loadChildren: './grn/grn.module#GRNModule' },
       { path: 'return', loadChildren: './return/return.module#ReturnModule' },
       { path: 'product', loadChildren: './products/product.module#ProductModule' },
-      { path: 'report', loadChildren: './reports/reports.module#ReportsModule' }
+      { path: 'report', loadChildren: './reports/reports.module#ReportsModule' },
+      { path: 'receipt', loadChildren: './receipt/receipt.module#ReceiptModule' }
     ]
   }
 ];
