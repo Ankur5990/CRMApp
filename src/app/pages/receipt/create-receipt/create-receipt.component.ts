@@ -8,7 +8,6 @@ import { CacheService } from '../../../shared/cache.service';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { ReceiptService } from '../receipt.service';
-import { vendor } from '../../../../../node_modules1/postcss/lib/postcss';
 
 @Component({
   selector: 'app-create-receipt',
