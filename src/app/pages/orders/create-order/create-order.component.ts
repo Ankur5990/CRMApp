@@ -110,6 +110,8 @@ export class CreateOrderComponent implements OnInit {
       this.createOrder.CashAmount = '';
       this.createOrder.ChequeAmount = '';
       this.createOrder.OtherAmount = '';
+      this.createOrder.AvailablePoints = 0;
+      this.createOrder.RedemPoints = 0;
       this.createOrder.Remark = '';
       this.disablePayment = true;
       this.disableStatus = true;
@@ -359,6 +361,8 @@ export class CreateOrderComponent implements OnInit {
         this.createOrder.GSTNo = allValues.GSTNO;
         this.createOrder.MembershipNo = allValues.MembershipNo;
         this.createOrder.TaxInvoice = allValues.IsTaxInvoice;
+        this.createOrder.AvailablePoints = allValues.AvailablePoints;
+        this.createOrder.RedemPoints = allValues.RedemPoints;
         this.createOrder.OrderDate = { year: +orderDateArray[2], month: +orderDateArray[0], day: +orderDateArray[1] };
         this.refreshDataHandler('typeChange');
       }
@@ -466,6 +470,10 @@ export class CreateOrderComponent implements OnInit {
       this.router.navigate(['/pages/orders/list']);
     }
     submitOrder(action) {
+      if( +this.createOrder.RedemPoints <= +this.createOrder.AvailablePoints) {
+        this.notification.error('Error', 'Please enter Redem Point is less or equal to Available Point !!!')
+        return
+      }
       if(!this.validateData()) {
         this.notification.error('Error', 'Please fill all the mandatory information !!!')
         return;
@@ -518,7 +526,9 @@ export class CreateOrderComponent implements OnInit {
         "CreatedBy": this.userID,
         "TotalAmount": this.finalAmount,
         "OrderDetail": productDetails,
-        "IsWarningAllowed": this.isWarning
+        "IsWarningAllowed": this.isWarning,
+        "AvailablePoints": this.createOrder.AvailablePoints,
+        "RedemPoints": this.createOrder.RedemPoints
       }
       this.showLoader = true;
       this.orderService.createOrder(postData).subscribe(res => {
@@ -592,6 +602,10 @@ export class CreateOrderComponent implements OnInit {
         if(this.createOrder.FreightCharge == 0) {
           this.createOrder.FreightCharge = '';
         }
+      } else if(type == 'redemPt') {
+        if(this.createOrder.RedemPoints == 0) {
+          this.createOrder.RedemPoints = '';
+        }
       }
     }
     addZero(type) {
@@ -602,6 +616,10 @@ export class CreateOrderComponent implements OnInit {
       } else if(type == 'frieght') {
         if(this.createOrder.FreightCharge == '') {
           this.createOrder.FreightCharge = 0;
+        }
+      } else if(type == 'redemPt') {
+        if(this.createOrder.RedemPoints == '') {
+          this.createOrder.RedemPoints = 0;
         }
       }
     }
@@ -636,6 +654,7 @@ export class CreateOrderComponent implements OnInit {
       this.createOrder.BillingAddress = item.BillingAddress;
       this.createOrder.GSTNo = item.GSTNO;
       this.createOrder.MembershipNo = item.MembershipNo;
+      this.createOrder.AvailablePoints = item.AvailablePoints;
     }
     showWarningPopUp(msg) {
       const activeModal = this.modalService.open(ModalComponent, {
