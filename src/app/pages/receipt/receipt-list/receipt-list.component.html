@@ -1,0 +1,136 @@
+<div *ngIf='showLoader' style="top:65px;bottom:0;left:0;right:0;height:calc(100% - 65px); opacity:0.5;background:gray;z-index:999;position:absolute;">
+  <div style="margin:auto;position:fixed;top:50%;left:50%;">
+      <img src="assets/crm/spinner.gif " width='25px'>
+  </div>
+</div>
+
+<ba-card cardTitle="Receipt" class="smart-table-container" #receipt>
+    <div class="row">
+        <div class="col-12 search-container">
+            Search Receipt By: <input type="radio" name="type" [value]="1" [(ngModel)]="receiptListTask.searchby" (change)="valueChange('receipt')"/>Receipt <input type="radio" name="type" [value]="2" [(ngModel)]="receiptListTask.searchby" (change)="valueChange('other')"/>Other filters
+        </div>
+    </div>
+    <div class="row" *ngIf="receiptListTask.searchby == 1"> 
+        <div class="col-md-5 padding-eater">
+            <input name="receiptnum" [(ngModel)]="searchReceiptKey" autocomplete="off" type="text" class="form-control" placeholder="Search Receipt" (keyup)="searchReceiptTerm$.next($event.target.value)">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="receiptListTask.searchby == 2">
+            <label>Start Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="receiptListTask.startDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="receiptListTask.searchby == 2">
+            <label>End Date</label>
+            <div class="input-group">
+                <date-picker [(dateModel)]="receiptListTask.endDate" (dateModelChange)="refreshDataHandler()"></date-picker>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="receiptListTask.searchby == 2">
+            <label>Select Party Type</label>
+            <select class="form-control"
+                [(ngModel)]="receiptListTask.PartyTypeID">
+                <option [value]="1">All Party Type</option>
+                <option [value]="2">Customer</option>
+                <option [value]="3">Vendor</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right" *ngIf="receiptListTask.searchby == 2">
+            <label>Select Receipt Type</label>
+            <select class="form-control"
+                [(ngModel)]="receiptListTask.ReceiptTypeID">
+                <option [value]="1">All Receipt Type</option>
+                <option *ngFor="let receipt of allReceiptType" [value]="receipt.ReceiptTypeID">{{receipt.ReceiptType}}</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-12 no-padding-right view-btn" *ngIf="receiptListTask.searchby == 2">
+            <button class="btn btn-primary" [disabled]='!buttonAction' (click)="getAllReceipt()">View </button>
+        </div>
+        <div class="col-md-2 col-sm-12 createReceiptBtn">
+            <button [routerLink]="['../create']" class="btn btn-primary addCustBtn pull-right">
+                Create
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 printBtn">
+            <button (click)="printTable()" class="btn btn-primary addCustBtn pull-right" [disabled]="allReceiptList.length == 0">
+                Print
+            </button>
+        </div>
+        <div class="col-md-2 col-sm-12 exportBtn">
+            <button (click)="exportToCSV()" class="btn btn-primary addCustBtn pull-right" [disabled]="allReceiptList.length == 0">
+                Export
+            </button>
+        </div>
+    </div>
+    <div class="table-container" style="overflow-x:auto;">
+        <table class="table table-striped table-condensed receipt-list-table" id="receipt-container">
+            <thead class="tableHeader">
+                <tr>
+                    <th class="table-id thVerticalAlign actionAlignCenter" style="width: 8%;">Actions</th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Receipt No
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Party Type
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Receipt Type
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Party Detail
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Transaction Type
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Amount
+                        </span>
+                    </th>
+                    <th class="thVerticalAlign text-align-left">
+                        <span>
+                            Receipt Date
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr valign="middle" *ngFor="let item of allReceiptList let i=index">
+                    <td class="table-id">
+                        <a [routerLink]="['../view',item.ReceiptID]">
+                            <i class="ion-eye custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">View</span>
+                            </i>
+                        </a>
+                        <a [routerLink]="['../edit',item.ReceiptID]" *ngIf="item.IsEditable == 1">
+                            <i class="ion-edit custom-tooltip-ion" style="margin-right: 5px">
+                                <span class="tooltiptext">Edit</span>
+                            </i>
+                        </a>
+                    </td>
+                    <td class='text-align-left receipt-number'>{{item.ReceiptNumber}}</td>
+                    <td class='text-align-left party-type'>{{item.PartyTypeID == 2 ? 'Customer' : 'Vendor'}}</td>
+                    <td class='text-align-left receipt-type'>{{item.ReceiptType}}</td>
+                    <td class='text-align-left customer'>{{item.Party}}</td>
+                    <td class='text-align-left tran-type'>{{receiptInfo.TranTypeID == 2 ? 'Credit' : 'Debit'}}</td>
+                    <td class='text-align-left amount'>{{item.Amount || 'NA'}}</td>
+                    <td class="text-align-left createdOn">{{item.ReceiptDate}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="noReceiptFound == '' && allReceiptList.length == 0 && refreshMessage" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{refreshMessage}}</div>
+        <div *ngIf="noReceiptFound != '' && allReceiptList.length == 0" style = "background-color:rgba(0, 0, 0, 0.1);font-size:16px;padding: 11px;text-align:center;">{{noReceiptFound}}</div>
+    </div>
+</ba-card>
