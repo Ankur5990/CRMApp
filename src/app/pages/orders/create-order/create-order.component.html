@@ -148,6 +148,18 @@
             </div>
             <div class="col-3">
                 <div class="form-group">
+                    <label>Available Points</label>
+                    <input type='text' class='form-control' [disabled] [(ngModel)]="createOrder.AvailablePoints">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label>Redem Points</label>
+                    <input type='text' class='form-control' [disabled]="isViewOnly" (focus)="removeZero('redemPt')" (focusout)="addZero('redemPt')" [(ngModel)]="createOrder.RedemPoints">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
                     <label>Remark</label>
                     <input type='text' class='form-control' [disabled]="isViewOnly" [(ngModel)]="createOrder.Remark">
                 </div>
