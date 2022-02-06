@@ -169,6 +169,18 @@ export const PAGES_MENU = [
 				order: 0,
 			  },
 			},
+		},
+	    	{
+			path: 'receipt',
+			data: {
+			  menu: {
+				title: 'Receipt',
+				icon: 'ion-compose',
+				selected: false,
+				expanded: false,
+				order: 0,
+			  },
+			},
 		}
     ]
   }
