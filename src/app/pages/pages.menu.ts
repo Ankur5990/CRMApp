@@ -51,18 +51,6 @@ export const PAGES_MENU = [
 			},
 		},
 		{
-			path: 'stock-management',
-			data: {
-			  menu: {
-				title: 'Stock Management',
-				icon: 'ion-compose',
-				selected: false,
-				expanded: false,
-				order: 0,
-			  },
-			},
-		},
-		{
 			path: 'purchase-order',
 			data: {
 			  menu: {
