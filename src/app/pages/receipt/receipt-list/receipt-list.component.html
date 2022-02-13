@@ -124,7 +124,7 @@
                     <td class='text-align-left party-type'>{{item.PartyTypeID == 2 ? 'Customer' : 'Vendor'}}</td>
                     <td class='text-align-left receipt-type'>{{item.ReceiptType}}</td>
                     <td class='text-align-left customer'>{{item.Party}}</td>
-                    <td class='text-align-left tran-type'>{{receiptInfo.TranTypeID == 2 ? 'Credit' : 'Debit'}}</td>
+                    <td class='text-align-left tran-type'>{{item.TranTypeID == 2 ? 'Credit' : 'Debit'}}</td>
                     <td class='text-align-left amount'>{{item.Amount || 'NA'}}</td>
                     <td class="text-align-left createdOn">{{item.ReceiptDate}}</td>
                 </tr>
