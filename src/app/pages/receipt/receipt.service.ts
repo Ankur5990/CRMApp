@@ -39,7 +39,7 @@ export class ReceiptService {
   }
 
   searchCustomerList(term,UserId) {
-    const type = +sessionStorage.getItem('type');
+    const type = 3;
     return this.http
         .get(`${this.API_ENDPOINT}api/CRMCustomerforOrder?Type=${type}&UserID=${UserId}&SearchKey=${term}`).pipe(
           map(res => res)
