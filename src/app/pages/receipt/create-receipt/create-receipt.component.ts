@@ -140,7 +140,7 @@ export class CreateReceiptComponent implements OnInit {
       }
       let PartyID = this.createReceipt.PartyID;
       if(!this.detail) {
-        PartyID == 2 ? this.createReceipt.VendorID : this.createReceipt.CustomerID;
+        PartyID = this.createReceipt.PartyTypeID == 3 ? this.createReceipt.VendorID : this.createReceipt.CustomerID;
       }
       let postData = {
         "ReceiptID": +this.ReceiptID,
