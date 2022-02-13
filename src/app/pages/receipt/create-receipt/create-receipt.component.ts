@@ -165,8 +165,8 @@ export class CreateReceiptComponent implements OnInit {
                 let resp = JSON.parse(JSON.stringify(res));
                 resp.startDate = this.createReceipt.ReceiptDate;
                 resp.endDate = this.createReceipt.ReceiptDate;
-                resp.Washer = 1;
-                resp.WasherType = 1;
+                resp.PartyTypeID = 1;
+                resp.ReceiptTypeID = 1;
                 this.cacheService.set("listReceiptFilterData", resp);
               });
             }
