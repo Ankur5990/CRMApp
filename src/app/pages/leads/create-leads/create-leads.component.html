@@ -26,6 +26,23 @@
             </div>
             <div class="col-6">
                 <div class="form-group">
+                    <label>Calling Date</label>
+                    <div>
+                        <date-picker [minDate]="todaysDate" [(dateModel)]="createLead.CallingDate" [disabled]="isViewOnly"></date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Call Reason <sup style="color:red;">*</sup></label>
+                    <select class="form-control" [disabled]="isViewOnly" [(ngModel)]="createLead.CallReasonID">
+                        <option [value]="0">Select Reason</option>
+                        <option *ngFor='let reason of allCallReason' [value]="reason.CallReasonID">{{reason.ReasonName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
                     <label>Lead Number</label>
                     <input type='text' class='form-control' [disabled]="true" [(ngModel)]="createLead.LeadNo">
                 </div>
