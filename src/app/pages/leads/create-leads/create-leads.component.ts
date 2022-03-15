@@ -31,6 +31,7 @@ export class CreateLeadComponent implements OnInit {
   allCities = [];
   allState = [];
   allLeadTypes = [];
+  allCallReason = [];
   totalCities = [];
   userID = '';
   LeadID = 0;
@@ -65,6 +66,8 @@ export class CreateLeadComponent implements OnInit {
       this.createLead.Address = '';
       this.createLead.State = 0;
       this.createLead.City = 0;
+      this.createLead.CallingDate = '';
+      this.createLead.CallReasonID = 0;
       this.createLead.ZipCode = '';
       this.createLead.Comment = '';
       const activatedRouteObject = this.activatedRoute.snapshot.data;
@@ -107,6 +110,7 @@ export class CreateLeadComponent implements OnInit {
         this.allLeadSource = lookUpData.LeadSource;
         this.totalCities = lookUpData.City;
         this.allLeadTypes = lookUpData.LeadType;
+        this.allCallReason = lookUpData.CallReason;
         if(this.editOrView == false) {
           if(this.allLeadTypes.length > 0) {
             this.createLead.LeadType = this.allLeadTypes[0].LeadTypeID;
@@ -166,7 +170,12 @@ export class CreateLeadComponent implements OnInit {
       if(resp.Lead.length) {
         let allValues = resp.Lead[0];
         let followUpDate;
+        let callingDate;
         const leadDateArray = allValues.LeadDate.split('/');
+        if(allValues.CallingDate) {
+          const callingDateArray = allValues.LeadDate.split('/');
+          callingDate = { year: +callingDateArray[2], month: +callingDateArray[0], day: +callingDateArray[1] };
+        }
         if(allValues.FollowUPDate) {
           const followupDateArray = allValues.FollowUPDate.split('/')
           followUpDate = { year: +followupDateArray[2], month: +followupDateArray[0], day: +followupDateArray[1] };
@@ -193,6 +202,8 @@ export class CreateLeadComponent implements OnInit {
         this.createLead.ShopName = allValues.ShopName;
         this.createLead.LeadType = allValues.LeadTypeID;
         this.createLead.LeadStatus = allValues.LeadStatusCode;
+        this.createLead.CallingDate = callingDate;
+        this.createLead.CallReasonID = allValues.CallReasonID;
         if(allValues.LeadStatusCode == 'F') {
           this.showCreateOrder = true;
         }
@@ -250,10 +261,13 @@ export class CreateLeadComponent implements OnInit {
       }
       let findResult = this.totalStatus.find(x => x.Code == this.createLead.LeadStatus);
       const followDate = this.createLead.FollowUpDate.day ? `${this.createLead.FollowUpDate.month}/${this.createLead.FollowUpDate.day}/${this.createLead.FollowUpDate.year}`:'';
+      const callingDate = this.createLead.CallingDate.day ? `${this.createLead.CallingDate.month}/${this.createLead.CallingDate.day}/${this.createLead.CallingDate.year}`:'';
       let postData = {
         "LeadID": this.LeadID,
         "LeadDate": `${this.createLead.LeadDate.month}/${this.createLead.LeadDate.day}/${this.createLead.LeadDate.year}`,
         "FollowupDate": followDate,
+        "CallingDate":callingDate,
+        "CallReasonID": this.createLead.CallReasonID,
         "CustomerName": this.createLead.CustomerName,
         "Address": this.createLead.Address,
         "Zip": this.createLead.ZipCode,
